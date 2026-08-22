@@ -1,0 +1,3341 @@
+{
+  "created_utc": "20260818_050808",
+  "train_condition": "ref",
+  "models": {
+    "xgboost": {
+      "intrinsic_top15": [
+        {
+          "feature": "prosody_intensity_min",
+          "importance": 0.030205,
+          "kind": "impurity/gain",
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_d1_00_std",
+          "importance": 0.025952,
+          "kind": "impurity/gain",
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_intensity_std",
+          "importance": 0.016462,
+          "kind": "impurity/gain",
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_00_iqr",
+          "importance": 0.015311,
+          "kind": "impurity/gain",
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_00_std",
+          "importance": 0.012844,
+          "kind": "impurity/gain",
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_intensity_iqr",
+          "importance": 0.012189,
+          "kind": "impurity/gain",
+          "family": "prosody"
+        },
+        {
+          "feature": "spectral_band_0_500_mean",
+          "importance": 0.01171,
+          "kind": "impurity/gain",
+          "family": "spectral"
+        },
+        {
+          "feature": "prosody_intensity_mean",
+          "importance": 0.008777,
+          "kind": "impurity/gain",
+          "family": "prosody"
+        },
+        {
+          "feature": "prosody_f0_mean",
+          "importance": 0.007974,
+          "kind": "impurity/gain",
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_d2_00_std",
+          "importance": 0.006309,
+          "kind": "impurity/gain",
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_f0_median",
+          "importance": 0.006265,
+          "kind": "impurity/gain",
+          "family": "prosody"
+        },
+        {
+          "feature": "duration_s",
+          "importance": 0.00568,
+          "kind": "impurity/gain",
+          "family": "other"
+        },
+        {
+          "feature": "spectral_contrast_2_mean",
+          "importance": 0.00546,
+          "kind": "impurity/gain",
+          "family": "spectral"
+        },
+        {
+          "feature": "spectral_rolloff85_median",
+          "importance": 0.004983,
+          "kind": "impurity/gain",
+          "family": "spectral"
+        },
+        {
+          "feature": "spectral_centroid_mean",
+          "importance": 0.004915,
+          "kind": "impurity/gain",
+          "family": "spectral"
+        }
+      ],
+      "permutation_top15": [
+        {
+          "feature": "mfcc_d1_00_std",
+          "importance": 0.013132,
+          "std": 0.003162,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_02_median",
+          "importance": 0.00842,
+          "std": 0.002403,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_f0_skew",
+          "importance": 0.007403,
+          "std": 0.001697,
+          "family": "prosody"
+        },
+        {
+          "feature": "prosody_f0_median",
+          "importance": 0.007316,
+          "std": 0.001425,
+          "family": "prosody"
+        },
+        {
+          "feature": "prosody_cpps",
+          "importance": 0.00713,
+          "std": 0.002651,
+          "family": "prosody"
+        },
+        {
+          "feature": "prosody_intensity_std",
+          "importance": 0.006089,
+          "std": 0.005221,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_03_mean",
+          "importance": 0.006064,
+          "std": 0.00255,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_f0_iqr",
+          "importance": 0.005878,
+          "std": 0.002805,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_03_max",
+          "importance": 0.005816,
+          "std": 0.002811,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_03_std",
+          "importance": 0.005543,
+          "std": 0.002034,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_d1_01_std",
+          "importance": 0.005221,
+          "std": 0.001297,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_f1_bw_median",
+          "importance": 0.005184,
+          "std": 0.001755,
+          "family": "prosody"
+        },
+        {
+          "feature": "prosody_f0_slope_abs_mean",
+          "importance": 0.005159,
+          "std": 0.001242,
+          "family": "prosody"
+        },
+        {
+          "feature": "duration_s",
+          "importance": 0.004725,
+          "std": 0.002603,
+          "family": "other"
+        },
+        {
+          "feature": "mfcc_04_min",
+          "importance": 0.004427,
+          "std": 0.001748,
+          "family": "mfcc"
+        }
+      ],
+      "permutation_family_share": {
+        "chroma": 0.0369,
+        "mfcc": 0.5718,
+        "other": 0.0124,
+        "prosody": 0.1956,
+        "spectral": 0.1832
+      },
+      "shap_top15": [
+        {
+          "feature": "mfcc_d1_00_std",
+          "importance": 0.2510719895362854,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_d2_00_std",
+          "importance": 0.17718400061130524,
+          "family": "mfcc"
+        },
+        {
+          "feature": "duration_s",
+          "importance": 0.1524980068206787,
+          "family": "other"
+        },
+        {
+          "feature": "prosody_intensity_std",
+          "importance": 0.1511400043964386,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_00_std",
+          "importance": 0.11855500191450119,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_03_std",
+          "importance": 0.11666899919509888,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_intensity_iqr",
+          "importance": 0.10841300338506699,
+          "family": "prosody"
+        },
+        {
+          "feature": "spectral_flux_std",
+          "importance": 0.10167799890041351,
+          "family": "spectral"
+        },
+        {
+          "feature": "mfcc_00_iqr",
+          "importance": 0.10123500227928162,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_f0_median",
+          "importance": 0.09129100292921066,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_d1_02_std",
+          "importance": 0.08967400342226028,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_f0_skew",
+          "importance": 0.08264700323343277,
+          "family": "prosody"
+        },
+        {
+          "feature": "prosody_cpps",
+          "importance": 0.08253200352191925,
+          "family": "prosody"
+        },
+        {
+          "feature": "prosody_f0_iqr",
+          "importance": 0.07994599640369415,
+          "family": "prosody"
+        },
+        {
+          "feature": "prosody_intensity_min",
+          "importance": 0.07890000194311142,
+          "family": "prosody"
+        }
+      ],
+      "shap_family_share": {
+        "chroma": 0.032600000500679016,
+        "mfcc": 0.5662999749183655,
+        "other": 0.01590000092983246,
+        "prosody": 0.1784999966621399,
+        "spectral": 0.20669999718666077
+      },
+      "shap_top5_per_class": {
+        "ANG": [
+          {
+            "feature": "mfcc_d1_00_std",
+            "importance": 1.11324
+          },
+          {
+            "feature": "mfcc_d2_00_std",
+            "importance": 0.3231
+          },
+          {
+            "feature": "mfcc_03_std",
+            "importance": 0.27959
+          },
+          {
+            "feature": "mfcc_d2_03_std",
+            "importance": 0.18702
+          },
+          {
+            "feature": "prosody_f1_bw_median",
+            "importance": 0.18296
+          }
+        ],
+        "DIS": [
+          {
+            "feature": "duration_s",
+            "importance": 0.34552
+          },
+          {
+            "feature": "mfcc_d2_01_std",
+            "importance": 0.28099
+          },
+          {
+            "feature": "prosody_f0_median",
+            "importance": 0.27022
+          },
+          {
+            "feature": "mfcc_d2_00_std",
+            "importance": 0.18387
+          },
+          {
+            "feature": "mfcc_03_std",
+            "importance": 0.18138
+          }
+        ],
+        "FEA": [
+          {
+            "feature": "mfcc_d1_02_std",
+            "importance": 0.20399
+          },
+          {
+            "feature": "prosody_f0_skew",
+            "importance": 0.19404
+          },
+          {
+            "feature": "spectral_contrast_1_mean",
+            "importance": 0.183
+          },
+          {
+            "feature": "mfcc_02_median",
+            "importance": 0.17142
+          },
+          {
+            "feature": "spectral_entropy_median",
+            "importance": 0.15814
+          }
+        ],
+        "HAP": [
+          {
+            "feature": "duration_s",
+            "importance": 0.30333
+          },
+          {
+            "feature": "prosody_f0_iqr",
+            "importance": 0.26308
+          },
+          {
+            "feature": "prosody_intensity_iqr",
+            "importance": 0.25442
+          },
+          {
+            "feature": "spectral_band_4000_5000_std",
+            "importance": 0.20349
+          },
+          {
+            "feature": "prosody_f0_std",
+            "importance": 0.18427
+          }
+        ],
+        "NEU": [
+          {
+            "feature": "prosody_intensity_std",
+            "importance": 0.46206
+          },
+          {
+            "feature": "prosody_cpps",
+            "importance": 0.29974
+          },
+          {
+            "feature": "prosody_f0_mean",
+            "importance": 0.26853
+          },
+          {
+            "feature": "mfcc_00_skew",
+            "importance": 0.2156
+          },
+          {
+            "feature": "spectral_flux_std",
+            "importance": 0.21019
+          }
+        ],
+        "SAD": [
+          {
+            "feature": "mfcc_00_std",
+            "importance": 0.36193
+          },
+          {
+            "feature": "mfcc_00_iqr",
+            "importance": 0.30487
+          },
+          {
+            "feature": "mfcc_d2_00_std",
+            "importance": 0.20499
+          },
+          {
+            "feature": "mfcc_d1_00_std",
+            "importance": 0.15515
+          },
+          {
+            "feature": "prosody_intensity_min",
+            "importance": 0.12215
+          }
+        ]
+      },
+      "attribution_stability": {
+        "mp3_64": {
+          "spearman_rho": 0.9912458546197689,
+          "spearman_p": 0.0,
+          "pearson_r": 0.9944526050498907,
+          "top25_jaccard": 1.0,
+          "top25_overlap": 25,
+          "entered_topk": [],
+          "left_topk": [],
+          "l1_shift": 0.03814281150698662
+        },
+        "mp4_aac64": {
+          "spearman_rho": 0.9840910061627806,
+          "spearman_p": 0.0,
+          "pearson_r": 0.9843679765411584,
+          "top25_jaccard": 0.7857142857142857,
+          "top25_overlap": 22,
+          "entered_topk": [
+            "mfcc_00_kurt",
+            "mfcc_00_skew",
+            "mfcc_d1_01_mean"
+          ],
+          "left_topk": [
+            "mfcc_02_std",
+            "mfcc_03_max",
+            "spectral_entropy_median"
+          ],
+          "l1_shift": 0.05690460652112961
+        },
+        "roundtrip_wav": {
+          "spearman_rho": 0.9836760518823158,
+          "spearman_p": 0.0,
+          "pearson_r": 0.9842707591581362,
+          "top25_jaccard": 0.7857142857142857,
+          "top25_overlap": 22,
+          "entered_topk": [
+            "mfcc_00_kurt",
+            "mfcc_00_skew",
+            "mfcc_d1_01_mean"
+          ],
+          "left_topk": [
+            "mfcc_02_std",
+            "mfcc_03_max",
+            "spectral_entropy_median"
+          ],
+          "l1_shift": 0.0575028695166111
+        }
+      },
+      "lime_top15": [
+        {
+          "feature": "mfcc_d1_00_std",
+          "importance": 0.030144,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_00_std",
+          "importance": 0.025614,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_d2_00_std",
+          "importance": 0.025108,
+          "family": "mfcc"
+        },
+        {
+          "feature": "duration_s",
+          "importance": 0.021452,
+          "family": "other"
+        },
+        {
+          "feature": "mfcc_00_iqr",
+          "importance": 0.019264,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_intensity_std",
+          "importance": 0.012964,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_00_kurt",
+          "importance": 0.009088,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_d2_08_std",
+          "importance": 0.008576,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_d2_01_std",
+          "importance": 0.007251,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_f0_iqr",
+          "importance": 0.006889,
+          "family": "prosody"
+        },
+        {
+          "feature": "prosody_intensity_iqr",
+          "importance": 0.005388,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_03_std",
+          "importance": 0.004936,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_intensity_min",
+          "importance": 0.004074,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_19_median",
+          "importance": 0.003871,
+          "family": "mfcc"
+        },
+        {
+          "feature": "spectral_band_4000_5000_std",
+          "importance": 0.003794,
+          "family": "spectral"
+        }
+      ],
+      "lime_vs_shap": {
+        "shap_vs_lime": {
+          "spearman_rho": 0.44631268021936543,
+          "top20_overlap": 15
+        },
+        "shap_vs_permutation": {
+          "spearman_rho": 0.31054894401568917,
+          "top20_overlap": 10
+        },
+        "shap_vs_intrinsic": {
+          "spearman_rho": 0.4634859779188147,
+          "top20_overlap": 11
+        }
+      },
+      "pdp_features": [
+        "mfcc_d1_00_std",
+        "mfcc_d2_00_std",
+        "duration_s",
+        "prosody_intensity_std"
+      ],
+      "surrogate_fidelity": 0.6213414634146341,
+      "surrogate_features_used": [
+        "mfcc_03_max",
+        "mfcc_05_mean",
+        "mfcc_d1_00_std",
+        "prosody_intensity_std",
+        "spectral_band_1000_2000_mean",
+        "spectral_bandwidth_iqr",
+        "spectral_centroid_iqr",
+        "spectral_flux_mean",
+        "spectral_flux_min",
+        "spectral_slope_median"
+      ]
+    },
+    "lightgbm": {
+      "intrinsic_top15": [
+        {
+          "feature": "duration_s",
+          "importance": 1046.0,
+          "kind": "impurity/gain",
+          "family": "other"
+        },
+        {
+          "feature": "mfcc_d2_00_std",
+          "importance": 967.0,
+          "kind": "impurity/gain",
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_d1_00_std",
+          "importance": 890.0,
+          "kind": "impurity/gain",
+          "family": "mfcc"
+        },
+        {
+          "feature": "spectral_flux_std",
+          "importance": 793.0,
+          "kind": "impurity/gain",
+          "family": "spectral"
+        },
+        {
+          "feature": "spectral_contrast_1_mean",
+          "importance": 721.0,
+          "kind": "impurity/gain",
+          "family": "spectral"
+        },
+        {
+          "feature": "mfcc_03_std",
+          "importance": 705.0,
+          "kind": "impurity/gain",
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_cpps",
+          "importance": 671.0,
+          "kind": "impurity/gain",
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_d1_02_std",
+          "importance": 660.0,
+          "kind": "impurity/gain",
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_00_std",
+          "importance": 656.0,
+          "kind": "impurity/gain",
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_f0_skew",
+          "importance": 655.0,
+          "kind": "impurity/gain",
+          "family": "prosody"
+        },
+        {
+          "feature": "prosody_f0_iqr",
+          "importance": 645.0,
+          "kind": "impurity/gain",
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_03_max",
+          "importance": 610.0,
+          "kind": "impurity/gain",
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_d2_01_std",
+          "importance": 608.0,
+          "kind": "impurity/gain",
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_f0_std",
+          "importance": 604.0,
+          "kind": "impurity/gain",
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_d2_03_std",
+          "importance": 604.0,
+          "kind": "impurity/gain",
+          "family": "mfcc"
+        }
+      ],
+      "permutation_top15": [
+        {
+          "feature": "duration_s",
+          "importance": 0.014447,
+          "std": 0.00337,
+          "family": "other"
+        },
+        {
+          "feature": "mfcc_d1_00_std",
+          "importance": 0.012996,
+          "std": 0.003094,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_intensity_std",
+          "importance": 0.011248,
+          "std": 0.002527,
+          "family": "prosody"
+        },
+        {
+          "feature": "prosody_cpps",
+          "importance": 0.010404,
+          "std": 0.004148,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_d2_00_std",
+          "importance": 0.005531,
+          "std": 0.002483,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_03_max",
+          "importance": 0.004998,
+          "std": 0.002485,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_f0_median",
+          "importance": 0.004812,
+          "std": 0.003354,
+          "family": "prosody"
+        },
+        {
+          "feature": "prosody_f1_bw_median",
+          "importance": 0.004477,
+          "std": 0.002541,
+          "family": "prosody"
+        },
+        {
+          "feature": "prosody_f0_mean",
+          "importance": 0.004278,
+          "std": 0.00334,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_d2_04_std",
+          "importance": 0.004142,
+          "std": 0.001926,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_hnr_mean",
+          "importance": 0.003807,
+          "std": 0.000898,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_02_median",
+          "importance": 0.003621,
+          "std": 0.001937,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_f0_skew",
+          "importance": 0.003584,
+          "std": 0.001981,
+          "family": "prosody"
+        },
+        {
+          "feature": "prosody_f0_iqr",
+          "importance": 0.003534,
+          "std": 0.002936,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_02_skew",
+          "importance": 0.003472,
+          "std": 0.001447,
+          "family": "mfcc"
+        }
+      ],
+      "permutation_family_share": {
+        "chroma": 0.0025,
+        "mfcc": 0.4175,
+        "other": 0.0845,
+        "prosody": 0.3694,
+        "spectral": 0.1261
+      },
+      "shap_top15": [
+        {
+          "feature": "mfcc_d1_00_std",
+          "importance": 0.38126,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_d2_00_std",
+          "importance": 0.307932,
+          "family": "mfcc"
+        },
+        {
+          "feature": "duration_s",
+          "importance": 0.27773,
+          "family": "other"
+        },
+        {
+          "feature": "prosody_intensity_std",
+          "importance": 0.242693,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_00_std",
+          "importance": 0.198598,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_intensity_iqr",
+          "importance": 0.164088,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_00_iqr",
+          "importance": 0.160384,
+          "family": "mfcc"
+        },
+        {
+          "feature": "spectral_flux_std",
+          "importance": 0.15933,
+          "family": "spectral"
+        },
+        {
+          "feature": "mfcc_03_std",
+          "importance": 0.153913,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_f0_median",
+          "importance": 0.147403,
+          "family": "prosody"
+        },
+        {
+          "feature": "prosody_f0_mean",
+          "importance": 0.144711,
+          "family": "prosody"
+        },
+        {
+          "feature": "prosody_intensity_min",
+          "importance": 0.135104,
+          "family": "prosody"
+        },
+        {
+          "feature": "prosody_cpps",
+          "importance": 0.13248,
+          "family": "prosody"
+        },
+        {
+          "feature": "spectral_contrast_1_mean",
+          "importance": 0.126666,
+          "family": "spectral"
+        },
+        {
+          "feature": "prosody_f0_skew",
+          "importance": 0.124024,
+          "family": "prosody"
+        }
+      ],
+      "shap_family_share": {
+        "chroma": 0.0304,
+        "mfcc": 0.5502,
+        "other": 0.0213,
+        "prosody": 0.189,
+        "spectral": 0.2091
+      },
+      "shap_top5_per_class": {
+        "ANG": [
+          {
+            "feature": "mfcc_d1_00_std",
+            "importance": 1.75233
+          },
+          {
+            "feature": "mfcc_d2_00_std",
+            "importance": 0.70567
+          },
+          {
+            "feature": "mfcc_03_std",
+            "importance": 0.431
+          },
+          {
+            "feature": "prosody_f1_bw_median",
+            "importance": 0.3227
+          },
+          {
+            "feature": "mfcc_03_max",
+            "importance": 0.30719
+          }
+        ],
+        "DIS": [
+          {
+            "feature": "duration_s",
+            "importance": 0.59666
+          },
+          {
+            "feature": "prosody_f0_median",
+            "importance": 0.40511
+          },
+          {
+            "feature": "mfcc_d2_01_std",
+            "importance": 0.36156
+          },
+          {
+            "feature": "mfcc_09_mean",
+            "importance": 0.29168
+          },
+          {
+            "feature": "mfcc_03_std",
+            "importance": 0.28944
+          }
+        ],
+        "FEA": [
+          {
+            "feature": "prosody_f0_skew",
+            "importance": 0.40312
+          },
+          {
+            "feature": "spectral_contrast_1_mean",
+            "importance": 0.36498
+          },
+          {
+            "feature": "prosody_f1_bw_median",
+            "importance": 0.3008
+          },
+          {
+            "feature": "mfcc_d1_05_std",
+            "importance": 0.27596
+          },
+          {
+            "feature": "mfcc_02_median",
+            "importance": 0.24855
+          }
+        ],
+        "HAP": [
+          {
+            "feature": "duration_s",
+            "importance": 0.56928
+          },
+          {
+            "feature": "prosody_f0_iqr",
+            "importance": 0.38321
+          },
+          {
+            "feature": "mfcc_d2_00_std",
+            "importance": 0.35146
+          },
+          {
+            "feature": "prosody_f0_std",
+            "importance": 0.35092
+          },
+          {
+            "feature": "prosody_intensity_std",
+            "importance": 0.26605
+          }
+        ],
+        "NEU": [
+          {
+            "feature": "prosody_intensity_std",
+            "importance": 0.87129
+          },
+          {
+            "feature": "prosody_f0_mean",
+            "importance": 0.6326
+          },
+          {
+            "feature": "prosody_cpps",
+            "importance": 0.52487
+          },
+          {
+            "feature": "duration_s",
+            "importance": 0.43042
+          },
+          {
+            "feature": "prosody_intensity_iqr",
+            "importance": 0.40817
+          }
+        ],
+        "SAD": [
+          {
+            "feature": "mfcc_00_std",
+            "importance": 0.66712
+          },
+          {
+            "feature": "mfcc_00_iqr",
+            "importance": 0.55724
+          },
+          {
+            "feature": "spectral_zcr_median",
+            "importance": 0.30222
+          },
+          {
+            "feature": "prosody_f3_bw_median",
+            "importance": 0.21913
+          },
+          {
+            "feature": "mfcc_d2_00_std",
+            "importance": 0.21184
+          }
+        ]
+      },
+      "attribution_stability": {
+        "mp3_64": {
+          "spearman_rho": 0.9883811353618217,
+          "spearman_p": 0.0,
+          "pearson_r": 0.9949181470809693,
+          "top25_jaccard": 0.8518518518518519,
+          "top25_overlap": 23,
+          "entered_topk": [
+            "mfcc_09_mean",
+            "spectral_flatness_iqr"
+          ],
+          "left_topk": [
+            "mfcc_02_median",
+            "spectral_band_1000_2000_std"
+          ],
+          "l1_shift": 0.044027428822072945
+        },
+        "mp4_aac64": {
+          "spearman_rho": 0.9829085457271366,
+          "spearman_p": 0.0,
+          "pearson_r": 0.9808047982298512,
+          "top25_jaccard": 0.7857142857142857,
+          "top25_overlap": 22,
+          "entered_topk": [
+            "mfcc_00_kurt",
+            "mfcc_00_skew",
+            "mfcc_d1_01_mean"
+          ],
+          "left_topk": [
+            "mfcc_d1_03_std",
+            "prosody_f0_std",
+            "spectral_band_1000_2000_std"
+          ],
+          "l1_shift": 0.06915120979610416
+        },
+        "roundtrip_wav": {
+          "spearman_rho": 0.9823899252691376,
+          "spearman_p": 0.0,
+          "pearson_r": 0.9807141187099527,
+          "top25_jaccard": 0.7857142857142857,
+          "top25_overlap": 22,
+          "entered_topk": [
+            "mfcc_00_kurt",
+            "mfcc_d1_01_mean",
+            "prosody_f3_bw_median"
+          ],
+          "left_topk": [
+            "mfcc_d1_03_std",
+            "prosody_f0_std",
+            "spectral_band_1000_2000_std"
+          ],
+          "l1_shift": 0.06977203992430821
+        }
+      },
+      "lime_top15": [
+        {
+          "feature": "mfcc_00_std",
+          "importance": 0.053351,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_00_iqr",
+          "importance": 0.04764,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_d1_00_std",
+          "importance": 0.043571,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_d2_00_std",
+          "importance": 0.033314,
+          "family": "mfcc"
+        },
+        {
+          "feature": "duration_s",
+          "importance": 0.030868,
+          "family": "other"
+        },
+        {
+          "feature": "mfcc_d2_08_std",
+          "importance": 0.009706,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_intensity_std",
+          "importance": 0.009063,
+          "family": "prosody"
+        },
+        {
+          "feature": "prosody_f0_iqr",
+          "importance": 0.007863,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_00_kurt",
+          "importance": 0.007538,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_f0_skew",
+          "importance": 0.007224,
+          "family": "prosody"
+        },
+        {
+          "feature": "spectral_band_2000_3000_mean",
+          "importance": 0.005783,
+          "family": "spectral"
+        },
+        {
+          "feature": "mfcc_19_median",
+          "importance": 0.00563,
+          "family": "mfcc"
+        },
+        {
+          "feature": "spectral_zcr_median",
+          "importance": 0.005565,
+          "family": "spectral"
+        },
+        {
+          "feature": "spectral_flux_std",
+          "importance": 0.005387,
+          "family": "spectral"
+        },
+        {
+          "feature": "mfcc_03_std",
+          "importance": 0.005215,
+          "family": "mfcc"
+        }
+      ],
+      "lime_vs_shap": {
+        "shap_vs_lime": {
+          "spearman_rho": 0.2855793096814659,
+          "top20_overlap": 11
+        },
+        "shap_vs_permutation": {
+          "spearman_rho": 0.16149487526424436,
+          "top20_overlap": 12
+        },
+        "shap_vs_intrinsic": {
+          "spearman_rho": 0.8260588962369568,
+          "top20_overlap": 15
+        }
+      },
+      "pdp_features": [
+        "mfcc_d1_00_std",
+        "mfcc_d2_00_std",
+        "duration_s",
+        "prosody_intensity_std"
+      ],
+      "surrogate_fidelity": 0.6335365853658537,
+      "surrogate_features_used": [
+        "duration_s",
+        "mfcc_01_iqr",
+        "mfcc_03_std",
+        "mfcc_04_min",
+        "mfcc_d1_00_std",
+        "prosody_f3_bw_median",
+        "prosody_hnr_median",
+        "prosody_intensity_min",
+        "prosody_intensity_skew",
+        "spectral_band_500_1000_mean",
+        "spectral_centroid_iqr",
+        "spectral_rolloff85_median",
+        "spectral_slope_mean"
+      ]
+    },
+    "decision_tree": {
+      "intrinsic_top15": [
+        {
+          "feature": "prosody_intensity_std",
+          "importance": 0.153395,
+          "kind": "impurity/gain",
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_d1_00_std",
+          "importance": 0.120417,
+          "kind": "impurity/gain",
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_f0_mean",
+          "importance": 0.032362,
+          "kind": "impurity/gain",
+          "family": "prosody"
+        },
+        {
+          "feature": "duration_s",
+          "importance": 0.023174,
+          "kind": "impurity/gain",
+          "family": "other"
+        },
+        {
+          "feature": "mfcc_02_std",
+          "importance": 0.015611,
+          "kind": "impurity/gain",
+          "family": "mfcc"
+        },
+        {
+          "feature": "spectral_band_3000_4000_mean",
+          "importance": 0.012779,
+          "kind": "impurity/gain",
+          "family": "spectral"
+        },
+        {
+          "feature": "prosody_hnr_median",
+          "importance": 0.011963,
+          "kind": "impurity/gain",
+          "family": "prosody"
+        },
+        {
+          "feature": "prosody_f0_max",
+          "importance": 0.010682,
+          "kind": "impurity/gain",
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_10_median",
+          "importance": 0.010577,
+          "kind": "impurity/gain",
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_00_std",
+          "importance": 0.010392,
+          "kind": "impurity/gain",
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_f0_iqr",
+          "importance": 0.009922,
+          "kind": "impurity/gain",
+          "family": "prosody"
+        },
+        {
+          "feature": "spectral_band_0_500_mean",
+          "importance": 0.009808,
+          "kind": "impurity/gain",
+          "family": "spectral"
+        },
+        {
+          "feature": "spectral_centroid_iqr",
+          "importance": 0.009034,
+          "kind": "impurity/gain",
+          "family": "spectral"
+        },
+        {
+          "feature": "prosody_f0_min",
+          "importance": 0.008927,
+          "kind": "impurity/gain",
+          "family": "prosody"
+        },
+        {
+          "feature": "chroma_08_std",
+          "importance": 0.008001,
+          "kind": "impurity/gain",
+          "family": "chroma"
+        }
+      ],
+      "permutation_top15": [
+        {
+          "feature": "prosody_intensity_std",
+          "importance": 0.087512,
+          "std": 0.008107,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_d1_00_std",
+          "importance": 0.066716,
+          "std": 0.006839,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_f0_mean",
+          "importance": 0.015563,
+          "std": 0.00239,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_00_std",
+          "importance": 0.013728,
+          "std": 0.002816,
+          "family": "mfcc"
+        },
+        {
+          "feature": "duration_s",
+          "importance": 0.01286,
+          "std": 0.004889,
+          "family": "other"
+        },
+        {
+          "feature": "spectral_band_3000_4000_mean",
+          "importance": 0.010863,
+          "std": 0.001323,
+          "family": "spectral"
+        },
+        {
+          "feature": "mfcc_02_std",
+          "importance": 0.010702,
+          "std": 0.001623,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_f0_min",
+          "importance": 0.007403,
+          "std": 0.001357,
+          "family": "prosody"
+        },
+        {
+          "feature": "spectral_band_0_500_mean",
+          "importance": 0.005072,
+          "std": 0.002609,
+          "family": "spectral"
+        },
+        {
+          "feature": "prosody_hnr_median",
+          "importance": 0.005047,
+          "std": 0.003386,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_d1_03_std",
+          "importance": 0.004539,
+          "std": 0.002032,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_f0_max",
+          "importance": 0.004402,
+          "std": 0.002511,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_07_std",
+          "importance": 0.004315,
+          "std": 0.002222,
+          "family": "mfcc"
+        },
+        {
+          "feature": "spectral_entropy_median",
+          "importance": 0.004253,
+          "std": 0.002531,
+          "family": "spectral"
+        },
+        {
+          "feature": "prosody_f0_iqr",
+          "importance": 0.004043,
+          "std": 0.002961,
+          "family": "prosody"
+        }
+      ],
+      "permutation_family_share": {
+        "chroma": 0.0148,
+        "mfcc": 0.4256,
+        "other": 0.0367,
+        "prosody": 0.379,
+        "spectral": 0.1439
+      },
+      "shap_top15": [
+        {
+          "feature": "prosody_intensity_std",
+          "importance": 0.077139,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_d1_00_std",
+          "importance": 0.051701,
+          "family": "mfcc"
+        },
+        {
+          "feature": "duration_s",
+          "importance": 0.021487,
+          "family": "other"
+        },
+        {
+          "feature": "prosody_f0_mean",
+          "importance": 0.019334,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_00_std",
+          "importance": 0.011264,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_02_std",
+          "importance": 0.01025,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_f0_min",
+          "importance": 0.009338,
+          "family": "prosody"
+        },
+        {
+          "feature": "spectral_band_3000_4000_mean",
+          "importance": 0.009059,
+          "family": "spectral"
+        },
+        {
+          "feature": "prosody_hnr_median",
+          "importance": 0.00901,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_00_iqr",
+          "importance": 0.008012,
+          "family": "mfcc"
+        },
+        {
+          "feature": "spectral_centroid_iqr",
+          "importance": 0.007733,
+          "family": "spectral"
+        },
+        {
+          "feature": "mfcc_d1_02_std",
+          "importance": 0.007552,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_f0_iqr",
+          "importance": 0.007366,
+          "family": "prosody"
+        },
+        {
+          "feature": "prosody_f0_max",
+          "importance": 0.007057,
+          "family": "prosody"
+        },
+        {
+          "feature": "spectral_contrast_1_mean",
+          "importance": 0.006843,
+          "family": "spectral"
+        }
+      ],
+      "shap_family_share": {
+        "chroma": 0.0335,
+        "mfcc": 0.4359,
+        "other": 0.0414,
+        "prosody": 0.306,
+        "spectral": 0.1832
+      },
+      "shap_top5_per_class": {
+        "ANG": [
+          {
+            "feature": "prosody_intensity_std",
+            "importance": 0.13107
+          },
+          {
+            "feature": "mfcc_d1_00_std",
+            "importance": 0.07067
+          },
+          {
+            "feature": "spectral_band_3000_4000_mean",
+            "importance": 0.02513
+          },
+          {
+            "feature": "duration_s",
+            "importance": 0.01499
+          },
+          {
+            "feature": "mfcc_03_std",
+            "importance": 0.0143
+          }
+        ],
+        "DIS": [
+          {
+            "feature": "prosody_intensity_std",
+            "importance": 0.04956
+          },
+          {
+            "feature": "duration_s",
+            "importance": 0.03645
+          },
+          {
+            "feature": "mfcc_d1_00_std",
+            "importance": 0.03405
+          },
+          {
+            "feature": "prosody_f0_mean",
+            "importance": 0.01952
+          },
+          {
+            "feature": "mfcc_02_std",
+            "importance": 0.01693
+          }
+        ],
+        "FEA": [
+          {
+            "feature": "mfcc_d1_00_std",
+            "importance": 0.04324
+          },
+          {
+            "feature": "prosody_intensity_std",
+            "importance": 0.03533
+          },
+          {
+            "feature": "prosody_f0_mean",
+            "importance": 0.02044
+          },
+          {
+            "feature": "prosody_f0_min",
+            "importance": 0.01871
+          },
+          {
+            "feature": "mfcc_02_std",
+            "importance": 0.01748
+          }
+        ],
+        "HAP": [
+          {
+            "feature": "prosody_intensity_std",
+            "importance": 0.08734
+          },
+          {
+            "feature": "mfcc_d1_00_std",
+            "importance": 0.04174
+          },
+          {
+            "feature": "prosody_f0_mean",
+            "importance": 0.0334
+          },
+          {
+            "feature": "duration_s",
+            "importance": 0.02258
+          },
+          {
+            "feature": "prosody_f0_iqr",
+            "importance": 0.01789
+          }
+        ],
+        "NEU": [
+          {
+            "feature": "prosody_intensity_std",
+            "importance": 0.07887
+          },
+          {
+            "feature": "mfcc_d1_00_std",
+            "importance": 0.05171
+          },
+          {
+            "feature": "duration_s",
+            "importance": 0.03372
+          },
+          {
+            "feature": "prosody_f0_mean",
+            "importance": 0.02903
+          },
+          {
+            "feature": "prosody_hnr_median",
+            "importance": 0.02025
+          }
+        ],
+        "SAD": [
+          {
+            "feature": "prosody_intensity_std",
+            "importance": 0.08067
+          },
+          {
+            "feature": "mfcc_d1_00_std",
+            "importance": 0.06878
+          },
+          {
+            "feature": "mfcc_00_std",
+            "importance": 0.02971
+          },
+          {
+            "feature": "spectral_entropy_median",
+            "importance": 0.01467
+          },
+          {
+            "feature": "mfcc_10_median",
+            "importance": 0.01073
+          }
+        ]
+      },
+      "attribution_stability": {
+        "mp3_64": {
+          "spearman_rho": 0.9950919266978654,
+          "spearman_p": 0.0,
+          "pearson_r": 0.9970294196020546,
+          "top25_jaccard": 0.9230769230769231,
+          "top25_overlap": 24,
+          "entered_topk": [
+            "spectral_contrast_6_std"
+          ],
+          "left_topk": [
+            "spectral_centroid_median"
+          ],
+          "l1_shift": 0.07612686674691589
+        },
+        "mp4_aac64": {
+          "spearman_rho": 0.9877050637348471,
+          "spearman_p": 0.0,
+          "pearson_r": 0.9886188178856649,
+          "top25_jaccard": 0.7241379310344828,
+          "top25_overlap": 21,
+          "entered_topk": [
+            "mfcc_d1_02_mean",
+            "mfcc_d2_02_std",
+            "mfcc_d2_08_std",
+            "spectral_entropy_std"
+          ],
+          "left_topk": [
+            "mfcc_03_skew",
+            "mfcc_10_median",
+            "spectral_centroid_median",
+            "spectral_entropy_median"
+          ],
+          "l1_shift": 0.18450960611667902
+        },
+        "roundtrip_wav": {
+          "spearman_rho": 0.9876464206981678,
+          "spearman_p": 0.0,
+          "pearson_r": 0.988419621052936,
+          "top25_jaccard": 0.7241379310344828,
+          "top25_overlap": 21,
+          "entered_topk": [
+            "mfcc_d1_02_mean",
+            "mfcc_d2_02_std",
+            "mfcc_d2_08_std",
+            "spectral_entropy_std"
+          ],
+          "left_topk": [
+            "mfcc_03_skew",
+            "mfcc_10_median",
+            "spectral_centroid_median",
+            "spectral_entropy_median"
+          ],
+          "l1_shift": 0.1852100369938201
+        }
+      },
+      "lime_top15": [
+        {
+          "feature": "prosody_intensity_std",
+          "importance": 0.056869,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_d1_00_std",
+          "importance": 0.037773,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_f0_mean",
+          "importance": 0.015958,
+          "family": "prosody"
+        },
+        {
+          "feature": "duration_s",
+          "importance": 0.013516,
+          "family": "other"
+        },
+        {
+          "feature": "mfcc_06_kurt",
+          "importance": 0.005837,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_f0_iqr",
+          "importance": 0.004941,
+          "family": "prosody"
+        },
+        {
+          "feature": "prosody_f0_max",
+          "importance": 0.004806,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_10_median",
+          "importance": 0.00447,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_d1_07_mean",
+          "importance": 0.004172,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_05_max",
+          "importance": 0.004062,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_08_median",
+          "importance": 0.004056,
+          "family": "mfcc"
+        },
+        {
+          "feature": "spectral_flatness_min",
+          "importance": 0.003973,
+          "family": "spectral"
+        },
+        {
+          "feature": "prosody_intensity_kurt",
+          "importance": 0.003944,
+          "family": "prosody"
+        },
+        {
+          "feature": "prosody_jitter_ppq5",
+          "importance": 0.003564,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_00_std",
+          "importance": 0.003476,
+          "family": "mfcc"
+        }
+      ],
+      "lime_vs_shap": {
+        "shap_vs_lime": {
+          "spearman_rho": 0.007531510283675668,
+          "top20_overlap": 10
+        },
+        "shap_vs_permutation": {
+          "spearman_rho": 0.20386874631791155,
+          "top20_overlap": 14
+        },
+        "shap_vs_intrinsic": {
+          "spearman_rho": 0.9844275326565296,
+          "top20_overlap": 15
+        }
+      },
+      "pdp_features": [
+        "prosody_intensity_std",
+        "mfcc_d1_00_std",
+        "duration_s",
+        "prosody_f0_mean"
+      ],
+      "surrogate_fidelity": 0.5823170731707317,
+      "surrogate_features_used": [
+        "duration_s",
+        "mfcc_00_std",
+        "mfcc_10_kurt",
+        "mfcc_10_std",
+        "mfcc_18_mean",
+        "mfcc_d1_00_std",
+        "prosody_f0_max",
+        "prosody_f0_mean",
+        "prosody_f0_min",
+        "prosody_f0_std",
+        "prosody_intensity_std",
+        "spectral_band_0_500_mean",
+        "spectral_rolloff95_kurt"
+      ]
+    },
+    "logistic_regression": {
+      "intrinsic_top15": [
+        {
+          "feature": "prosody_cpps",
+          "importance": 0.763818,
+          "kind": "mean |coefficient|",
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_04_std",
+          "importance": 0.713289,
+          "kind": "mean |coefficient|",
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_01_mean",
+          "importance": 0.710043,
+          "kind": "mean |coefficient|",
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_intensity_std",
+          "importance": 0.690569,
+          "kind": "mean |coefficient|",
+          "family": "prosody"
+        },
+        {
+          "feature": "spectral_rms_mean",
+          "importance": 0.667879,
+          "kind": "mean |coefficient|",
+          "family": "spectral"
+        },
+        {
+          "feature": "mfcc_04_mean",
+          "importance": 0.664414,
+          "kind": "mean |coefficient|",
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_f1_mean",
+          "importance": 0.647905,
+          "kind": "mean |coefficient|",
+          "family": "prosody"
+        },
+        {
+          "feature": "spectral_entropy_mean",
+          "importance": 0.612616,
+          "kind": "mean |coefficient|",
+          "family": "spectral"
+        },
+        {
+          "feature": "prosody_f2_mean",
+          "importance": 0.585587,
+          "kind": "mean |coefficient|",
+          "family": "prosody"
+        },
+        {
+          "feature": "spectral_flatness_mean",
+          "importance": 0.585407,
+          "kind": "mean |coefficient|",
+          "family": "spectral"
+        },
+        {
+          "feature": "mfcc_d2_00_std",
+          "importance": 0.582194,
+          "kind": "mean |coefficient|",
+          "family": "mfcc"
+        },
+        {
+          "feature": "spectral_rolloff95_mean",
+          "importance": 0.570017,
+          "kind": "mean |coefficient|",
+          "family": "spectral"
+        },
+        {
+          "feature": "prosody_f0_mean",
+          "importance": 0.567739,
+          "kind": "mean |coefficient|",
+          "family": "prosody"
+        },
+        {
+          "feature": "spectral_bandwidth_median",
+          "importance": 0.567465,
+          "kind": "mean |coefficient|",
+          "family": "spectral"
+        },
+        {
+          "feature": "spectral_rolloff95_std",
+          "importance": 0.5599,
+          "kind": "mean |coefficient|",
+          "family": "spectral"
+        }
+      ],
+      "permutation_top15": [
+        {
+          "feature": "spectral_rms_mean",
+          "importance": 0.041307,
+          "std": 0.006467,
+          "family": "spectral"
+        },
+        {
+          "feature": "mfcc_00_std",
+          "importance": 0.037686,
+          "std": 0.006863,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_00_skew",
+          "importance": 0.036062,
+          "std": 0.006519,
+          "family": "mfcc"
+        },
+        {
+          "feature": "spectral_flatness_mean",
+          "importance": 0.030841,
+          "std": 0.003758,
+          "family": "spectral"
+        },
+        {
+          "feature": "prosody_intensity_std",
+          "importance": 0.030605,
+          "std": 0.005593,
+          "family": "prosody"
+        },
+        {
+          "feature": "prosody_intensity_iqr",
+          "importance": 0.029849,
+          "std": 0.003616,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_02_median",
+          "importance": 0.027728,
+          "std": 0.004531,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_04_std",
+          "importance": 0.027517,
+          "std": 0.004572,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_04_mean",
+          "importance": 0.027046,
+          "std": 0.006198,
+          "family": "mfcc"
+        },
+        {
+          "feature": "spectral_rms_median",
+          "importance": 0.026525,
+          "std": 0.007227,
+          "family": "spectral"
+        },
+        {
+          "feature": "prosody_cpps",
+          "importance": 0.024541,
+          "std": 0.002551,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_01_mean",
+          "importance": 0.02345,
+          "std": 0.006762,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_d2_00_std",
+          "importance": 0.022855,
+          "std": 0.005923,
+          "family": "mfcc"
+        },
+        {
+          "feature": "spectral_rolloff95_mean",
+          "importance": 0.020697,
+          "std": 0.005506,
+          "family": "spectral"
+        },
+        {
+          "feature": "mfcc_00_mean",
+          "importance": 0.020461,
+          "std": 0.005346,
+          "family": "mfcc"
+        }
+      ],
+      "permutation_family_share": {
+        "chroma": 0.0509,
+        "mfcc": 0.4404,
+        "other": 0.009,
+        "prosody": 0.1816,
+        "spectral": 0.3181
+      },
+      "shap_top15": [
+        {
+          "feature": "prosody_cpps",
+          "importance": 0.626956,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_04_std",
+          "importance": 0.610812,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_intensity_std",
+          "importance": 0.579161,
+          "family": "prosody"
+        },
+        {
+          "feature": "spectral_rms_mean",
+          "importance": 0.534325,
+          "family": "spectral"
+        },
+        {
+          "feature": "mfcc_04_mean",
+          "importance": 0.534289,
+          "family": "mfcc"
+        },
+        {
+          "feature": "spectral_entropy_mean",
+          "importance": 0.525295,
+          "family": "spectral"
+        },
+        {
+          "feature": "mfcc_01_mean",
+          "importance": 0.520764,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_f1_mean",
+          "importance": 0.514617,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_d2_00_std",
+          "importance": 0.48443,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_f2_mean",
+          "importance": 0.475595,
+          "family": "prosody"
+        },
+        {
+          "feature": "spectral_rolloff95_mean",
+          "importance": 0.474998,
+          "family": "spectral"
+        },
+        {
+          "feature": "spectral_rolloff95_std",
+          "importance": 0.465934,
+          "family": "spectral"
+        },
+        {
+          "feature": "mfcc_00_std",
+          "importance": 0.453793,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_02_std",
+          "importance": 0.439758,
+          "family": "mfcc"
+        },
+        {
+          "feature": "spectral_slope_median",
+          "importance": 0.43409,
+          "family": "spectral"
+        }
+      ],
+      "shap_family_share": {
+        "chroma": 0.0624,
+        "mfcc": 0.4706,
+        "other": 0.0051,
+        "prosody": 0.1557,
+        "spectral": 0.3062
+      },
+      "shap_top5_per_class": {
+        "ANG": [
+          {
+            "feature": "prosody_f1_mean",
+            "importance": 1.26569
+          },
+          {
+            "feature": "prosody_intensity_std",
+            "importance": 1.08146
+          },
+          {
+            "feature": "mfcc_00_std",
+            "importance": 0.87624
+          },
+          {
+            "feature": "mfcc_02_mean",
+            "importance": 0.84834
+          },
+          {
+            "feature": "spectral_rolloff85_std",
+            "importance": 0.84632
+          }
+        ],
+        "DIS": [
+          {
+            "feature": "spectral_rms_mean",
+            "importance": 1.21421
+          },
+          {
+            "feature": "mfcc_04_std",
+            "importance": 0.92305
+          },
+          {
+            "feature": "prosody_intensity_median",
+            "importance": 0.72889
+          },
+          {
+            "feature": "spectral_rolloff95_mean",
+            "importance": 0.70724
+          },
+          {
+            "feature": "spectral_band_500_1000_std",
+            "importance": 0.62915
+          }
+        ],
+        "FEA": [
+          {
+            "feature": "prosody_intensity_iqr",
+            "importance": 0.98682
+          },
+          {
+            "feature": "mfcc_01_mean",
+            "importance": 0.94102
+          },
+          {
+            "feature": "mfcc_02_median",
+            "importance": 0.89169
+          },
+          {
+            "feature": "spectral_centroid_mean",
+            "importance": 0.85405
+          },
+          {
+            "feature": "spectral_rolloff95_std",
+            "importance": 0.85071
+          }
+        ],
+        "HAP": [
+          {
+            "feature": "spectral_rms_median",
+            "importance": 1.24922
+          },
+          {
+            "feature": "spectral_entropy_mean",
+            "importance": 0.80659
+          },
+          {
+            "feature": "mfcc_04_std",
+            "importance": 0.7563
+          },
+          {
+            "feature": "spectral_slope_median",
+            "importance": 0.7407
+          },
+          {
+            "feature": "prosody_f3_mean",
+            "importance": 0.7105
+          }
+        ],
+        "NEU": [
+          {
+            "feature": "mfcc_04_std",
+            "importance": 1.13371
+          },
+          {
+            "feature": "prosody_cpps",
+            "importance": 1.05059
+          },
+          {
+            "feature": "prosody_intensity_std",
+            "importance": 0.99774
+          },
+          {
+            "feature": "mfcc_00_skew",
+            "importance": 0.94846
+          },
+          {
+            "feature": "spectral_entropy_mean",
+            "importance": 0.9175
+          }
+        ],
+        "SAD": [
+          {
+            "feature": "prosody_cpps",
+            "importance": 0.83028
+          },
+          {
+            "feature": "mfcc_00_iqr",
+            "importance": 0.8013
+          },
+          {
+            "feature": "spectral_zcr_median",
+            "importance": 0.78704
+          },
+          {
+            "feature": "mfcc_d2_00_std",
+            "importance": 0.75896
+          },
+          {
+            "feature": "chroma_02_mean",
+            "importance": 0.7059
+          }
+        ]
+      },
+      "attribution_stability": {
+        "mp3_64": {
+          "spearman_rho": 0.9870939952524945,
+          "spearman_p": 0.0,
+          "pearson_r": 0.21552552912966433,
+          "top25_jaccard": 0.7857142857142857,
+          "top25_overlap": 22,
+          "entered_topk": [
+            "mfcc_11_mean",
+            "spectral_contrast_6_mean",
+            "spectral_flatness_median"
+          ],
+          "left_topk": [
+            "spectral_rms_median",
+            "spectral_rolloff85_std",
+            "spectral_zcr_std"
+          ],
+          "l1_shift": 0.19675887213388152
+        },
+        "mp4_aac64": {
+          "spearman_rho": 0.9423821647843389,
+          "spearman_p": 1.6522426293333176e-208,
+          "pearson_r": 0.8970612602668897,
+          "top25_jaccard": 0.7241379310344828,
+          "top25_overlap": 21,
+          "entered_topk": [
+            "mfcc_00_kurt",
+            "mfcc_00_min",
+            "mfcc_d1_01_mean",
+            "spectral_flatness_max"
+          ],
+          "left_topk": [
+            "mfcc_00_std",
+            "mfcc_d1_02_std",
+            "spectral_rolloff85_std",
+            "spectral_zcr_std"
+          ],
+          "l1_shift": 0.08311571500451655
+        },
+        "roundtrip_wav": {
+          "spearman_rho": 0.940658497405088,
+          "spearman_p": 8.187382956190925e-206,
+          "pearson_r": 0.8905801403358015,
+          "top25_jaccard": 0.7241379310344828,
+          "top25_overlap": 21,
+          "entered_topk": [
+            "mfcc_00_kurt",
+            "mfcc_00_min",
+            "mfcc_d1_01_mean",
+            "spectral_flatness_max"
+          ],
+          "left_topk": [
+            "mfcc_00_std",
+            "mfcc_d1_02_std",
+            "spectral_rolloff85_std",
+            "spectral_zcr_std"
+          ],
+          "l1_shift": 0.0862508318815217
+        }
+      },
+      "lime_top15": [
+        {
+          "feature": "spectral_rms_mean",
+          "importance": 0.015159,
+          "family": "spectral"
+        },
+        {
+          "feature": "mfcc_d2_00_std",
+          "importance": 0.013904,
+          "family": "mfcc"
+        },
+        {
+          "feature": "duration_s",
+          "importance": 0.011126,
+          "family": "other"
+        },
+        {
+          "feature": "prosody_intensity_std",
+          "importance": 0.01112,
+          "family": "prosody"
+        },
+        {
+          "feature": "spectral_rms_median",
+          "importance": 0.010408,
+          "family": "spectral"
+        },
+        {
+          "feature": "spectral_slope_median",
+          "importance": 0.008422,
+          "family": "spectral"
+        },
+        {
+          "feature": "chroma_04_mean",
+          "importance": 0.008198,
+          "family": "chroma"
+        },
+        {
+          "feature": "prosody_f1_mean",
+          "importance": 0.00817,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_04_mean",
+          "importance": 0.007753,
+          "family": "mfcc"
+        },
+        {
+          "feature": "spectral_bandwidth_kurt",
+          "importance": 0.007747,
+          "family": "spectral"
+        },
+        {
+          "feature": "spectral_band_4000_5000_std",
+          "importance": 0.006916,
+          "family": "spectral"
+        },
+        {
+          "feature": "spectral_flatness_mean",
+          "importance": 0.006776,
+          "family": "spectral"
+        },
+        {
+          "feature": "spectral_centroid_iqr",
+          "importance": 0.006737,
+          "family": "spectral"
+        },
+        {
+          "feature": "spectral_zcr_iqr",
+          "importance": 0.006494,
+          "family": "spectral"
+        },
+        {
+          "feature": "spectral_band_1000_2000_std",
+          "importance": 0.006445,
+          "family": "spectral"
+        }
+      ],
+      "lime_vs_shap": {
+        "shap_vs_lime": {
+          "spearman_rho": 0.38412421452753903,
+          "top20_overlap": 7
+        },
+        "shap_vs_permutation": {
+          "spearman_rho": 0.6121326271437278,
+          "top20_overlap": 13
+        },
+        "shap_vs_intrinsic": {
+          "spearman_rho": 0.9826055103785627,
+          "top20_overlap": 19
+        }
+      },
+      "pdp_features": [
+        "prosody_cpps",
+        "mfcc_04_std",
+        "prosody_intensity_std",
+        "spectral_rms_mean"
+      ],
+      "surrogate_fidelity": 0.5707317073170731,
+      "surrogate_features_used": [
+        "chroma_10_mean",
+        "mfcc_02_min",
+        "mfcc_04_min",
+        "mfcc_10_skew",
+        "mfcc_d1_00_std",
+        "mfcc_d2_01_std",
+        "prosody_f0_mean",
+        "prosody_hnr_mean",
+        "prosody_intensity_min",
+        "prosody_intensity_std",
+        "spectral_band_1000_2000_std",
+        "spectral_band_4000_5000_std",
+        "spectral_centroid_iqr",
+        "spectral_centroid_median"
+      ]
+    },
+    "random_forest": {
+      "intrinsic_top15": [
+        {
+          "feature": "mfcc_d1_00_std",
+          "importance": 0.015962,
+          "kind": "impurity/gain",
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_intensity_min",
+          "importance": 0.012715,
+          "kind": "impurity/gain",
+          "family": "prosody"
+        },
+        {
+          "feature": "prosody_intensity_std",
+          "importance": 0.012198,
+          "kind": "impurity/gain",
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_00_iqr",
+          "importance": 0.012065,
+          "kind": "impurity/gain",
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_00_std",
+          "importance": 0.010679,
+          "kind": "impurity/gain",
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_intensity_iqr",
+          "importance": 0.010503,
+          "kind": "impurity/gain",
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_d2_00_std",
+          "importance": 0.009863,
+          "kind": "impurity/gain",
+          "family": "mfcc"
+        },
+        {
+          "feature": "spectral_band_0_500_mean",
+          "importance": 0.009032,
+          "kind": "impurity/gain",
+          "family": "spectral"
+        },
+        {
+          "feature": "spectral_band_0_500_std",
+          "importance": 0.008835,
+          "kind": "impurity/gain",
+          "family": "spectral"
+        },
+        {
+          "feature": "spectral_flux_min",
+          "importance": 0.007917,
+          "kind": "impurity/gain",
+          "family": "spectral"
+        },
+        {
+          "feature": "spectral_centroid_iqr",
+          "importance": 0.007462,
+          "kind": "impurity/gain",
+          "family": "spectral"
+        },
+        {
+          "feature": "prosody_intensity_mean",
+          "importance": 0.007357,
+          "kind": "impurity/gain",
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_02_std",
+          "importance": 0.006887,
+          "kind": "impurity/gain",
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_f0_mean",
+          "importance": 0.006051,
+          "kind": "impurity/gain",
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_00_mean",
+          "importance": 0.00571,
+          "kind": "impurity/gain",
+          "family": "mfcc"
+        }
+      ],
+      "permutation_top15": [
+        {
+          "feature": "mfcc_00_std",
+          "importance": 0.00475,
+          "std": 0.00314,
+          "family": "mfcc"
+        },
+        {
+          "feature": "duration_s",
+          "importance": 0.004415,
+          "std": 0.001602,
+          "family": "other"
+        },
+        {
+          "feature": "mfcc_02_iqr",
+          "importance": 0.004266,
+          "std": 0.001362,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_f1_bw_median",
+          "importance": 0.004067,
+          "std": 0.001885,
+          "family": "prosody"
+        },
+        {
+          "feature": "prosody_f0_mean",
+          "importance": 0.004018,
+          "std": 0.001493,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_d1_02_std",
+          "importance": 0.003931,
+          "std": 0.00194,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_03_max",
+          "importance": 0.003919,
+          "std": 0.000807,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_intensity_iqr",
+          "importance": 0.003832,
+          "std": 0.002701,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_d2_04_std",
+          "importance": 0.003646,
+          "std": 0.001176,
+          "family": "mfcc"
+        },
+        {
+          "feature": "spectral_band_500_1000_mean",
+          "importance": 0.003373,
+          "std": 0.00193,
+          "family": "spectral"
+        },
+        {
+          "feature": "mfcc_d1_06_std",
+          "importance": 0.003361,
+          "std": 0.001342,
+          "family": "mfcc"
+        },
+        {
+          "feature": "spectral_zcr_std",
+          "importance": 0.003199,
+          "std": 0.001065,
+          "family": "spectral"
+        },
+        {
+          "feature": "mfcc_00_kurt",
+          "importance": 0.003187,
+          "std": 0.001388,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_02_std",
+          "importance": 0.00315,
+          "std": 0.00259,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_07_iqr",
+          "importance": 0.003137,
+          "std": 0.001554,
+          "family": "mfcc"
+        }
+      ],
+      "permutation_family_share": {
+        "chroma": 0.0353,
+        "mfcc": 0.5411,
+        "other": 0.0146,
+        "prosody": 0.1497,
+        "spectral": 0.2593
+      },
+      "shap_top15": [
+        {
+          "feature": "mfcc_d1_00_std",
+          "importance": 0.008032,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_intensity_min",
+          "importance": 0.007077,
+          "family": "prosody"
+        },
+        {
+          "feature": "prosody_intensity_std",
+          "importance": 0.006766,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_00_iqr",
+          "importance": 0.006399,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_intensity_iqr",
+          "importance": 0.005974,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_d2_00_std",
+          "importance": 0.005199,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_00_std",
+          "importance": 0.005188,
+          "family": "mfcc"
+        },
+        {
+          "feature": "spectral_band_0_500_mean",
+          "importance": 0.004948,
+          "family": "spectral"
+        },
+        {
+          "feature": "spectral_band_0_500_std",
+          "importance": 0.004841,
+          "family": "spectral"
+        },
+        {
+          "feature": "spectral_flux_min",
+          "importance": 0.00426,
+          "family": "spectral"
+        },
+        {
+          "feature": "prosody_intensity_mean",
+          "importance": 0.0042,
+          "family": "prosody"
+        },
+        {
+          "feature": "spectral_centroid_iqr",
+          "importance": 0.004074,
+          "family": "spectral"
+        },
+        {
+          "feature": "mfcc_02_std",
+          "importance": 0.003502,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_f0_mean",
+          "importance": 0.003196,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_00_mean",
+          "importance": 0.00309,
+          "family": "mfcc"
+        }
+      ],
+      "shap_family_share": {
+        "chroma": 0.032,
+        "mfcc": 0.4376,
+        "other": 0.0106,
+        "prosody": 0.2049,
+        "spectral": 0.3149
+      },
+      "shap_top5_per_class": {
+        "ANG": [
+          {
+            "feature": "mfcc_d1_00_std",
+            "importance": 0.01835
+          },
+          {
+            "feature": "prosody_intensity_min",
+            "importance": 0.01321
+          },
+          {
+            "feature": "prosody_intensity_std",
+            "importance": 0.01121
+          },
+          {
+            "feature": "spectral_band_0_500_std",
+            "importance": 0.00997
+          },
+          {
+            "feature": "mfcc_00_iqr",
+            "importance": 0.00971
+          }
+        ],
+        "DIS": [
+          {
+            "feature": "duration_s",
+            "importance": 0.00582
+          },
+          {
+            "feature": "prosody_intensity_iqr",
+            "importance": 0.00526
+          },
+          {
+            "feature": "mfcc_d1_00_std",
+            "importance": 0.0052
+          },
+          {
+            "feature": "mfcc_d2_00_std",
+            "importance": 0.00507
+          },
+          {
+            "feature": "prosody_intensity_min",
+            "importance": 0.005
+          }
+        ],
+        "FEA": [
+          {
+            "feature": "mfcc_d1_00_std",
+            "importance": 0.00648
+          },
+          {
+            "feature": "spectral_band_0_500_mean",
+            "importance": 0.00581
+          },
+          {
+            "feature": "spectral_band_0_500_std",
+            "importance": 0.00542
+          },
+          {
+            "feature": "prosody_f0_mean",
+            "importance": 0.00425
+          },
+          {
+            "feature": "spectral_centroid_iqr",
+            "importance": 0.00414
+          }
+        ],
+        "HAP": [
+          {
+            "feature": "mfcc_00_iqr",
+            "importance": 0.00708
+          },
+          {
+            "feature": "prosody_intensity_std",
+            "importance": 0.00698
+          },
+          {
+            "feature": "prosody_intensity_iqr",
+            "importance": 0.00633
+          },
+          {
+            "feature": "prosody_intensity_min",
+            "importance": 0.00625
+          },
+          {
+            "feature": "mfcc_00_std",
+            "importance": 0.00509
+          }
+        ],
+        "NEU": [
+          {
+            "feature": "prosody_intensity_std",
+            "importance": 0.00884
+          },
+          {
+            "feature": "prosody_intensity_min",
+            "importance": 0.00849
+          },
+          {
+            "feature": "mfcc_00_iqr",
+            "importance": 0.00805
+          },
+          {
+            "feature": "prosody_intensity_iqr",
+            "importance": 0.00715
+          },
+          {
+            "feature": "mfcc_00_std",
+            "importance": 0.00621
+          }
+        ],
+        "SAD": [
+          {
+            "feature": "mfcc_00_iqr",
+            "importance": 0.00895
+          },
+          {
+            "feature": "mfcc_d1_00_std",
+            "importance": 0.00805
+          },
+          {
+            "feature": "mfcc_00_std",
+            "importance": 0.00755
+          },
+          {
+            "feature": "prosody_intensity_min",
+            "importance": 0.00731
+          },
+          {
+            "feature": "prosody_intensity_std",
+            "importance": 0.00679
+          }
+        ]
+      },
+      "attribution_stability": {
+        "mp3_64": {
+          "spearman_rho": 0.9897413919790468,
+          "spearman_p": 0.0,
+          "pearson_r": 0.9994057481464794,
+          "top25_jaccard": 1.0,
+          "top25_overlap": 25,
+          "entered_topk": [],
+          "left_topk": [],
+          "l1_shift": 0.02569337927310626
+        },
+        "mp4_aac64": {
+          "spearman_rho": 0.9761929754581907,
+          "spearman_p": 3.414604160576884e-290,
+          "pearson_r": 0.993732244179892,
+          "top25_jaccard": 1.0,
+          "top25_overlap": 25,
+          "entered_topk": [],
+          "left_topk": [],
+          "l1_shift": 0.05581842346333063
+        },
+        "roundtrip_wav": {
+          "spearman_rho": 0.9752399995077305,
+          "spearman_p": 1.538811057768217e-286,
+          "pearson_r": 0.9937680017841332,
+          "top25_jaccard": 1.0,
+          "top25_overlap": 25,
+          "entered_topk": [],
+          "left_topk": [],
+          "l1_shift": 0.0559915933585172
+        }
+      },
+      "lime_top15": [
+        {
+          "feature": "mfcc_00_iqr",
+          "importance": 0.01528,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_intensity_min",
+          "importance": 0.013163,
+          "family": "prosody"
+        },
+        {
+          "feature": "prosody_intensity_std",
+          "importance": 0.01305,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_00_std",
+          "importance": 0.01246,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_d1_00_std",
+          "importance": 0.012083,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_intensity_mean",
+          "importance": 0.008993,
+          "family": "prosody"
+        },
+        {
+          "feature": "prosody_intensity_iqr",
+          "importance": 0.008916,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_d2_00_std",
+          "importance": 0.006399,
+          "family": "mfcc"
+        },
+        {
+          "feature": "spectral_rms_mean",
+          "importance": 0.006245,
+          "family": "spectral"
+        },
+        {
+          "feature": "spectral_flux_median",
+          "importance": 0.004981,
+          "family": "spectral"
+        },
+        {
+          "feature": "spectral_band_0_500_mean",
+          "importance": 0.004838,
+          "family": "spectral"
+        },
+        {
+          "feature": "spectral_flux_min",
+          "importance": 0.004588,
+          "family": "spectral"
+        },
+        {
+          "feature": "spectral_band_0_500_std",
+          "importance": 0.00414,
+          "family": "spectral"
+        },
+        {
+          "feature": "spectral_centroid_iqr",
+          "importance": 0.003816,
+          "family": "spectral"
+        },
+        {
+          "feature": "mfcc_02_std",
+          "importance": 0.003542,
+          "family": "mfcc"
+        }
+      ],
+      "lime_vs_shap": {
+        "shap_vs_lime": {
+          "spearman_rho": 0.31565755065000395,
+          "top20_overlap": 17
+        },
+        "shap_vs_permutation": {
+          "spearman_rho": 0.2636990666012588,
+          "top20_overlap": 6
+        },
+        "shap_vs_intrinsic": {
+          "spearman_rho": 0.9035788720801358,
+          "top20_overlap": 19
+        }
+      },
+      "pdp_features": [
+        "mfcc_d1_00_std",
+        "prosody_intensity_min",
+        "prosody_intensity_std",
+        "mfcc_00_iqr"
+      ],
+      "surrogate_fidelity": 0.7390243902439024,
+      "surrogate_features_used": [
+        "mfcc_d1_00_std",
+        "prosody_f0_median",
+        "prosody_intensity_min",
+        "prosody_intensity_std",
+        "spectral_band_500_1000_mean",
+        "spectral_centroid_iqr",
+        "spectral_centroid_mean",
+        "spectral_centroid_median",
+        "spectral_flux_min",
+        "spectral_flux_std",
+        "spectral_rolloff85_iqr",
+        "spectral_slope_mean"
+      ]
+    },
+    "svm_rbf": {
+      "permutation_top15": [
+        {
+          "feature": "spectral_flux_min",
+          "importance": 0.008611,
+          "std": 0.002698,
+          "family": "spectral"
+        },
+        {
+          "feature": "mfcc_00_skew",
+          "importance": 0.008135,
+          "std": 0.002224,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_03_max",
+          "importance": 0.007183,
+          "std": 0.000613,
+          "family": "mfcc"
+        },
+        {
+          "feature": "spectral_flux_std",
+          "importance": 0.007103,
+          "std": 0.003532,
+          "family": "spectral"
+        },
+        {
+          "feature": "mfcc_06_min",
+          "importance": 0.006687,
+          "std": 0.001196,
+          "family": "mfcc"
+        },
+        {
+          "feature": "spectral_contrast_1_mean",
+          "importance": 0.00625,
+          "std": 0.003249,
+          "family": "spectral"
+        },
+        {
+          "feature": "mfcc_02_max",
+          "importance": 0.005536,
+          "std": 0.001238,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_00_median",
+          "importance": 0.005377,
+          "std": 0.003098,
+          "family": "mfcc"
+        },
+        {
+          "feature": "chroma_06_mean",
+          "importance": 0.005298,
+          "std": 0.002075,
+          "family": "chroma"
+        },
+        {
+          "feature": "mfcc_d1_03_std",
+          "importance": 0.005238,
+          "std": 0.001892,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_d2_14_mean",
+          "importance": 0.00502,
+          "std": 0.00279,
+          "family": "mfcc"
+        },
+        {
+          "feature": "spectral_flux_iqr",
+          "importance": 0.004742,
+          "std": 0.002221,
+          "family": "spectral"
+        },
+        {
+          "feature": "duration_s",
+          "importance": 0.004623,
+          "std": 0.002638,
+          "family": "other"
+        },
+        {
+          "feature": "mfcc_08_iqr",
+          "importance": 0.004484,
+          "std": 0.001826,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_d2_01_std",
+          "importance": 0.004405,
+          "std": 0.003823,
+          "family": "mfcc"
+        }
+      ],
+      "permutation_family_share": {
+        "chroma": 0.0349,
+        "mfcc": 0.5122,
+        "other": 0.0106,
+        "prosody": 0.1538,
+        "spectral": 0.2886
+      },
+      "shap_top15": [
+        {
+          "feature": "prosody_f0_median",
+          "importance": 2137395729711.707,
+          "family": "prosody"
+        },
+        {
+          "feature": "spectral_flux_kurt",
+          "importance": 2137395729711.7065,
+          "family": "spectral"
+        },
+        {
+          "feature": "mfcc_d2_14_std",
+          "importance": 1690796213497.5198,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_d1_08_mean",
+          "importance": 1690796213497.519,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_voiced_fraction",
+          "importance": 615148599732.8306,
+          "family": "prosody"
+        },
+        {
+          "feature": "prosody_f3_mean",
+          "importance": 615148599732.8295,
+          "family": "prosody"
+        },
+        {
+          "feature": "spectral_rolloff95_skew",
+          "importance": 0.003172,
+          "family": "spectral"
+        },
+        {
+          "feature": "duration_s",
+          "importance": 0.00315,
+          "family": "other"
+        },
+        {
+          "feature": "prosody_f0_skew",
+          "importance": 0.002337,
+          "family": "prosody"
+        },
+        {
+          "feature": "spectral_contrast_2_std",
+          "importance": 0.002201,
+          "family": "spectral"
+        },
+        {
+          "feature": "mfcc_d2_00_std",
+          "importance": 0.002025,
+          "family": "mfcc"
+        },
+        {
+          "feature": "spectral_bandwidth_min",
+          "importance": 0.001964,
+          "family": "spectral"
+        },
+        {
+          "feature": "mfcc_00_std",
+          "importance": 0.001814,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_d2_12_mean",
+          "importance": 0.001809,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_00_median",
+          "importance": 0.00173,
+          "family": "mfcc"
+        }
+      ],
+      "shap_family_share": {
+        "chroma": 0.0,
+        "mfcc": 0.3805,
+        "other": 0.0,
+        "prosody": 0.379,
+        "spectral": 0.2405
+      },
+      "shap_top5_per_class": {
+        "ANG": [
+          {
+            "feature": "mfcc_d2_14_std",
+            "importance": 10144777280985.117
+          },
+          {
+            "feature": "mfcc_d1_08_mean",
+            "importance": 10144777280985.115
+          },
+          {
+            "feature": "spectral_rolloff95_skew",
+            "importance": 0.01639
+          },
+          {
+            "feature": "spectral_bandwidth_min",
+            "importance": 0.00975
+          },
+          {
+            "feature": "mfcc_d2_00_std",
+            "importance": 0.00811
+          }
+        ],
+        "DIS": [
+          {
+            "feature": "prosody_voiced_fraction",
+            "importance": 3690891598396.9756
+          },
+          {
+            "feature": "prosody_f3_mean",
+            "importance": 3690891598396.9736
+          },
+          {
+            "feature": "duration_s",
+            "importance": 0.00666
+          },
+          {
+            "feature": "spectral_slope_mean",
+            "importance": 0.00598
+          },
+          {
+            "feature": "mfcc_05_kurt",
+            "importance": 0.00571
+          }
+        ],
+        "FEA": [
+          {
+            "feature": "prosody_f0_median",
+            "importance": 12824374378270.242
+          },
+          {
+            "feature": "spectral_flux_kurt",
+            "importance": 12824374378270.238
+          },
+          {
+            "feature": "spectral_contrast_2_std",
+            "importance": 0.01019
+          },
+          {
+            "feature": "prosody_f0_skew",
+            "importance": 0.00963
+          },
+          {
+            "feature": "mfcc_11_mean",
+            "importance": 0.00899
+          }
+        ],
+        "HAP": [
+          {
+            "feature": "duration_s",
+            "importance": 0.00384
+          },
+          {
+            "feature": "mfcc_08_min",
+            "importance": 0.00347
+          },
+          {
+            "feature": "mfcc_19_median",
+            "importance": 0.00321
+          },
+          {
+            "feature": "mfcc_11_kurt",
+            "importance": 0.00296
+          },
+          {
+            "feature": "spectral_contrast_4_std",
+            "importance": 0.00295
+          }
+        ],
+        "NEU": [
+          {
+            "feature": "duration_s",
+            "importance": 0.00564
+          },
+          {
+            "feature": "mfcc_00_std",
+            "importance": 0.00467
+          },
+          {
+            "feature": "prosody_f0_mean",
+            "importance": 0.00417
+          },
+          {
+            "feature": "mfcc_10_median",
+            "importance": 0.00371
+          },
+          {
+            "feature": "spectral_entropy_skew",
+            "importance": 0.00328
+          }
+        ],
+        "SAD": [
+          {
+            "feature": "mfcc_00_median",
+            "importance": 0.00455
+          },
+          {
+            "feature": "prosody_f3_bw_median",
+            "importance": 0.004
+          },
+          {
+            "feature": "spectral_rolloff95_max",
+            "importance": 0.00342
+          },
+          {
+            "feature": "mfcc_14_std",
+            "importance": 0.00262
+          },
+          {
+            "feature": "mfcc_d2_18_mean",
+            "importance": 0.00238
+          }
+        ]
+      },
+      "attribution_stability_note": "skipped: KernelSHAP is too costly to run per condition for this model",
+      "lime_top15": [
+        {
+          "feature": "mfcc_d1_00_std",
+          "importance": 0.008819,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_d2_00_std",
+          "importance": 0.007853,
+          "family": "mfcc"
+        },
+        {
+          "feature": "duration_s",
+          "importance": 0.006948,
+          "family": "other"
+        },
+        {
+          "feature": "prosody_f0_iqr",
+          "importance": 0.004776,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_d1_02_std",
+          "importance": 0.003748,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_d2_03_std",
+          "importance": 0.003666,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_00_iqr",
+          "importance": 0.00348,
+          "family": "mfcc"
+        },
+        {
+          "feature": "spectral_band_500_1000_std",
+          "importance": 0.00314,
+          "family": "spectral"
+        },
+        {
+          "feature": "mfcc_d1_04_std",
+          "importance": 0.002858,
+          "family": "mfcc"
+        },
+        {
+          "feature": "prosody_f2_std",
+          "importance": 0.002754,
+          "family": "prosody"
+        },
+        {
+          "feature": "mfcc_d2_01_std",
+          "importance": 0.002633,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_00_skew",
+          "importance": 0.002542,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_d2_08_std",
+          "importance": 0.002489,
+          "family": "mfcc"
+        },
+        {
+          "feature": "mfcc_02_std",
+          "importance": 0.002441,
+          "family": "mfcc"
+        },
+        {
+          "feature": "spectral_band_1000_2000_std",
+          "importance": 0.002379,
+          "family": "spectral"
+        }
+      ],
+      "lime_vs_shap": {
+        "shap_vs_lime": {
+          "spearman_rho": 0.1411862482833405,
+          "top20_overlap": 2
+        },
+        "shap_vs_permutation": {
+          "spearman_rho": 0.0944711817689604,
+          "top20_overlap": 2
+        }
+      },
+      "pdp_features": [
+        "prosody_f0_median",
+        "spectral_flux_kurt",
+        "mfcc_d2_14_std",
+        "mfcc_d1_08_mean"
+      ],
+      "surrogate_fidelity": 0.5865853658536585,
+      "surrogate_features_used": [
+        "duration_s",
+        "mfcc_00_median",
+        "mfcc_01_std",
+        "mfcc_04_min",
+        "mfcc_09_mean",
+        "mfcc_d1_00_std",
+        "prosody_f0_min",
+        "prosody_f1_bw_median",
+        "prosody_intensity_min",
+        "spectral_band_0_500_std",
+        "spectral_band_500_1000_mean",
+        "spectral_centroid_iqr",
+        "spectral_entropy_median",
+        "spectral_rolloff85_mean"
+      ]
+    }
+  },
+  "figures": {
+    "xgboost_shap_global": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_050808/xgboost/shap_global.png",
+    "xgboost_shap_per_class": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_050808/xgboost/shap_per_class.png",
+    "xgboost_beeswarm": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_050808/xgboost/shap_beeswarm_ANG.png",
+    "xgboost_stability": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_050808/xgboost/attribution_stability.png",
+    "xgboost_pdp": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_050808/xgboost/pdp_ice.png",
+    "xgboost_surrogate": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_050808/xgboost/surrogate_tree.png",
+    "lightgbm_shap_global": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_050808/lightgbm/shap_global.png",
+    "lightgbm_shap_per_class": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_050808/lightgbm/shap_per_class.png",
+    "lightgbm_beeswarm": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_050808/lightgbm/shap_beeswarm_ANG.png",
+    "lightgbm_stability": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_050808/lightgbm/attribution_stability.png",
+    "lightgbm_pdp": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_050808/lightgbm/pdp_ice.png",
+    "lightgbm_surrogate": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_050808/lightgbm/surrogate_tree.png",
+    "decision_tree_shap_global": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_050808/decision_tree/shap_global.png",
+    "decision_tree_shap_per_class": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_050808/decision_tree/shap_per_class.png",
+    "decision_tree_beeswarm": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_050808/decision_tree/shap_beeswarm_ANG.png",
+    "decision_tree_stability": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_050808/decision_tree/attribution_stability.png",
+    "decision_tree_pdp": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_050808/decision_tree/pdp_ice.png",
+    "decision_tree_surrogate": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_050808/decision_tree/surrogate_tree.png",
+    "logistic_regression_shap_global": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_050808/logistic_regression/shap_global.png",
+    "logistic_regression_shap_per_class": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_050808/logistic_regression/shap_per_class.png",
+    "logistic_regression_beeswarm": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_050808/logistic_regression/shap_beeswarm_ANG.png",
+    "logistic_regression_stability": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_050808/logistic_regression/attribution_stability.png",
+    "logistic_regression_pdp": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_050808/logistic_regression/pdp_ice.png",
+    "logistic_regression_surrogate": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_050808/logistic_regression/surrogate_tree.png",
+    "random_forest_shap_global": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_050808/random_forest/shap_global.png",
+    "random_forest_shap_per_class": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_050808/random_forest/shap_per_class.png",
+    "random_forest_beeswarm": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_050808/random_forest/shap_beeswarm_ANG.png",
+    "random_forest_stability": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_050808/random_forest/attribution_stability.png",
+    "random_forest_pdp": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_050808/random_forest/pdp_ice.png",
+    "random_forest_surrogate": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_050808/random_forest/surrogate_tree.png",
+    "svm_rbf_shap_global": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_052349/svm_rbf/shap_global.png",
+    "svm_rbf_shap_per_class": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_052349/svm_rbf/shap_per_class.png",
+    "svm_rbf_beeswarm": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_052349/svm_rbf/shap_beeswarm_ANG.png",
+    "svm_rbf_pdp": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_052349/svm_rbf/pdp_ice.png",
+    "svm_rbf_surrogate": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/xai/20260818_052349/svm_rbf/surrogate_tree.png"
+  },
+  "note_svm_rbf": "svm_rbf was re-run in a separate process (outputs/xai/20260818_052349) after an OpenMP deadlock; its KernelSHAP estimate is rank-deficient and excluded from conclusions - see FINDINGS.md E4."
+}

@@ -1,0 +1,29 @@
+# Feature extraction settings shared by every condition.
+audio:
+  sample_rate: 16000
+  mono: true
+
+frame:
+  n_fft: 512          # 32 ms @ 16 kHz
+  hop_length: 160     # 10 ms
+  win_length: 400     # 25 ms
+
+mfcc:
+  n_mfcc: 20
+  n_mels: 40
+  fmin: 20
+  fmax: 8000
+
+# Summary statistics applied to every frame-level contour.
+summary_stats: [mean, std, min, max, median, iqr, skew, kurtosis]
+
+praat:
+  pitch_floor: 75.0
+  pitch_ceiling: 500.0
+  max_formant_hz: 5500.0
+  n_formants: 5
+  # point-process based perturbation measures
+  jitter_shimmer_period_floor: 0.0001
+  jitter_shimmer_period_ceiling: 0.02
+  max_period_factor: 1.3
+  max_amplitude_factor: 1.6

@@ -1,0 +1,40 @@
+# Stimulus generation for the format-robustness arm.
+#
+# Every condition is derived from the canonical `ref`, which is itself derived
+# from the CREMA-D source clip. This mirrors the transform design of the parent
+# LLM study so results are directly comparable.
+#
+# Canonical reference: 16 kHz mono PCM16, EBU R128 loudness-normalized.
+reference:
+  sample_rate: 16000
+  channels: 1
+  codec: pcm_s16le
+  loudnorm: "loudnorm=I=-23:LRA=7:TP=-2"
+
+conditions:
+  ref:
+    kind: reference
+    ext: wav
+
+  mp3_64:
+    kind: encode
+    from: ref
+    ext: mp3
+    args: ["-c:a", "libmp3lame", "-b:a", "64k"]
+
+  mp4_aac64:
+    kind: encode
+    from: ref
+    ext: mp4
+    args: ["-c:a", "aac", "-b:a", "64k", "-vn", "-f", "mp4"]
+
+  # THE CONTROL: same decoded signal as mp4_aac64, delivered as WAV.
+  # For a feature-based pipeline (unlike an API-fed LLM) this decodes to the
+  # same PCM as mp4_aac64, so it is retained as a decode-path sanity check.
+  roundtrip_wav:
+    kind: decode
+    from: mp4_aac64
+    ext: wav
+    args: ["-ar", "16000", "-ac", "1", "-c:a", "pcm_s16le"]
+
+order: [ref, mp3_64, mp4_aac64, roundtrip_wav]

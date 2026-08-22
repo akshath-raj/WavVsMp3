@@ -1,0 +1,24 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+
+# Corpus and generated audio are large and reproducible from scripts/
+data/raw/
+data/stimuli/
+data/cremad_repo/
+data/filelist*.txt
+
+# The 436-feature table is ~243 MB, over GitHub's 100 MB per-file hard limit.
+# Regenerate with `python -m xai_ser.extract`; the companion schema JSON is
+# tracked so the column set and extraction settings stay on record.
+data/features/*.csv
+data/features/*.parquet
+
+# Fitted model artefacts (~800 MB total; extra_trees alone is ~216 MB).
+# Regenerate with `python -m xai_ser.models` and `python -m xai_ser.ann`.
+# The metrics/leaderboard/attribution files they produce are tracked.
+*.joblib
+*.pt
+*.pth
+outputs/models/**/fitted/

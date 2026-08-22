@@ -1,0 +1,48 @@
+# Stimulus generation. Every condition is derived from the canonical `ref`,
+# which is itself derived from the CREMA-D source clip.
+#
+# Canonical reference: 16 kHz mono PCM16, EBU R128 loudness-normalized.
+reference:
+  sample_rate: 16000
+  channels: 1
+  codec: pcm_s16le
+  # ffmpeg loudnorm filter args (single-pass; adequate for the pilot).
+  loudnorm: "loudnorm=I=-23:LRA=7:TP=-2"
+
+# The four experimental conditions. `from` names the input condition.
+#   kind: reference -> build the canonical WAV from the CREMA-D source
+#   kind: encode    -> re-encode ref into a lossy container
+#   kind: decode    -> decode a container back to canonical PCM (the control)
+conditions:
+  ref:
+    kind: reference
+    ext: wav
+
+  mp3_64:
+    kind: encode
+    from: ref
+    ext: mp3
+    args: ["-c:a", "libmp3lame", "-b:a", "64k"]
+
+  mp4_aac64:
+    kind: encode
+    from: ref
+    ext: mp4
+    # audio-only mp4 container, AAC @ 64k
+    args: ["-c:a", "aac", "-b:a", "64k", "-vn", "-f", "mp4"]
+
+  # THE CONTROL: same decoded signal as mp4_aac64, delivered as WAV.
+  roundtrip_wav:
+    kind: decode
+    from: mp4_aac64
+    ext: wav
+    args: ["-ar", "16000", "-ac", "1", "-c:a", "pcm_s16le"]
+
+# Order matters for generation (deps): ref -> {mp3_64, mp4_aac64} -> roundtrip_wav
+order: [ref, mp3_64, mp4_aac64, roundtrip_wav]
+
+# Conditions submitted to the model. Gemini (gemini-flash-latest) ingests all
+# four containers as raw bytes and has an opaque decode path, so the full
+# container-routing design is testable: mp4_aac64 vs roundtrip_wav separates
+# codec degradation from container routing (Step 7.3).
+model_transforms: [ref, mp3_64, mp4_aac64, roundtrip_wav]

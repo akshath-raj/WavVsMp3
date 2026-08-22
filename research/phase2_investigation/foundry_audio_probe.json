@@ -1,0 +1,51 @@
+[
+ {
+  "file": "ref.wav",
+  "format": "wav",
+  "http": 200,
+  "verdict": "ACCEPTED",
+  "output": "Neutral"
+ },
+ {
+  "file": "roundtrip_wav.wav",
+  "format": "wav",
+  "http": 200,
+  "verdict": "ACCEPTED",
+  "output": "Neutral"
+ },
+ {
+  "file": "mp3_64.mp3",
+  "format": "mp3",
+  "http": 200,
+  "verdict": "ACCEPTED",
+  "output": "Neutral"
+ },
+ {
+  "file": "mp4_aac64.mp4",
+  "format": "mp4",
+  "http": 400,
+  "verdict": "REJECTED",
+  "output": null
+ },
+ {
+  "file": "mp4_aac64.mp4",
+  "format": "m4a",
+  "http": 400,
+  "verdict": "REJECTED",
+  "output": null
+ },
+ {
+  "file": "mp4_aac64.mp4",
+  "format": "aac",
+  "http": 400,
+  "verdict": "REJECTED",
+  "output": null
+ },
+ {
+  "file": "mp4_aac64.mp4",
+  "format": "wav",
+  "http": 400,
+  "verdict": "REJECTED",
+  "output": null
+ }
+]

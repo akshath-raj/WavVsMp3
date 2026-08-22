@@ -1,0 +1,86 @@
+[
+ {
+  "item": "1005_MTI_ANG_XX",
+  "gold": "angry",
+  "p_gold": [
+   4.604658294052174e-06,
+   6.011072451049555e-07,
+   3.4596315104755995e-07
+  ],
+  "labels": [
+   "neutral",
+   "neutral",
+   "neutral"
+  ]
+ },
+ {
+  "item": "1009_IEO_ANG_MD",
+  "gold": "angry",
+  "p_gold": [
+   0.03774473147891345,
+   0.3376012724733563,
+   0.014678395681133338
+  ],
+  "labels": [
+   "neutral",
+   "neutral",
+   "neutral"
+  ]
+ },
+ {
+  "item": "1022_ITH_ANG_XX",
+  "gold": "angry",
+  "p_gold": [
+   2.0992538992543673e-05,
+   6.147053008395445e-06,
+   3.4953565014753533e-06
+  ],
+  "labels": [
+   "neutral",
+   "neutral",
+   "neutral"
+  ]
+ },
+ {
+  "item": "1026_ITS_ANG_XX",
+  "gold": "angry",
+  "p_gold": [
+   0.003973297611922608,
+   0.00016383351513910016,
+   0.003733060235967123
+  ],
+  "labels": [
+   "neutral",
+   "neutral",
+   "neutral"
+  ]
+ },
+ {
+  "item": "1012_IWL_SAD_XX",
+  "gold": "sad",
+  "p_gold": [
+   0.20181164051493725,
+   0.24364503074170482,
+   0.08050109177275173
+  ],
+  "labels": [
+   "neutral",
+   "neutral",
+   "neutral"
+  ]
+ },
+ {
+  "item": "1015_DFA_SAD_XX",
+  "gold": "sad",
+  "p_gold": [
+   0.009038304669653257,
+   0.021639527282334925,
+   0.0017703227260486363
+  ],
+  "labels": [
+   "neutral",
+   "neutral",
+   "neutral"
+  ]
+ }
+]

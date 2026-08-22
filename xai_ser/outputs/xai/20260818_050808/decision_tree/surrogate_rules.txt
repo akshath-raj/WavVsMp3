@@ -1,0 +1,43 @@
+|--- prosody_intensity_std <= 8.21
+|   |--- mfcc_d1_00_std <= 4.00
+|   |   |--- mfcc_00_std <= 37.08
+|   |   |   |--- mfcc_18_mean <= -1.64
+|   |   |   |   |--- class: 5
+|   |   |   |--- mfcc_18_mean >  -1.64
+|   |   |   |   |--- class: 5
+|   |   |--- mfcc_00_std >  37.08
+|   |   |   |--- spectral_rolloff95_kurt <= 14.53
+|   |   |   |   |--- class: 2
+|   |   |   |--- spectral_rolloff95_kurt >  14.53
+|   |   |   |   |--- class: 5
+|   |--- mfcc_d1_00_std >  4.00
+|   |   |--- duration_s <= 2.85
+|   |   |   |--- prosody_f0_max <= 289.26
+|   |   |   |   |--- class: 4
+|   |   |   |--- prosody_f0_max >  289.26
+|   |   |   |   |--- class: 2
+|   |   |--- duration_s >  2.85
+|   |   |   |--- mfcc_10_std <= 4.32
+|   |   |   |   |--- class: 2
+|   |   |   |--- mfcc_10_std >  4.32
+|   |   |   |   |--- class: 1
+|--- prosody_intensity_std >  8.21
+|   |--- spectral_band_0_500_mean <= 0.71
+|   |   |--- mfcc_d1_00_std <= 7.79
+|   |   |   |--- prosody_f0_std <= 52.21
+|   |   |   |   |--- class: 0
+|   |   |   |--- prosody_f0_std >  52.21
+|   |   |   |   |--- class: 3
+|   |   |--- mfcc_d1_00_std >  7.79
+|   |   |   |--- mfcc_10_kurt <= -0.21
+|   |   |   |   |--- class: 0
+|   |   |   |--- mfcc_10_kurt >  -0.21
+|   |   |   |   |--- class: 0
+|   |--- spectral_band_0_500_mean >  0.71
+|   |   |--- prosody_f0_min <= 150.86
+|   |   |   |--- prosody_f0_mean <= 141.66
+|   |   |   |   |--- class: 4
+|   |   |   |--- prosody_f0_mean >  141.66
+|   |   |   |   |--- class: 3
+|   |   |--- prosody_f0_min >  150.86
+|   |   |   |--- class: 2

@@ -1,0 +1,36 @@
+{
+ "n_items": 50,
+ "bitrates": [
+  32,
+  64,
+  128
+ ],
+ "container_pairs_identical": 150,
+ "container_pairs_total": 150,
+ "by_bitrate": {
+  "32": {
+   "snr_db": 19.479,
+   "lsd_db": 13.001,
+   "lag_ms": 0.0,
+   "mp3_kb": 11.0,
+   "ref_kb": 83.514,
+   "compression_x": 7.6
+  },
+  "64": {
+   "snr_db": 25.014,
+   "lsd_db": 11.59,
+   "lag_ms": 0.0,
+   "mp3_kb": 21.886,
+   "ref_kb": 83.514,
+   "compression_x": 3.8
+  },
+  "128": {
+   "snr_db": 25.472,
+   "lsd_db": 11.39,
+   "lag_ms": 0.0,
+   "mp3_kb": 43.728,
+   "ref_kb": 83.514,
+   "compression_x": 1.9
+  }
+ }
+}

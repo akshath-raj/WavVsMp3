@@ -1,0 +1,18 @@
+# Task prompts. The emotion task has three prompt variants for the
+# prompt-sensitivity arm; emotion_v1 is the canonical one used on the full grid.
+# emotion_v2 and emotion_v3 are run only on {ref, mp4_aac64} (see runner.py).
+
+emotion:
+  labels: [angry, disgusted, fearful, happy, neutral, sad]
+  canonical_prompt: emotion_v1
+  # Which transforms the non-canonical prompt variants run on.
+  sensitivity_transforms: [ref, mp4_aac64]
+  prompts:
+    emotion_v1: "Listen to this audio. The speaker's emotion is one of: angry, disgusted, fearful, happy, neutral, sad. Respond with exactly one word from that list and nothing else."
+    emotion_v2: "What emotion is the speaker expressing? Choose one: angry, disgusted, fearful, happy, neutral, sad. Answer with only that single word."
+    emotion_v3: "Classify the speaker's emotional state as one of these six options — angry, disgusted, fearful, happy, neutral, sad — and reply with the one word that fits best, nothing more."
+
+transcribe:
+  canonical_prompt: transcribe_v1
+  prompts:
+    transcribe_v1: "Transcribe this audio verbatim. Output only the transcription."

@@ -1,0 +1,81 @@
+{
+ "accuracy": 0.08333333333333333,
+ "n": 12,
+ "rows": [
+  {
+   "item": "1005_MTI_ANG_XX",
+   "gold": "angry",
+   "pred": "neutral",
+   "correct": false
+  },
+  {
+   "item": "1007_WSI_NEU_XX",
+   "gold": "neutral",
+   "pred": "neutral",
+   "correct": true
+  },
+  {
+   "item": "1008_TAI_DIS_XX",
+   "gold": "disgusted",
+   "pred": "neutral",
+   "correct": false
+  },
+  {
+   "item": "1009_IEO_ANG_MD",
+   "gold": "angry",
+   "pred": "neutral",
+   "correct": false
+  },
+  {
+   "item": "1009_TIE_HAP_XX",
+   "gold": "happy",
+   "pred": "neutral",
+   "correct": false
+  },
+  {
+   "item": "1012_IEO_DIS_HI",
+   "gold": "disgusted",
+   "pred": "neutral",
+   "correct": false
+  },
+  {
+   "item": "1012_IWL_SAD_XX",
+   "gold": "sad",
+   "pred": "neutral",
+   "correct": false
+  },
+  {
+   "item": "1014_TSI_HAP_XX",
+   "gold": "happy",
+   "pred": "neutral",
+   "correct": false
+  },
+  {
+   "item": "1015_DFA_SAD_XX",
+   "gold": "sad",
+   "pred": "neutral",
+   "correct": false
+  },
+  {
+   "item": "1019_IEO_SAD_MD",
+   "gold": "sad",
+   "pred": "neutral",
+   "correct": false
+  },
+  {
+   "item": "1021_TSI_DIS_XX",
+   "gold": "disgusted",
+   "pred": "neutral",
+   "correct": false
+  },
+  {
+   "item": "1022_ITH_ANG_XX",
+   "gold": "angry",
+   "pred": "neutral",
+   "correct": false
+  }
+ ],
+ "distribution": {
+  "neutral": 12
+ }
+}

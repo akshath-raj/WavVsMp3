@@ -1,0 +1,43 @@
+|--- prosody_intensity_std <= 8.37
+|   |--- prosody_intensity_min <= 59.07
+|   |   |--- spectral_centroid_median <= 254.82
+|   |   |   |--- spectral_slope_mean <= -0.00
+|   |   |   |   |--- class: 5
+|   |   |   |--- spectral_slope_mean >  -0.00
+|   |   |   |   |--- class: 2
+|   |   |--- spectral_centroid_median >  254.82
+|   |   |   |--- prosody_f0_median <= 224.72
+|   |   |   |   |--- class: 4
+|   |   |   |--- prosody_f0_median >  224.72
+|   |   |   |   |--- class: 3
+|   |--- prosody_intensity_min >  59.07
+|   |   |--- spectral_rolloff85_iqr <= 308.59
+|   |   |   |--- mfcc_d1_00_std <= 4.74
+|   |   |   |   |--- class: 5
+|   |   |   |--- mfcc_d1_00_std >  4.74
+|   |   |   |   |--- class: 5
+|   |   |--- spectral_rolloff85_iqr >  308.59
+|   |   |   |--- spectral_flux_std <= 3.60
+|   |   |   |   |--- class: 5
+|   |   |   |--- spectral_flux_std >  3.60
+|   |   |   |   |--- class: 1
+|--- prosody_intensity_std >  8.37
+|   |--- spectral_centroid_iqr <= 360.49
+|   |   |--- spectral_band_500_1000_mean <= 0.11
+|   |   |   |--- class: 2
+|   |   |--- spectral_band_500_1000_mean >  0.11
+|   |   |   |--- spectral_flux_min <= 0.20
+|   |   |   |   |--- class: 0
+|   |   |   |--- spectral_flux_min >  0.20
+|   |   |   |   |--- class: 3
+|   |--- spectral_centroid_iqr >  360.49
+|   |   |--- mfcc_d1_00_std <= 6.44
+|   |   |   |--- prosody_intensity_min <= 43.63
+|   |   |   |   |--- class: 0
+|   |   |   |--- prosody_intensity_min >  43.63
+|   |   |   |   |--- class: 3
+|   |   |--- mfcc_d1_00_std >  6.44
+|   |   |   |--- spectral_centroid_mean <= 499.86
+|   |   |   |   |--- class: 0
+|   |   |   |--- spectral_centroid_mean >  499.86
+|   |   |   |   |--- class: 0

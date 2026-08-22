@@ -1,0 +1,564 @@
+{
+  "source_table": "/Users/akshathr/Clones/WavVsMp4/xai_ser/data/features/features_20260818_045621.parquet",
+  "figures": {
+    "corpus_overview": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/eda/01_corpus_overview.png",
+    "speaker_class_matrix": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/eda/02_speaker_class_matrix.png",
+    "human_ceiling": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/eda/03_human_ceiling.png",
+    "table_health": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/eda/04_table_health.png",
+    "separability": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/eda/05_separability.png",
+    "top_feature_distributions": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/eda/06_top_feature_distributions.png",
+    "correlation": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/eda/07_correlation.png",
+    "pca": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/eda/08_pca.png",
+    "tsne": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/eda/09_tsne.png",
+    "variance_decomposition": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/eda/10_variance_decomposition.png",
+    "format_drift": "/Users/akshathr/Clones/WavVsMp4/xai_ser/outputs/eda/11_format_drift.png"
+  },
+  "corpus": {
+    "rows_total": 29768,
+    "clips": 7442,
+    "speakers": 91,
+    "conditions": [
+      "mp3_64",
+      "mp4_aac64",
+      "ref",
+      "roundtrip_wav"
+    ],
+    "sentences": 12,
+    "class_counts": {
+      "ANG": 1271,
+      "DIS": 1271,
+      "FEA": 1271,
+      "HAP": 1271,
+      "SAD": 1271,
+      "NEU": 1087
+    },
+    "intensity_counts": {
+      "XX": 6077,
+      "HI": 455,
+      "LO": 455,
+      "MD": 455
+    },
+    "sex_counts_speakers": {
+      "Male": 48,
+      "Female": 43
+    },
+    "race_counts_speakers": {
+      "Caucasian": 61,
+      "African American": 22,
+      "Asian": 7,
+      "Unknown": 1
+    },
+    "age_speakers": {
+      "min": 20.0,
+      "max": 74.0,
+      "mean": 36.42857142857143
+    },
+    "duration_s": {
+      "mean": 2.5428836670249932,
+      "std": 0.5059785910764006,
+      "min": 1.2679375,
+      "max": 5.005,
+      "total_hours": 5.256705625
+    },
+    "clips_per_speaker": {
+      "min": 76.0,
+      "max": 82.0,
+      "mean": 81.78021978021978
+    }
+  },
+  "human": {
+    "voice_only_accuracy": 0.45525396398817525,
+    "mean_agreement": 0.6366989907133686,
+    "median_n_ratings": 9.0,
+    "tied_votes": 644,
+    "per_class_recall": {
+      "ANG": 0.6687647521636507,
+      "DIS": 0.3170731707317073,
+      "FEA": 0.37293469708890636,
+      "HAP": 0.3162863886703383,
+      "NEU": 0.9659613615455381,
+      "SAD": 0.16443745082612116
+    }
+  },
+  "health": {
+    "extraction_failures": 4,
+    "failure_examples": [
+      {
+        "item_id": "1076_MTI_SAD_XX",
+        "condition": "ref",
+        "extract_error": "silent or too short"
+      },
+      {
+        "item_id": "1076_MTI_SAD_XX",
+        "condition": "mp3_64",
+        "extract_error": "silent or too short"
+      },
+      {
+        "item_id": "1076_MTI_SAD_XX",
+        "condition": "mp4_aac64",
+        "extract_error": "silent or too short"
+      },
+      {
+        "item_id": "1076_MTI_SAD_XX",
+        "condition": "roundtrip_wav",
+        "extract_error": "silent or too short"
+      }
+    ],
+    "features": 436,
+    "features_with_any_nan": 5,
+    "features_nan_over_1pct": {
+      "prosody_shimmer_apq11": 0.113
+    },
+    "constant_features": [],
+    "top_outlier_features": {
+      "spectral_flatness_iqr": 0.0089,
+      "mfcc_00_kurt": 0.0079,
+      "spectral_rolloff95_iqr": 0.007,
+      "spectral_rolloff85_iqr": 0.007,
+      "prosody_mean_voiced_seg_s": 0.0068,
+      "spectral_band_4000_5000_mean": 0.0065,
+      "mfcc_17_kurt": 0.0064,
+      "spectral_rolloff85_median": 0.0063,
+      "mfcc_15_std": 0.0063,
+      "mfcc_17_iqr": 0.0062
+    },
+    "family_sizes": {
+      "mfcc": 240,
+      "spectral": 114,
+      "prosody": 56,
+      "chroma": 24,
+      "other": 2
+    }
+  },
+  "separability": {
+    "top20_anova": [
+      {
+        "feature": "mfcc_d1_00_std",
+        "family": "mfcc",
+        "anova_F": 1193.6857,
+        "mutual_info": 0.2907
+      },
+      {
+        "feature": "mfcc_00_std",
+        "family": "mfcc",
+        "anova_F": 1158.9227,
+        "mutual_info": 0.3163
+      },
+      {
+        "feature": "prosody_intensity_std",
+        "family": "prosody",
+        "anova_F": 1078.1653,
+        "mutual_info": 0.3261
+      },
+      {
+        "feature": "mfcc_00_iqr",
+        "family": "mfcc",
+        "anova_F": 1044.0267,
+        "mutual_info": 0.2977
+      },
+      {
+        "feature": "prosody_intensity_iqr",
+        "family": "prosody",
+        "anova_F": 984.6528,
+        "mutual_info": 0.2959
+      },
+      {
+        "feature": "mfcc_d2_00_std",
+        "family": "mfcc",
+        "anova_F": 888.5961,
+        "mutual_info": 0.249
+      },
+      {
+        "feature": "spectral_band_0_500_std",
+        "family": "spectral",
+        "anova_F": 865.3143,
+        "mutual_info": 0.2495
+      },
+      {
+        "feature": "spectral_band_0_500_mean",
+        "family": "spectral",
+        "anova_F": 833.8628,
+        "mutual_info": 0.2477
+      },
+      {
+        "feature": "prosody_intensity_mean",
+        "family": "prosody",
+        "anova_F": 815.2791,
+        "mutual_info": 0.281
+      },
+      {
+        "feature": "mfcc_02_std",
+        "family": "mfcc",
+        "anova_F": 788.4163,
+        "mutual_info": 0.237
+      },
+      {
+        "feature": "prosody_intensity_min",
+        "family": "prosody",
+        "anova_F": 775.89,
+        "mutual_info": 0.3246
+      },
+      {
+        "feature": "spectral_flux_min",
+        "family": "spectral",
+        "anova_F": 749.1805,
+        "mutual_info": 0.3
+      },
+      {
+        "feature": "mfcc_02_iqr",
+        "family": "mfcc",
+        "anova_F": 717.4442,
+        "mutual_info": 0.2166
+      },
+      {
+        "feature": "mfcc_00_mean",
+        "family": "mfcc",
+        "anova_F": 690.2518,
+        "mutual_info": 0.244
+      },
+      {
+        "feature": "spectral_flux_median",
+        "family": "spectral",
+        "anova_F": 638.3566,
+        "mutual_info": 0.2081
+      },
+      {
+        "feature": "mfcc_02_min",
+        "family": "mfcc",
+        "anova_F": 612.9514,
+        "mutual_info": 0.1844
+      },
+      {
+        "feature": "spectral_rms_mean",
+        "family": "spectral",
+        "anova_F": 605.8688,
+        "mutual_info": 0.1861
+      },
+      {
+        "feature": "spectral_centroid_median",
+        "family": "spectral",
+        "anova_F": 595.6667,
+        "mutual_info": 0.2043
+      },
+      {
+        "feature": "mfcc_00_min",
+        "family": "mfcc",
+        "anova_F": 573.0942,
+        "mutual_info": 0.1935
+      },
+      {
+        "feature": "spectral_slope_mean",
+        "family": "spectral",
+        "anova_F": 548.1385,
+        "mutual_info": 0.1787
+      }
+    ],
+    "family_mean_mi": {
+      "chroma": 0.0982,
+      "mfcc": 0.0605,
+      "other": 0.0283,
+      "prosody": 0.0865,
+      "spectral": 0.082
+    },
+    "family_mean_F": {
+      "chroma": 276.08,
+      "mfcc": 154.62,
+      "other": 93.09,
+      "prosody": 228.49,
+      "spectral": 195.63
+    },
+    "n_significant_bonferroni": 397
+  },
+  "correlation": {
+    "pairs_above_0.95": 49,
+    "pairs_above_0.99": 7,
+    "most_correlated_pairs": [
+      {
+        "a": "prosody_voiced_fraction",
+        "b": "prosody_pause_fraction",
+        "r": 1.0
+      },
+      {
+        "a": "prosody_jitter_rap",
+        "b": "prosody_jitter_ddp",
+        "r": 1.0
+      },
+      {
+        "a": "prosody_shimmer_apq3",
+        "b": "prosody_shimmer_dda",
+        "r": 0.9999999999999996
+      },
+      {
+        "a": "spectral_band_6000_8000_mean",
+        "b": "spectral_hf_ratio_6000_mean",
+        "r": 0.9999977185355214
+      },
+      {
+        "a": "spectral_band_6000_8000_std",
+        "b": "spectral_hf_ratio_6000_std",
+        "r": 0.999996714712607
+      },
+      {
+        "a": "spectral_centroid_std",
+        "b": "spectral_zcr_std",
+        "r": 0.9935255802653259
+      },
+      {
+        "a": "spectral_centroid_mean",
+        "b": "spectral_zcr_mean",
+        "r": 0.9912253991830968
+      },
+      {
+        "a": "spectral_rolloff85_mean",
+        "b": "spectral_zcr_mean",
+        "r": 0.9855779086660449
+      },
+      {
+        "a": "spectral_zcr_std",
+        "b": "spectral_hf_ratio_4000_std",
+        "r": 0.9836729896334908
+      },
+      {
+        "a": "prosody_hnr_mean",
+        "b": "prosody_hnr_median",
+        "r": 0.9826803803862845
+      }
+    ],
+    "mean_abs_offdiag_r": 0.18001084729396463
+  },
+  "structure": {
+    "pcs_for_95pct_variance": 51,
+    "pc1_variance": 0.21704835618592844,
+    "pc2_variance": 0.08206326965047804,
+    "tsne_sample": 2500
+  },
+  "variance": {
+    "mean_speaker_eta2": 0.1781487255187701,
+    "mean_emotion_eta2": 0.09828565117055577,
+    "features_speaker_dominant": 340,
+    "by_family": {
+      "speaker_eta2": {
+        "chroma": 0.2538,
+        "mfcc": 0.1653,
+        "other": 0.1572,
+        "prosody": 0.2324,
+        "spectral": 0.1631
+      },
+      "emotion_eta2": {
+        "chroma": 0.1528,
+        "mfcc": 0.0845,
+        "other": 0.0586,
+        "prosody": 0.1202,
+        "spectral": 0.1059
+      }
+    }
+  },
+  "format_drift": {
+    "n_items_paired": 7441,
+    "per_condition": {
+      "mp3_64": {
+        "median_abs_smd": 0.019504225472210233,
+        "features_smd_over_0.2": 63,
+        "features_smd_over_0.5": 28,
+        "features_significant": 361,
+        "top_shifted": [
+          {
+            "feature": "spectral_contrast_6_mean",
+            "smd": 37.6775,
+            "rel_change": 1.8419
+          },
+          {
+            "feature": "spectral_contrast_6_std",
+            "smd": 1.9992,
+            "rel_change": 0.2936
+          },
+          {
+            "feature": "spectral_flatness_median",
+            "smd": -1.545,
+            "rel_change": -0.6307
+          },
+          {
+            "feature": "spectral_flatness_mean",
+            "smd": -1.0223,
+            "rel_change": -0.6491
+          },
+          {
+            "feature": "spectral_flatness_min",
+            "smd": -0.9329,
+            "rel_change": -0.6361
+          },
+          {
+            "feature": "spectral_flatness_std",
+            "smd": -0.9181,
+            "rel_change": -0.634
+          },
+          {
+            "feature": "spectral_flatness_max",
+            "smd": -0.8454,
+            "rel_change": -0.5847
+          },
+          {
+            "feature": "mfcc_18_median",
+            "smd": -0.6541,
+            "rel_change": -0.3202
+          },
+          {
+            "feature": "mfcc_08_median",
+            "smd": -0.6408,
+            "rel_change": -1.6378
+          },
+          {
+            "feature": "mfcc_19_median",
+            "smd": 0.6356,
+            "rel_change": 1.1128
+          }
+        ],
+        "by_family_median_abs_smd": {
+          "chroma": 0.0048,
+          "mfcc": 0.0257,
+          "other": 0.1075,
+          "prosody": 0.0036,
+          "spectral": 0.0306
+        }
+      },
+      "mp4_aac64": {
+        "median_abs_smd": 0.024726786989600555,
+        "features_smd_over_0.2": 51,
+        "features_smd_over_0.5": 27,
+        "features_significant": 370,
+        "top_shifted": [
+          {
+            "feature": "mfcc_d1_01_mean",
+            "smd": -4.1557,
+            "rel_change": -79.274
+          },
+          {
+            "feature": "mfcc_d1_00_mean",
+            "smd": -3.472,
+            "rel_change": -18.7619
+          },
+          {
+            "feature": "mfcc_d1_03_mean",
+            "smd": -2.3779,
+            "rel_change": -15.6522
+          },
+          {
+            "feature": "mfcc_d1_02_mean",
+            "smd": -1.8595,
+            "rel_change": -7.0691
+          },
+          {
+            "feature": "mfcc_00_kurt",
+            "smd": 1.8432,
+            "rel_change": 4.2899
+          },
+          {
+            "feature": "mfcc_00_skew",
+            "smd": -1.7084,
+            "rel_change": -1.9155
+          },
+          {
+            "feature": "mfcc_00_min",
+            "smd": -1.6805,
+            "rel_change": -0.2709
+          },
+          {
+            "feature": "mfcc_d2_01_mean",
+            "smd": -1.5464,
+            "rel_change": -6.1327
+          },
+          {
+            "feature": "spectral_flatness_max",
+            "smd": 1.5304,
+            "rel_change": 1.0585
+          },
+          {
+            "feature": "mfcc_d1_05_mean",
+            "smd": -1.1934,
+            "rel_change": -62.1563
+          }
+        ],
+        "by_family_median_abs_smd": {
+          "chroma": 0.0153,
+          "mfcc": 0.0237,
+          "other": 0.0425,
+          "prosody": 0.0077,
+          "spectral": 0.0488
+        }
+      },
+      "roundtrip_wav": {
+        "median_abs_smd": 0.02578856091483566,
+        "features_smd_over_0.2": 52,
+        "features_smd_over_0.5": 27,
+        "features_significant": 371,
+        "top_shifted": [
+          {
+            "feature": "mfcc_d1_01_mean",
+            "smd": -4.1555,
+            "rel_change": -79.2688
+          },
+          {
+            "feature": "mfcc_d1_00_mean",
+            "smd": -3.4719,
+            "rel_change": -18.7611
+          },
+          {
+            "feature": "mfcc_d1_03_mean",
+            "smd": -2.3778,
+            "rel_change": -15.6515
+          },
+          {
+            "feature": "spectral_flatness_max",
+            "smd": 1.9076,
+            "rel_change": 1.3194
+          },
+          {
+            "feature": "mfcc_d1_02_mean",
+            "smd": -1.8595,
+            "rel_change": -7.0693
+          },
+          {
+            "feature": "mfcc_00_kurt",
+            "smd": 1.843,
+            "rel_change": 4.2894
+          },
+          {
+            "feature": "mfcc_00_skew",
+            "smd": -1.7082,
+            "rel_change": -1.9153
+          },
+          {
+            "feature": "mfcc_00_min",
+            "smd": -1.6804,
+            "rel_change": -0.2709
+          },
+          {
+            "feature": "mfcc_d2_01_mean",
+            "smd": -1.5461,
+            "rel_change": -6.1317
+          },
+          {
+            "feature": "spectral_flatness_kurt",
+            "smd": 1.3177,
+            "rel_change": 1.1245
+          }
+        ],
+        "by_family_median_abs_smd": {
+          "chroma": 0.0171,
+          "mfcc": 0.0237,
+          "other": 0.0425,
+          "prosody": 0.0074,
+          "spectral": 0.0511
+        }
+      }
+    }
+  },
+  "decode_path": {
+    "n_items": 7441,
+    "bitwise_identical_pcm_fraction": 0.0,
+    "median_abs_smd": 7.579933556657784e-05,
+    "max_abs_smd": 0.23755256675689723,
+    "feature_at_max": "spectral_entropy_max",
+    "features_smd_over_0.05": 12
+  }
+}

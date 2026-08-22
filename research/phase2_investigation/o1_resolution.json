@@ -1,0 +1,18 @@
+{
+ "issue": "chosen token 'neutral' at logprob -6.25 while '<|end|>' showed -0.00 in same position's top_logprobs under temperature=0",
+ "test1_forced_answer": {
+  "prompt": "Reply with exactly one word: banana",
+  "content": "banana",
+  "chosen_logprob": -0.0338,
+  "argmax_of_list": "banana",
+  "conclusion": "top_logprobs IS correctly aligned to the emitted position"
+ },
+ "test2_special_tokens": {
+  "end_token_occurrences": 15,
+  "end_token_bytes": null,
+  "text_token_bytes": "non-null byte arrays",
+  "conclusion": "the 15 '<|end|>' entries are DISTINCT reserved/special token ids that all render to the same placeholder string; bytes=None marks them non-emittable"
+ },
+ "resolution": "No API defect. Raw distribution mass sits largely on non-emittable special tokens. Among EMITTABLE text tokens the argmax is 'neutral', which is what greedy decoding produced. Required analysis rule: filter to tokens with non-null `bytes`, then renormalize over the label set.",
+ "impact": "Absolute probabilities are deflated by special-token mass; renormalizing over {gold, neutral} removes this. The graded readout is valid."
+}

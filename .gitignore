@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# Secrets
+.env
+
+# OS
+.DS_Store
+
+# ---------------------------------------------------------------- Arm A (exp/)
+# Bulk audio and raw corpus are large and regenerable from the build scripts;
+# manifests, result parquets and the API response cache are kept, because the
+# arm re-executes from cache without further inference calls.
+data/raw/
+data/stimuli/
+data/responses/
+
+# ---------------------------------------------------------- Arm B (xai_ser/)
+# Fitted model artefacts. Regenerable with `python -m xai_ser.models` /
+# `xai_ser.ann`; several exceed GitHub's 100 MB per-file hard limit
+# (extra_trees ~216 MB, random_forest ~102 MB). The metrics, leaderboards and
+# attribution summaries these produce ARE tracked — those are what the papers
+# read.
+*.joblib
+*.pt
+*.pth
+xai_ser/outputs/models/**/fitted/
+
+# The 436-feature table (~243 MB, over GitHub's hard limit). Regenerable with
+# `python -m xai_ser.extract`; its schema JSON is tracked so the columns and
+# the extraction settings stay on record.
+xai_ser/data/features/*.csv
+xai_ser/data/features/*.parquet
+
+# Corpus audio and rendered stimuli.
+xai_ser/data/raw/
+xai_ser/data/stimuli/
+xai_ser/data/cremad_repo/
+xai_ser/data/filelist*.txt
+
+# ------------------------------------------------------------------- LaTeX
+*.aux
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.toc
+*.out
+*.log
+!**/reports/*.log
