@@ -1,0 +1,90 @@
+{
+ "created_utc": "20260823_095359",
+ "n_draws": 20,
+ "actor_fraction": 0.85,
+ "n_actors_per_draw": 51,
+ "top_k": 25,
+ "design": "within-draw: floor = ref vs ref (different tie-breaking); effect = ref vs condition, same actors, same items",
+ "tests": {
+  "mp3_64_rho": {
+   "floor_mean": 0.9575648806595156,
+   "effect_mean": -0.06807488643966217,
+   "mean_drop": 1.0256397670991781,
+   "sd_drop": 0.0726191956089548,
+   "wilcoxon_W": 0.0,
+   "p": 1.9073486328125e-06,
+   "n_draws": 20,
+   "cohen_dz": 14.123535223690975
+  },
+  "mp3_64_overlap": {
+   "floor_mean": 24.15,
+   "effect_mean": 12.55,
+   "mean_drop": 11.6,
+   "sd_drop": 2.3033156878497434,
+   "wilcoxon_W": 0.0,
+   "p": 8.402303711316717e-05,
+   "n_draws": 20,
+   "cohen_dz": 5.036218031766701
+  },
+  "mp4_aac64_rho": {
+   "floor_mean": 0.9575648806595156,
+   "effect_mean": -0.137256128417607,
+   "mean_drop": 1.0948210090771227,
+   "sd_drop": 0.04803335429963889,
+   "wilcoxon_W": 0.0,
+   "p": 1.9073486328125e-06,
+   "n_draws": 20,
+   "cohen_dz": 22.792932641086725
+  },
+  "mp4_aac64_overlap": {
+   "floor_mean": 24.15,
+   "effect_mean": 10.65,
+   "mean_drop": 13.5,
+   "sd_drop": 1.538967528127731,
+   "wilcoxon_W": 0.0,
+   "p": 8.342190190118424e-05,
+   "n_draws": 20,
+   "cohen_dz": 8.772114910328067
+  },
+  "roundtrip_wav_rho": {
+   "floor_mean": 0.9575648806595156,
+   "effect_mean": -0.1263142482373752,
+   "mean_drop": 1.0838791288968908,
+   "sd_drop": 0.06349473693851382,
+   "wilcoxon_W": 0.0,
+   "p": 1.9073486328125e-06,
+   "n_draws": 20,
+   "cohen_dz": 17.070377501468872
+  },
+  "roundtrip_wav_overlap": {
+   "floor_mean": 24.15,
+   "effect_mean": 9.95,
+   "mean_drop": 14.2,
+   "sd_drop": 1.5423836644690752,
+   "wilcoxon_W": 0.0,
+   "p": 7.918992174589852e-05,
+   "n_draws": 20,
+   "cohen_dz": 9.20652904145479
+  },
+  "container_rho": {
+   "floor_mean": 0.9575648806595156,
+   "effect_mean": 0.19553919234892317,
+   "mean_drop": 0.7620256883105924,
+   "sd_drop": 0.1114340159115903,
+   "wilcoxon_W": 0.0,
+   "p": 1.9073486328125e-06,
+   "n_draws": 20,
+   "cohen_dz": 6.838357947318075
+  },
+  "container_overlap": {
+   "floor_mean": 24.15,
+   "effect_mean": 15.8,
+   "mean_drop": 8.35,
+   "sd_drop": 1.5985190514644287,
+   "wilcoxon_W": 0.0,
+   "p": 8.046523097853163e-05,
+   "n_draws": 20,
+   "cohen_dz": 5.223584912766871
+  }
+ }
+}

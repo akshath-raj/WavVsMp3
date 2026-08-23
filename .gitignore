@@ -12,20 +12,20 @@ venv/
 # OS
 .DS_Store
 
-# ---------------------------------------------------------------- Arm A (exp/)
+# ------------------------------------------------- parked LLM arm (future_work/)
 # Bulk audio and raw corpus are large and regenerable from the build scripts;
 # manifests, result parquets and the API response cache are kept, because the
 # arm re-executes from cache without further inference calls.
-data/raw/
-data/stimuli/
-data/responses/
+future_work/data/raw/
+future_work/data/stimuli/
+future_work/data/responses/
 
-# ---------------------------------------------------------- Arm B (xai_ser/)
+# ------------------------------------------------- interpretable arm (xai_ser/)
 # Fitted model artefacts. Regenerable with `python -m xai_ser.models` /
 # `xai_ser.ann`; several exceed GitHub's 100 MB per-file hard limit
 # (extra_trees ~216 MB, random_forest ~102 MB). The metrics, leaderboards and
-# attribution summaries these produce ARE tracked — those are what the papers
-# read.
+# attribution summaries these produce ARE tracked — those are what the paper
+# reads.
 *.joblib
 *.pt
 *.pth

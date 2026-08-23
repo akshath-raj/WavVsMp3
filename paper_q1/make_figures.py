@@ -1,13 +1,9 @@
-"""Publication figures for the combined manuscript.
+"""Publication figures.
 
-Every number plotted here is read from a committed artefact of one of the two
-study arms:
-
-  Arm A (LALM)   exp/out/*.json, exp/out/*.parquet
-  Arm B (feature) xai_ser/outputs/{eda,models,xai,robustness}/...
-
-Nothing is hard-coded except axis labels and the band/condition names that the
-source files themselves use.
+Every number plotted here is read from a committed artefact under
+``xai_ser/outputs/{eda,models,xai,robustness,per_condition}/``. Nothing is
+hard-coded except axis labels and the condition names the source files
+themselves use.
 
 Output: PDF (vector) at IEEE column widths, plus a PNG mirror for quick review.
 """
@@ -26,7 +22,6 @@ from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 
 ROOT = Path(__file__).resolve().parents[1]
-EXP = ROOT / "exp" / "out"
 XS = ROOT / "xai_ser" / "outputs"
 FIGS = Path(__file__).resolve().parent / "figs"
 FIGS.mkdir(parents=True, exist_ok=True)
@@ -37,6 +32,19 @@ XAI_DIR = XS / "xai" / "20260818_050808"
 DEEP_DIR = XS / "xai" / "deep" / "20260818_050247"
 ROB_DIR = XS / "robustness" / "20260818_051057"
 EDA_DIR = XS / "eda"
+PC_DIR = XS / "per_condition"
+
+
+def _newest(parent: Path, glob: str) -> Path:
+    hits = sorted(parent.glob(glob))
+    if not hits:
+        raise FileNotFoundError(f"no {glob} under {parent}")
+    return hits[-1]
+
+
+CONDS = ("ref", "mp3_64", "mp4_aac64", "roundtrip_wav")
+COND_LABEL = {"ref": "uncompressed\nWAV", "mp3_64": "MP3\n64k",
+              "mp4_aac64": "MP4/AAC\n64k", "roundtrip_wav": "roundtrip\nWAV"}
 
 # ---------------------------------------------------------------- style
 COL = 3.45          # IEEE single-column width, inches
@@ -54,12 +62,15 @@ PURPLE = "#CC79A7"
 GREY = "#7F7F7F"
 
 FAMILY_COLOUR = {
-    "tree": GREEN,          # threshold-based
-    "kernel": VERM,         # magnitude-based
+    "tree": GREEN,          # axis-aligned partitioning
+    "kernel": VERM,         # magnitude-sensitive
     "linear": BLUE,
     "neural": PURPLE,
     "other": GREY,
 }
+
+COND_COLOUR = {"ref": BLACK, "mp3_64": VERM, "mp4_aac64": BLUE,
+               "roundtrip_wav": GREY}
 
 mpl.rcParams.update({
     "font.family": "serif",
@@ -103,12 +114,6 @@ def panel_tag(ax, text: str, dx: float = -0.16, dy: float = 1.06) -> None:
 # ================================================================= load
 def load_all():
     d = {}
-    d["band"] = json.loads((EXP / "band_damage.json").read_text())
-    d["fid"] = json.loads((EXP / "fidelity_summary.json").read_text())
-    d["arousal"] = json.loads((EXP / "arousal_results.json").read_text())
-    d["auc"] = json.loads((EXP / "arousal_auc.json").read_text())
-    d["grid"] = pd.read_parquet(EXP / "arousal_grid.parquet")
-
     d["drift"] = pd.read_csv(EDA_DIR / "format_drift.csv")
     d["cross"] = pd.read_csv(MODELS_DIR / "cross_format.csv")
     d["xai"] = json.loads((XAI_DIR / "xai_summary.json").read_text())
@@ -119,39 +124,55 @@ def load_all():
         for c in ("ref", "mp3_64", "mp4_aac64", "roundtrip_wav")
     }
     d["shift_mp3"] = pd.read_csv(ROB_DIR / "feature_shift_mp3_64.csv")
+
+    # matched-format training + its null calibration
+    pc = _newest(PC_DIR, "2*")
+    d["pc"] = json.loads((pc / "summary.json").read_text())
+    d["pc_lb"] = pd.read_csv(pc / "leaderboard_matched.csv")
+    d["null"] = json.loads(
+        (_newest(PC_DIR, "null_2*") / "null_calibration.json").read_text())
+    try:
+        pdir = _newest(PC_DIR, "paired_2*")
+        d["paired"] = json.loads((pdir / "paired_null.json").read_text())
+        d["paired"]["table"] = pd.read_csv(pdir / "paired_draws.csv")
+    except FileNotFoundError:
+        d["paired"] = None
     return d
 
 
 # ================================================================= Fig. 2
 def fig_signal(d):
-    """What the codec does to the signal, from both arms' instrumentation."""
+    """What the codec does to the signal, measured on the feature table."""
     fig, axes = plt.subplots(1, 3, figsize=(DCOL, 2.05))
 
-    # --- (a) Arm A: band-wise noise-to-signal ratio -----------------------
+    # --- (a) the most displaced descriptors, per codec ---------------------
     ax = axes[0]
-    nsr = d["band"]["nsr_db"]
-    bands = list(nsr["64"].keys())
-    labels = [b.replace("Hz", "").replace("–", "-") for b in bands]
-    x = np.arange(len(bands))
-    for br, c, m in (("32", VERM, "o"), ("64", ORANGE, "s"), ("128", BLUE, "^")):
-        ax.plot(x, [nsr[br][b] for b in bands], marker=m, ms=3.2, color=c,
-                label=f"{br} kbps")
-    ax.set_xticks(x)
-    ax.set_xticklabels(labels, rotation=45, ha="right", fontsize=5.8)
-    ax.set_ylabel("band NSR (dB)")
-    ax.set_xlabel("frequency band (Hz)")
-    ax.legend(frameon=False, loc="upper left", handlelength=1.3,
-              bbox_to_anchor=(-0.02, 1.04), labelspacing=0.3)
-    ax.grid(axis="y", alpha=0.25)
-    ax.set_ylim(-29, -2.0)
-    ax.axvspan(4.5, 5.5, color=YELLOW, alpha=0.30, zorder=0, lw=0)
-    ax.annotate("top band is\nprotected least", xy=(4.80, -14.6),
-                xytext=(2.35, -21.5), fontsize=5.9, ha="center", color=BLACK,
-                arrowprops=dict(arrowstyle="->", lw=0.5, color=BLACK))
-    panel_tag(ax, "(a)")
-    ax.set_title("Arm A: spectral damage", pad=3)
+    dr = d["drift"]
+    top_mp3 = dr[dr.condition == "mp3_64"].nlargest(6, "abs_smd")
+    top_aac = dr[dr.condition == "mp4_aac64"].nlargest(6, "abs_smd")
+    names, vals, cols_ = [], [], []
+    for _, r in top_mp3.iterrows():
+        names.append(r.feature); vals.append(r.abs_smd); cols_.append(VERM)
+    for _, r in top_aac.iterrows():
+        names.append(r.feature); vals.append(r.abs_smd); cols_.append(BLUE)
+    order = np.argsort(vals)
+    y = np.arange(len(order))
+    ax.barh(y, [vals[i] for i in order], color=[cols_[i] for i in order],
+            height=0.68, edgecolor=BLACK, lw=0.3)
+    ax.set_yticks(y)
+    ax.set_yticklabels([names[i] for i in order], fontsize=5.0,
+                       family="monospace")
+    ax.set_xscale("log")
+    ax.set_xlabel(r"$|$SMD$|$ vs. uncompressed (log)")
+    ax.set_xlim(0.4, 90)
+    handles = [Patch(color=VERM, label="MP3 64k"), Patch(color=BLUE, label="MP4/AAC 64k")]
+    ax.legend(handles=handles, frameon=False, loc="lower right", fontsize=5.9,
+              handlelength=1.0)
+    ax.grid(axis="x", alpha=0.25)
+    panel_tag(ax, "(a)", dx=-0.52)
+    ax.set_title("the six most displaced descriptors", pad=3)
 
-    # --- (b) Arm B: standardised feature shift ---------------------------
+    # --- (b) standardised feature shift, whole table ---------------------
     ax = axes[1]
     dr = d["drift"]
     conds = [("mp3_64", VERM, "MP3 64k"),
@@ -178,7 +199,7 @@ def fig_signal(d):
               bbox_to_anchor=(-0.02, 1.03))
     ax.grid(alpha=0.25)
     panel_tag(ax, "(b)")
-    ax.set_title("Arm B: feature shift", pad=3)
+    ax.set_title("displacement of the whole table", pad=3)
 
     # --- (c) duration / encoder padding ----------------------------------
     ax = axes[2]
@@ -200,139 +221,12 @@ def fig_signal(d):
                 xytext=(0.05, delta_ms[1] * 0.30), fontsize=5.9, ha="left",
                 arrowprops=dict(arrowstyle="->", lw=0.5))
     panel_tag(ax, "(c)")
-    ax.set_title("Arm B: frame alignment", pad=3)
+    ax.set_title("frame alignment", pad=3)
 
     fig.subplots_adjust(wspace=0.42)
     save(fig, "fig_signal")
 
 
-# ================================================================= Fig. 3
-def fig_armA(d):
-    """Sensitivity invariant, criterion displaced, attribution reordered."""
-    fig, axes = plt.subplots(1, 3, figsize=(DCOL, 2.15))
-    auc = d["auc"]["auc_by_condition"]
-
-    # --- (a) discriminability with bootstrap CI ---------------------------
-    ax = axes[0]
-    order = ["ref", "rt_mp3_32", "rt_mp3_64", "rt_mp3_128",
-             "mp3_32", "mp3_64", "mp3_128"]
-    nice = ["WAV\nref", "rt\n32k", "rt\n64k", "rt\n128k",
-            "MP3\n32k", "MP3\n64k", "MP3\n128k"]
-    y = np.arange(len(order))[::-1]
-    for i, c in enumerate(order):
-        a = auc[c]
-        col = BLACK if c == "ref" else (GREY if c.startswith("rt") else VERM)
-        ax.plot([a["lo"], a["hi"]], [y[i], y[i]], color=col, lw=1.3,
-                solid_capstyle="butt", alpha=0.75)
-        ax.plot(a["auc"], y[i], "o", ms=3.4, color=col)
-    ax.axvline(auc["ref"]["auc"], color=BLACK, lw=0.6, ls="--", zorder=0)
-    ax.axvline(0.5, color=GREY, lw=0.6, ls=":", zorder=0)
-    ax.text(0.508, -0.42, "chance", fontsize=5.9, ha="left", color=GREY)
-    ax.set_ylim(-0.85, len(order) - 0.35)
-    ax.set_yticks(y)
-    ax.set_yticklabels(nice, fontsize=5.8)
-    ax.set_xlabel("AUC (fixed-label posterior)")
-    ax.set_xlim(0.44, 0.94)
-    ax.grid(axis="x", alpha=0.25)
-    panel_tag(ax, "(a)", dx=-0.30)
-    ax.set_title("sensitivity: invariant", pad=3)
-
-    # --- (b) criterion shift: class-conditional translation ---------------
-    ax = axes[1]
-    for lab, key, col in (("high arousal", "meanP_high", VERM),
-                          ("low arousal", "meanP_low", BLUE)):
-        vals = [auc["ref"][key], auc["mp3_64"][key]]
-        ax.plot([0, 1], vals, "-o", color=col, ms=4, label=lab)
-        for xx, vv in zip((0, 1), vals):
-            ax.annotate(f"{vv:.3f}", (xx, vv), textcoords="offset points",
-                        xytext=(0, 6 if col == VERM else -11), ha="center",
-                        fontsize=6.0, color=col)
-    mp = [auc["ref"]["meanP"], auc["mp3_64"]["meanP"]]
-    ax.plot([0, 1], mp, "--s", color=BLACK, ms=3.2, label="marginal")
-    ax.set_xticks([0, 1])
-    ax.set_xticklabels(["WAV ref", "MP3 64k"])
-    ax.set_xlim(-0.32, 1.32)
-    ax.set_ylim(-0.02, 0.47)
-    ax.set_ylabel(r"mean $P(\mathrm{high})$")
-    ax.legend(frameon=False, loc="upper right", handlelength=1.4,
-              bbox_to_anchor=(1.04, 1.06))
-    ax.grid(axis="y", alpha=0.25)
-    ax.annotate("both class-conditional means\ntranslate together",
-                xy=(0.5, 0.105), fontsize=5.8, ha="center", style="italic")
-    panel_tag(ax, "(b)")
-    ax.set_title("criterion: displaced", pad=3)
-
-    # --- (c) attribution similarity against the measured null -------------
-    ax = axes[2]
-    ms = d["arousal"]["map_similarity"]
-    names = ["1-LSB dither\n(null floor)", "container", "codec", "total"]
-    keys = ["rho_dither (NULL)", "rho_container", "rho_codec", "rho_total"]
-    cols = [YELLOW, GREY, VERM, ORANGE]
-    vals = [ms[k] for k in keys]
-    bars = ax.bar(range(4), vals, color=cols, edgecolor=BLACK, lw=0.5, width=0.62)
-    ax.axhline(vals[0], color=BLACK, ls="--", lw=0.7, zorder=3)
-    for i, (b, v) in enumerate(zip(bars, vals)):
-        ax.text(b.get_x() + b.get_width() / 2, v + 0.018, f"{v:.3f}",
-                ha="center", fontsize=6.2)
-    ax.set_xticks(range(4))
-    ax.set_xticklabels(names, fontsize=5.8)
-    ax.set_ylabel(r"attribution rank $\rho$ vs. ref")
-    ax.set_ylim(0, 1.02)
-    ax.grid(axis="y", alpha=0.25)
-    # significance annotations, placed above the dashed floor line
-    nv = d["arousal"]["null_vs"]
-    for i, k in ((1, "container"), (2, "codec")):
-        p = nv[k]["p"]
-        txt = "n.s." if p > 0.05 else r"$p{=}4{\times}10^{-8}$"
-        ax.text(i, 0.755, txt, ha="center", fontsize=5.9,
-                color=BLACK if p > 0.05 else VERM)
-    ax.text(0.5, 0.985, "estimator null floor, not 1.0", transform=ax.transAxes,
-            fontsize=5.9, va="top", ha="center", style="italic")
-    panel_tag(ax, "(c)")
-    ax.set_title("attribution: reordered", pad=3)
-
-    fig.subplots_adjust(wspace=0.40)
-    save(fig, "fig_armA")
-
-
-# ================================================================= Fig. 4
-def fig_bands(d):
-    """Codec damage and model reliance occupy different bands (Arm A)."""
-    fig, ax = plt.subplots(figsize=(COL, 1.95))
-    band = d["band"]
-    bands = list(band["attribution_ref"].keys())
-    labels = [b.replace("Hz", "").replace("–", "-") for b in bands]
-    x = np.arange(len(bands))
-    attr = [band["attribution_ref"][b] for b in bands]
-    nsr64 = [band["nsr_db"]["64"][b] for b in bands]
-
-    ax.bar(x, attr, color=BLUE, width=0.6, label="model reliance (attribution)")
-    ax.set_ylabel("mean occlusion attribution", color=BLUE)
-    ax.tick_params(axis="y", colors=BLUE)
-    ax.set_ylim(0, 0.128)
-
-    ax2 = ax.twinx()
-    ax2.spines["right"].set_visible(True)
-    ax2.plot(x, nsr64, "-o", color=VERM, ms=3.4, label="codec damage (NSR, 64 kbps)")
-    ax2.set_ylabel("band NSR at 64 kbps (dB)", color=VERM)
-    ax2.tick_params(axis="y", colors=VERM)
-    ax2.set_ylim(-28.5, -9)
-
-    ax.set_xticks(x)
-    ax.set_xticklabels(labels, rotation=40, ha="right", fontsize=6.0)
-    ax.set_xlabel("frequency band (Hz)")
-    ax.axvspan(1.5, 3.5, color=SKY, alpha=0.16, zorder=0, lw=0)
-    ax.set_ylim(0, 0.140)
-    ax.text(2.5, 0.104, "model reliance\npeaks here", ha="center", fontsize=5.9,
-            color=BLUE)
-    ax.text(4.75, 0.0715, "codec damage\npeaks here", ha="right", fontsize=5.9,
-            color=VERM)
-    rho = band["spearman_attr_vs_damage_64k"]
-    ax.text(0.5, 0.99,
-            rf"attribution vs. damage: $\rho={rho['rho']:.2f}$, $p={rho['p']:.2f}$",
-            transform=ax.transAxes, fontsize=6.2, va="top", ha="center")
-    ax.grid(axis="y", alpha=0.22)
-    save(fig, "fig_bands")
 
 
 # ================================================================= Fig. 5
@@ -346,7 +240,10 @@ FAMILY_OF = {
     "mlp_sklearn": "neural", "ann_pytorch": "neural",
     "dummy_majority": "other", "dummy_stratified": "other",
 }
+FAMILY_OF["decision_tree_entropy"] = "tree"
+FAMILY_OF["decision_tree_readable"] = "tree"
 PRETTY = {
+    "decision_tree_entropy": "Decision tree", "decision_tree_readable": "Decision tree (d=3)",
     "lightgbm": "LightGBM", "xgboost": "XGBoost",
     "hist_gradient_boosting": "HistGB", "random_forest": "Random forest",
     "extra_trees": "Extra trees", "adaboost": "AdaBoost",
@@ -447,121 +344,6 @@ def _stability_rows(d):
     return pd.DataFrame(rows)
 
 
-def fig_synthesis(d):
-    """The cross-arm plane: accuracy displacement vs explanation displacement."""
-    fig, axes = plt.subplots(1, 2, figsize=(DCOL, 2.7))
-
-    # --- (a) the plane ----------------------------------------------------
-    ax = axes[0]
-    stab = _stability_rows(d)
-    piv = _crossformat_frame(d)
-
-    pts = []
-    for _, r in stab.iterrows():
-        if r.condition not in ("mp3_64", "mp4_aac64") or r.model not in piv.index:
-            continue
-        pts.append((abs(piv.loc[r.model, r.condition] - piv.loc[r.model, "ref"]),
-                    1.0 - r.rho, r.model, r.condition))
-    for dacc, disp, m, cond in pts:
-        fam = FAMILY_OF.get(m, "other")
-        ax.scatter(dacc, disp, s=27, marker="o" if cond == "mp3_64" else "^",
-                   color=FAMILY_COLOUR[fam], edgecolor=BLACK, linewidth=0.4,
-                   zorder=3)
-    for dacc, disp, m, cond in pts:                   # label sparingly
-        if cond != "mp3_64":
-            continue
-        if m == "ann_pytorch":
-            off = (-6, 8); ha = "right"
-        elif m == "logistic_regression":
-            off = (-6, 7); ha = "right"
-        else:
-            continue
-        ax.annotate(PRETTY.get(m, m), (dacc, disp), textcoords="offset points",
-                    xytext=off, ha=ha, fontsize=6.2,
-                    color=FAMILY_COLOUR[FAMILY_OF[m]])
-
-    # Arm A point: |Δ acc| = 0.68 − 0.58 (n.s.), attribution ρ = 0.491
-    dacc_A = abs(d["arousal"]["discriminability"]["mp3_64"]["acc"]
-                 - d["arousal"]["discriminability"]["ref"]["acc"])
-    ms = d["arousal"]["map_similarity"]
-    ax.scatter(dacc_A, 1 - ms["rho_codec"], s=80, marker="*", color=ORANGE,
-               edgecolor=BLACK, linewidth=0.5, zorder=4)
-    ax.annotate("LALM, occlusion\nattribution (Arm A)",
-                (dacc_A, 1 - ms["rho_codec"]), textcoords="offset points",
-                xytext=(9, -1), fontsize=6.2, color=BLACK, va="center")
-
-    floor = 1 - ms["rho_dither (NULL)"]
-    ax.axhspan(-0.02, floor, color=YELLOW, alpha=0.20, zorder=0, lw=0)
-    ax.axhline(floor, color=ORANGE, ls="--", lw=0.7, zorder=1)
-    ax.text(0.004, floor + 0.012, "Arm A null floor (1-LSB dither)",
-            fontsize=5.9, color=ORANGE, ha="left")
-    ax.text(0.398, 0.135, "Arm B attribution is computed exactly:\n"
-                          "its null floor is 0",
-            fontsize=5.9, color=GREY, ha="right", va="top")
-
-    ax.set_xlabel(r"$|\Delta|$ accuracy vs. uncompressed")
-    ax.set_ylabel(r"explanation displacement $\,1-\rho$")
-    ax.set_xlim(-0.015, 0.40)
-    ax.set_ylim(-0.02, 0.60)
-    ax.grid(alpha=0.22)
-    handles = [
-        Line2D([], [], ls="", marker="o", ms=4, color=GREY, mec=BLACK,
-               mew=0.4, label="MP3 64k"),
-        Line2D([], [], ls="", marker="^", ms=4, color=GREY, mec=BLACK,
-               mew=0.4, label="MP4/AAC 64k"),
-    ] + [Line2D([], [], ls="", marker="s", ms=4, color=FAMILY_COLOUR[k],
-                label=v) for k, v in (("tree", "tree"), ("linear", "linear"),
-                                      ("neural", "neural"))]
-    ax.legend(handles=handles, frameon=False, loc="upper left",
-              bbox_to_anchor=(-0.01, 1.005), handlelength=1.0, fontsize=6.0,
-              ncol=1, labelspacing=0.35)
-    panel_tag(ax, "(a)", dx=-0.155)
-    ax.set_title("accuracy change does not index explanation change", pad=3)
-
-    # --- (b) what enters and what leaves ---------------------------------
-    ax = axes[1]
-    ref = d["ig"]["ref"].set_index("feature")["importance"]
-    mp3 = d["ig"]["mp3_64"].set_index("feature")["importance"]
-    r_ref = ref.rank(ascending=False)
-    r_mp3 = mp3.rank(ascending=False)
-    top_ref = set(r_ref.nsmallest(25).index)
-    top_mp3 = set(r_mp3.nsmallest(25).index)
-    left = sorted(top_ref - top_mp3, key=lambda f: r_ref[f])
-    entered = sorted(top_mp3 - top_ref, key=lambda f: r_mp3[f])
-
-    def kind(f):
-        if f.startswith("spectral_contrast") or f.startswith("spectral_flatness"):
-            return VERM                      # codec fingerprint
-        if f.startswith("prosody"):
-            return GREEN                     # voice
-        return GREY
-
-    n = max(len(left), len(entered))
-    ax.axvline(0.5, color=BLACK, lw=0.6, ymin=0.03, ymax=0.90)
-    for i, f in enumerate(left):
-        ax.text(0.475, n - i, f, ha="right", va="center", fontsize=5.5,
-                color=kind(f), family="monospace")
-    for i, f in enumerate(entered):
-        ax.text(0.525, n - i, f, ha="left", va="center", fontsize=5.5,
-                color=kind(f), family="monospace")
-    ax.text(0.475, n + 1.5, "left the top 25", ha="right", fontsize=6.8,
-            fontweight="bold")
-    ax.text(0.525, n + 1.5, "entered the top 25", ha="left", fontsize=6.8,
-            fontweight="bold")
-    ax.set_xlim(0, 1)
-    ax.set_ylim(-1.9, n + 2.6)
-    ax.axis("off")
-    handles = [Patch(color=GREEN, label="voice quality / prosody"),
-               Patch(color=VERM, label="encoder fingerprint"),
-               Patch(color=GREY, label="cepstral, other")]
-    ax.legend(handles=handles, frameon=False, loc="upper center",
-              bbox_to_anchor=(0.5, -0.005), ncol=3, fontsize=5.9,
-              handlelength=1.0, columnspacing=1.2)
-    panel_tag(ax, "(b)", dx=-0.02)
-    ax.set_title("under MP3 the ANN stops listening to the voice", pad=3)
-
-    fig.subplots_adjust(wspace=0.30)
-    save(fig, "fig_synthesis")
 
 
 # ================================================================= Fig. 7
@@ -687,14 +469,224 @@ def fig_sanity(d):
     save(fig, "fig_sanity")
 
 
+# ================================================================= Fig. 4
+def fig_matched(d):
+    """Matched-format training removes the damage that mismatch creates."""
+    lb = d["pc_lb"]
+    piv_m = lb.pivot_table(index="model", columns="condition",
+                           values="balanced_accuracy")
+    piv_x = _crossformat_frame(d)
+    fig, axes = plt.subplots(1, 2, figsize=(DCOL, 2.5),
+                             gridspec_kw={"width_ratios": [1.25, 1]})
+
+    # --- (a) trained and tested in the same condition ---------------------
+    ax = axes[0]
+    models = list(piv_m["ref"].sort_values(ascending=False).index)
+    x = np.arange(len(models))
+    w = 0.2
+    for i, cond in enumerate(CONDS):
+        ax.bar(x + (i - 1.5) * w, [piv_m.loc[m, cond] for m in models], w,
+               color=COND_COLOUR[cond], label=COND_LABEL[cond].replace("\n", " "),
+               edgecolor=BLACK, lw=0.3)
+    ax.set_xticks(x)
+    ax.set_xticklabels([PRETTY.get(m, m) for m in models], rotation=24,
+                       ha="right", fontsize=6.0)
+    ax.set_ylabel("balanced accuracy")
+    ax.set_ylim(0, 0.68)
+    ax.axhline(0.455, color=BLACK, ls="--", lw=0.6)
+    ax.text(len(models) - 0.45, 0.463, "human voice-only ceiling", fontsize=5.7,
+            ha="right")
+    ax.axhline(1 / 6, color=GREY, ls=":", lw=0.6)
+    ax.text(len(models) - 0.45, 0.175, "chance", fontsize=5.7, ha="right",
+            color=GREY)
+    ax.legend(frameon=False, ncol=4, loc="upper center", fontsize=5.9,
+              handlelength=1.0, columnspacing=0.9, bbox_to_anchor=(0.5, 1.12))
+    ax.grid(axis="y", alpha=0.22)
+    panel_tag(ax, "(a)", dx=-0.115)
+    ax.set_title("trained and tested in the same condition", pad=14)
+
+    # --- (b) mismatch vs match, on MP3 ------------------------------------
+    ax = axes[1]
+    pairs = [("svm_rbf", "SVM (RBF)"), ("logistic_regression", "Logistic reg."),
+             ("lda", "LDA"), ("mlp_sklearn", "MLP"),
+             ("random_forest", "Random forest"), ("lightgbm", "LightGBM")]
+    y = np.arange(len(pairs))
+    mism = [piv_x.loc[m, "mp3_64"] for m, _ in pairs]
+    match = [piv_m.loc[m, "mp3_64"] for m, _ in pairs]
+    ax.barh(y - 0.19, mism, 0.36, color=VERM, edgecolor=BLACK, lw=0.3,
+            label="trained on WAV, served MP3")
+    ax.barh(y + 0.19, match, 0.36, color=GREEN, edgecolor=BLACK, lw=0.3,
+            label="trained and served on MP3")
+    for i, (a, b) in enumerate(zip(mism, match)):
+        if b - a > 0.05:
+            ax.annotate(f"+{(b - a) * 100:.0f} pts", (max(a, b) + 0.014, i),
+                        fontsize=5.8, va="center", fontweight="bold")
+    ax.set_yticks(y)
+    ax.set_yticklabels([p[1] for p in pairs], fontsize=6.2)
+    ax.set_xlabel("balanced accuracy on MP3 64k")
+    ax.set_xlim(0, 0.82)
+    ax.axvline(1 / 6, color=GREY, ls=":", lw=0.6)
+    ax.legend(frameon=False, loc="upper center", fontsize=5.9, handlelength=1.0,
+              ncol=1, bbox_to_anchor=(0.5, 1.13))
+    ax.grid(axis="x", alpha=0.22)
+    panel_tag(ax, "(b)", dx=-0.30)
+    ax.set_title("the collapse is mismatch, not lost information", pad=14)
+
+    fig.subplots_adjust(wspace=0.42)
+    save(fig, "fig_matched")
+
+
+# ================================================================= Fig. 5
+def fig_trees(d):
+    """The top two levels of the entropy tree, fitted separately per condition."""
+    sp = d["pc"]["top_splits"]
+    fig, axes = plt.subplots(1, 4, figsize=(DCOL, 1.55))
+
+    for ax, cond in zip(axes, CONDS):
+        nodes = {n["path"]: n for n in sp[cond]}
+        ax.set_xlim(0, 1)
+        ax.set_ylim(0.26, 1.02)
+        ax.axis("off")
+        ax.set_title(COND_LABEL[cond].replace("\n", " "), pad=4,
+                     color=COND_COLOUR[cond], fontsize=7.4)
+
+        def box(path, cx, cy, wid):
+            n = nodes.get(path)
+            if n is None:
+                return
+            same = (n["feature"] == {p["path"]: p for p in sp["ref"]}
+                    .get(path, {}).get("feature"))
+            edge = GREY if same else VERM
+            lw = 0.5 if same else 1.1
+            ax.add_patch(plt.Rectangle((cx - wid / 2, cy - 0.085), wid, 0.17,
+                                       fill=True, facecolor="white",
+                                       edgecolor=edge, lw=lw, zorder=3))
+            ax.text(cx, cy + 0.048, n["feature"], ha="center", va="center",
+                    fontsize=4.3, family="monospace", zorder=4,
+                    color=BLACK if same else VERM)
+            ax.text(cx, cy + 0.002, r"$\leq$ " + f"{n['threshold']:.3f}",
+                    ha="center", va="center", fontsize=4.9, zorder=4)
+            ax.text(cx, cy - 0.048, f"IG {n['information_gain_bits']:.3f} bits",
+                    ha="center", va="center", fontsize=4.4, color=GREY, zorder=4)
+
+        box("", 0.5, 0.80, 0.92)
+        box("L", 0.26, 0.42, 0.50)
+        box("R", 0.76, 0.42, 0.50)
+        for x0, x1 in ((0.5, 0.26), (0.5, 0.76)):
+            ax.plot([x0, x1], [0.70, 0.51], color=BLACK, lw=0.5, zorder=1)
+        ax.text(0.32, 0.615, "yes", fontsize=4.6, color=GREY)
+        ax.text(0.63, 0.615, "no", fontsize=4.6, color=GREY)
+        ax.text(0.5, 0.955, f"H = {nodes['']['entropy_bits']:.4f} bits",
+                ha="center", fontsize=5.4, color=GREY)
+
+    handles = [Line2D([], [], color=GREY, lw=0.8, label="same feature as uncompressed"),
+               Line2D([], [], color=VERM, lw=1.4, label="different feature")]
+    fig.legend(handles=handles, frameon=False, ncol=2, fontsize=6.2,
+               loc="lower center", bbox_to_anchor=(0.5, -0.10), handlelength=1.6)
+    fig.subplots_adjust(wspace=0.10)
+    save(fig, "fig_trees")
+
+
+# ================================================================= Fig. 6
+def fig_nullcal(d):
+    """Importance-ranking displacement against its own resampling floor."""
+    nl = d["null"]
+    pr = d.get("paired")
+    fig, axes = plt.subplots(1, 2, figsize=(DCOL, 2.4))
+
+    # --- (a) marginal floors and the condition effects --------------------
+    ax = axes[0]
+    k = f"top{nl['top_k']}_overlap"
+    bars = [
+        ("tie-breaking\n(data fixed)", nl["floors"]["seed"][k]["mean"],
+         nl["floors"]["seed"][k]["p05"], nl["floors"]["seed"][k]["p95"], GREEN),
+        ("actor bootstrap\n(codec fixed)", nl["floors"]["bootstrap"][k]["mean"],
+         nl["floors"]["bootstrap"][k]["p05"], nl["floors"]["bootstrap"][k]["p95"],
+         ORANGE),
+    ]
+    x = np.arange(len(bars) + 4)
+    for i, (lab, m, lo, hi, c) in enumerate(bars):
+        ax.bar(i, m, 0.62, color=c, edgecolor=BLACK, lw=0.4)
+        ax.errorbar(i, m, yerr=[[m - lo], [hi - m]], color=BLACK, lw=0.7,
+                    capsize=2.2)
+    labels = [b[0] for b in bars]
+    ax.bar(2, nl["floors"]["container"][k], 0.62, color=GREY, edgecolor=BLACK, lw=0.4)
+    labels.append("container\n(same codec)")
+    for j, cond in enumerate([c for c in CONDS if c != "ref"]):
+        ax.bar(3 + j, nl["effects"][cond][k], 0.62, color=COND_COLOUR[cond],
+               edgecolor=BLACK, lw=0.4)
+        labels.append(COND_LABEL[cond])
+    ax.axhspan(nl["floors"]["bootstrap"][k]["p05"],
+               nl["floors"]["bootstrap"][k]["p95"],
+               color=ORANGE, alpha=0.16, zorder=0, lw=0)
+    ax.text(5.4, nl["floors"]["bootstrap"][k]["p95"] + 0.4,
+            "sampling floor", fontsize=5.8, color=ORANGE, ha="right")
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels, fontsize=5.3, rotation=30, ha="right")
+    ax.set_ylabel(f"top-{nl['top_k']} features retained")
+    ax.set_ylim(0, 26)
+    ax.grid(axis="y", alpha=0.22)
+    panel_tag(ax, "(a)", dx=-0.135)
+    ax.set_title("unpaired: the sampling floor swallows every effect", pad=3)
+
+    # --- (b) the paired within-draw comparison ----------------------------
+    ax = axes[1]
+    if pr is None:
+        ax.axis("off")
+    else:
+        tab = pr["table"]
+        conds = [c for c in CONDS if c != "ref"] + ["container"]
+        for j, cond in enumerate(conds):
+            f = tab["floor_overlap"].to_numpy(float)
+            e = tab[f"{cond}_overlap"].to_numpy(float)
+            jitter = (np.random.default_rng(j).random(len(f)) - 0.5) * 0.16
+            ax.plot(np.vstack([np.full_like(f, j * 2 + 0.0) + jitter,
+                               np.full_like(e, j * 2 + 0.85) + jitter]),
+                    np.vstack([f, e]), color=GREY, lw=0.35, alpha=0.55, zorder=1)
+            ax.scatter(np.full_like(f, j * 2 + 0.0) + jitter, f, s=8,
+                       color=GREEN, edgecolor=BLACK, lw=0.25, zorder=3)
+            ax.scatter(np.full_like(e, j * 2 + 0.85) + jitter, e, s=8,
+                       color=COND_COLOUR.get(cond, YELLOW), edgecolor=BLACK,
+                       lw=0.25, zorder=3)
+            ax.plot([j * 2 - 0.25, j * 2 + 1.10], [e.mean()] * 2,
+                    color=BLACK, lw=0.9, zorder=4)
+        ax.axhline(tab["container_overlap"].mean(), color=YELLOW, lw=0.9,
+                   ls="--", zorder=2)
+        ax.text(0.05, tab["container_overlap"].mean() + 0.55,
+                "informationally empty perturbation", fontsize=5.4,
+                color="#B8860B",
+                bbox=dict(facecolor="white", edgecolor="none", pad=0.8,
+                          alpha=0.85))
+        ax.set_xticks([j * 2 + 0.42 for j in range(len(conds))])
+        ax.set_xticklabels(
+            [COND_LABEL.get(c, "container\n(same codec)") for c in conds],
+            fontsize=5.5)
+        ax.set_ylabel(f"top-{nl['top_k']} features retained")
+        ax.set_ylim(0, 26)
+        ax.grid(axis="y", alpha=0.22)
+        handles = [Line2D([], [], ls="", marker="o", ms=3.6, color=GREEN,
+                          mec=BLACK, mew=0.25,
+                          label="floor: same audio, different tie-breaking"),
+                   Line2D([], [], ls="", marker="o", ms=3.6, color=GREY,
+                          mec=BLACK, mew=0.25, label="effect: same actors, coded audio"),
+                   Line2D([], [], color=BLACK, lw=0.9, label="mean")]
+        ax.legend(handles=handles, frameon=False, loc="lower center", fontsize=5.7,
+                  handlelength=1.0, bbox_to_anchor=(0.5, -0.02))
+        panel_tag(ax, "(b)", dx=-0.135)
+        ax.set_title("paired: codec separates from the empty perturbation", pad=3)
+
+    fig.subplots_adjust(wspace=0.32)
+    save(fig, "fig_nullcal")
+
+
 # ================================================================= main
 def main():
     d = load_all()
     fig_signal(d)
-    fig_armA(d)
-    fig_bands(d)
     fig_crossformat(d)
-    fig_synthesis(d)
+    fig_matched(d)
+    fig_trees(d)
+    fig_nullcal(d)
     fig_neutralise(d)
     fig_methods(d)
     fig_sanity(d)

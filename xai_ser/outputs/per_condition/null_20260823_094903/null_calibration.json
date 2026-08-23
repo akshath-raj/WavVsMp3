@@ -1,0 +1,137 @@
+{
+ "created_utc": "20260823_094903",
+ "feature_table": "/Users/akshathr/Clones/WavVsMp3/xai_ser/data/features/features_20260818_045621.parquet",
+ "estimator": "DecisionTreeClassifier(criterion=entropy, max_depth=12, min_samples_leaf=10, class_weight=balanced)",
+ "n_replicates": 20,
+ "top_k": 25,
+ "floors": {
+  "seed": {
+   "rho_used": {
+    "mean": 0.9460129266138368,
+    "sd": 0.012095237453314424,
+    "min": 0.9158333702641144,
+    "max": 0.9869827690793268,
+    "p05": 0.926601174330605,
+    "p95": 0.9644635910465811,
+    "n": 190
+   },
+   "top25_overlap": {
+    "mean": 23.46315789473684,
+    "sd": 0.7023848462857386,
+    "min": 22.0,
+    "max": 25.0,
+    "p05": 22.0,
+    "p95": 24.549999999999983,
+    "n": 190
+   },
+   "n_pairs": 190
+  },
+  "bootstrap": {
+   "rho_used": {
+    "mean": -0.2000650658961381,
+    "sd": 0.05340923796999008,
+    "min": -0.3562390430520602,
+    "max": -0.047665579041538605,
+    "p05": -0.28022581362400767,
+    "p95": -0.109304141534035,
+    "n": 190
+   },
+   "top25_overlap": {
+    "mean": 7.9526315789473685,
+    "sd": 1.8581632909754489,
+    "min": 3.0,
+    "max": 13.0,
+    "p05": 5.0,
+    "p95": 11.0,
+    "n": 190
+   },
+   "n_pairs": 190
+  },
+  "container": {
+   "rho_used": 0.18412827969519194,
+   "p_used": 0.0014641051583476926,
+   "rho_all": 0.4210905783474777,
+   "n_used": 296,
+   "top25_overlap": 16
+  }
+ },
+ "effects": {
+  "mp3_64": {
+   "rho_used": 0.017322070133327618,
+   "p_used": 0.7624296509582286,
+   "rho_all": 0.29511438525720657,
+   "n_used": 307,
+   "top25_overlap": 12
+  },
+  "mp4_aac64": {
+   "rho_used": -0.08215597221968649,
+   "p_used": 0.1509894136757209,
+   "rho_all": 0.23140303872946988,
+   "n_used": 307,
+   "top25_overlap": 9
+  },
+  "roundtrip_wav": {
+   "rho_used": -0.12296877092778793,
+   "p_used": 0.030152577249737102,
+   "rho_all": 0.17881256674281396,
+   "n_used": 311,
+   "top25_overlap": 10
+  }
+ },
+ "verdict": {
+  "mp3_64": {
+   "seed": {
+    "rho_below_floor_p05": true,
+    "rho_z": -76.78153157927649,
+    "overlap_below_floor_p05": true,
+    "overlap_z": -16.32033771137695
+   },
+   "bootstrap": {
+    "rho_below_floor_p05": false,
+    "rho_z": 4.070216020524625,
+    "overlap_below_floor_p05": false,
+    "overlap_z": 2.1781554079286285
+   },
+   "vs_container": {
+    "rho_below_container": true,
+    "overlap_below_container": true
+   }
+  },
+  "mp4_aac64": {
+   "seed": {
+    "rho_below_floor_p05": true,
+    "rho_z": -85.00609457251929,
+    "overlap_below_floor_p05": true,
+    "overlap_z": -20.591500473307555
+   },
+   "bootstrap": {
+    "rho_below_floor_p05": false,
+    "rho_z": 2.207653547551139,
+    "overlap_below_floor_p05": false,
+    "overlap_z": 0.5636579014015566
+   },
+   "vs_container": {
+    "rho_below_container": true,
+    "overlap_below_container": true
+   }
+  },
+  "roundtrip_wav": {
+   "seed": {
+    "rho_below_floor_p05": true,
+    "rho_z": -88.38038125896361,
+    "overlap_below_floor_p05": true,
+    "overlap_z": -19.167779552664022
+   },
+   "bootstrap": {
+    "rho_below_floor_p05": false,
+    "rho_z": 1.4435011226273162,
+    "overlap_below_floor_p05": false,
+    "overlap_z": 1.1018237369105806
+   },
+   "vs_container": {
+    "rho_below_container": true,
+    "overlap_below_container": true
+   }
+  }
+ }
+}
