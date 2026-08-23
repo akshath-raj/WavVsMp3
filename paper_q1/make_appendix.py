@@ -317,27 +317,31 @@ def write_splits_appendix() -> None:
       r"summarised in Table~\ref{tab:depth} and Fig.~\ref{fig:depth}.")
     w("")
 
-    counts = {}
-    for cond in ("ref", "mp3_64", "mp4_aac64", "roundtrip_wav"):
+    def tabular(cond) -> list[str]:
         sub = nodes[nodes["condition"] == cond].copy()
         sub = sub.sort_values("path", key=lambda s: s.map(sort_key))
         counts[cond] = len(sub)
-        w(r"\begin{table}[!ht]")
-        w(rf"\caption{{Entropy tree fitted on \textbf{{{COND_NAME[cond]}}}, "
-          rf"internal nodes to depth {APPENDIX_DEPTH}.}}")
-        w(rf"\label{{tab:app-splits-{cond.replace('_', '-')}}}")
-        w(r"\centering\scriptsize\setlength{\tabcolsep}{3pt}")
-        w(r"\begin{tabular}{@{}llrrrr@{}}")
-        w(r"\toprule")
-        w(r"Path & Feature & Threshold & $H$ & IG & $n$\\")
-        w(r"\midrule")
+        rows = [r"\begin{tabular}{@{}llrrrr@{}}", r"\toprule",
+                r"Path & Feature & Threshold & $H$ & IG & $n$\\", r"\midrule"]
         for _, n in sub.iterrows():
             path = r"\textit{root}" if n["path"] == "(root)" else f"\\texttt{{{n['path']}}}"
-            w(rf"{path} & \texttt{{{esc(n['feature'])}}} & "
-              rf"{n['threshold']:.4f} & {n['entropy_bits']:.4f} & "
-              rf"{n['information_gain_bits']:.4f} & {int(n['n_samples'])}\\")
-        w(r"\bottomrule")
-        w(r"\end{tabular}")
+            rows.append(rf"{path} & \texttt{{{esc(n['feature'])}}} & "
+                        rf"{n['threshold']:.4f} & {n['entropy_bits']:.4f} & "
+                        rf"{n['information_gain_bits']:.4f} & {int(n['n_samples'])}\\")
+        rows += [r"\bottomrule", r"\end{tabular}"]
+        return rows
+
+    # One condition per single-column float. The longest descriptor name is
+    # 32 characters, so the column separation is tightened to keep the widest
+    # row inside the measure.
+    counts = {}
+    for cond in ("ref", "mp3_64", "mp4_aac64", "roundtrip_wav"):
+        w(r"\begin{table}[!ht]")
+        w(rf"\caption{{Entropy tree fitted on \textbf{{{COND_NAME[cond]}}}, "
+          rf"all internal nodes to depth {APPENDIX_DEPTH}.}}")
+        w(rf"\label{{tab:app-splits-{cond.replace('_', '-')}}}")
+        w(r"\centering\scriptsize\setlength{\tabcolsep}{1.5pt}")
+        out.extend(tabular(cond))
         w(r"\end{table}")
         w("")
 
