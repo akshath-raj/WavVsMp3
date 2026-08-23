@@ -1369,8 +1369,11 @@ because matched-format training recovers 38.6 points and lands within 0.003 of
 the clean score. The second is whether the codec breaks deployed models. It
 breaks them severely, provided that those models consume descriptor magnitudes
 and were fitted on clean audio. The third is whether the codec changes what the
-model learns. It does, but by much less than the raw numbers suggest, and only a
-properly nulled comparison can say by how much.
+model learns. It does, and the change spares the leading questions. The root
+test survives both codecs intact, MP3 leaves two further levels untouched, and
+everything below that is reorganised. Even the reorganisation is smaller than
+the raw numbers suggest, and only a properly nulled comparison can say by how
+much.
 
 An evaluation that reports only the second question, which is what cross-format
 benchmarking does, would conclude that MP3 at \SI{64}{\kilo\bit\per\second} is
@@ -1379,14 +1382,22 @@ the pipeline and not about the codec.
 
 \subsection{Null calibration is not optional}
 The container re-wrap changes no coding information at all, and it still turns
-over a third of the tree's top-25 ranking. Any claim of the form ``manipulation
-$M$ changed which features the model uses'' is therefore impossible to interpret
+over a third of the tree's top-25 ranking. It also destroys the node-for-node
+identity of the tree below depth 3. Any claim of the form ``manipulation $M$
+changed which features the model uses'' is therefore impossible to interpret
 without a perturbation that is matched in every respect except informational
 content. We propose this as standard practice for feature-attribution claims in
 affective computing. The cost is one additional condition and one additional
 model fit. The benefit is that the claim becomes falsifiable. In our case the
 benefit is also that the claim shrinks by a factor of 2.6 rather than being
 reported at face value.
+
+The requirement is not specific to one statistic. We applied the same empty
+control to an importance ranking in Section~\ref{sec:null} and to the tree's
+split structure in Section~\ref{sec:depth}, and in both cases it absorbed a
+large part of what looked like a codec effect. The two statistics are computed
+from different objects and they agree on the ordering of the two codecs, which
+is the strongest evidence we have that the codec-specific remainder is real.
 
 The paired design matters as much as the null itself does. When the comparison
 was made marginally, the actor-resampling floor was wide enough to swallow every
@@ -1400,10 +1411,13 @@ Under mismatch, axis-aligned models are almost perfectly robust to a $38\sigma$
 excursion, because a threshold test does not care how far past the threshold a
 value lands. That is a real engineering advantage and a cheap one. However,
 Section~\ref{sec:matched} shows that the advantage disappears under matched
-training, and Section~\ref{sec:null} shows that the learned structure of the
-same models is \emph{more} sensitive to a small diffuse perturbation than to a
-large concentrated one. A threshold protects the decision, and it does not
-protect the evidence.
+training, and Sections~\ref{sec:depth} and~\ref{sec:null} show that the learned
+structure of the same models is \emph{more} sensitive to a small diffuse
+perturbation than to a large concentrated one. Under matched training the
+depth-6 tree loses 2.2 balanced-accuracy points on MP3 and 3.8 on AAC, so the
+two codecs are 1.6 points apart. That small accuracy gap accompanies a two-level
+gap in the depth to which each reproduces the reference structure. A threshold
+protects the decision, and it does not protect the evidence.
 
 \subsection{Auditing and the archive problem}
 Per-instance rationales are increasingly presented to operators and auditors.
@@ -1414,6 +1428,15 @@ input, or the same situation reversed. In either case the decisions will agree
 while the explanations will not. An explanation is not reproducible unless the
 delivery format forms part of the record, and to our knowledge no SER benchmark
 currently reports it.
+
+Section~\ref{sec:depth} sharpens what an operator can safely be told. A
+rationale that cites the root test is reproducible across every condition we
+tested. A rationale that cites a rule several levels down is not, and neither is
+one that reports a ranked list of secondary features. How far past the root a
+rationale may go is itself codec-dependent, since MP3 supports two further
+levels and AAC supports none. Where a rationale has to be defensible, it should
+be truncated at the depth to which the structure has been shown to reproduce for
+the format actually in use.
 
 \subsection{What named descriptors buy}
 The repair described in Section~\ref{sec:neutralise} has no counterpart in a
@@ -1507,7 +1530,10 @@ Second, extending the null calibration to SHAP and integrated-gradients rankings
 under refitting would establish whether the fragility we document is specific to
 trees or general to feature attribution. Third, a bitrate ladder that includes
 Opus alongside MP3 and AAC would turn the two-point comparison of
-Section~\ref{sec:trees} into a dose-response curve for structural displacement.
+Section~\ref{sec:trees} into a dose-response curve for structural displacement,
+with the depth profile of Section~\ref{sec:depth} as its natural readout: the
+depth to which a structure reproduces is a single number per condition and is
+cheap to compute for a ladder of bitrates.
 
 Beyond emotion, the tasks of speaker identification, vocal stress detection and
 voice-quality assessment rely on precisely the spectral detail that perceptual
