@@ -3,30 +3,30 @@
 
 \section{Complete Feature Inventory}\label{app:features}
 
-Every stimulus is reduced to 436 named columns. Frame-level contours are summarised by eight order statistics (mean, standard deviation, minimum, maximum, median, interquartile range, skewness, excess kurtosis); descriptors marked with a shorter list are summarised only by those statistics, and scalars are already clip-level. Naming is \ttf{<family>\_<descriptor>\_<statistic>} throughout, which is what makes an attribution over a column a claim about an acoustic quantity.
+Every stimulus is reduced to 436 named columns. Frame-level contours are summarised by eight order statistics (mean, standard deviation, minimum, maximum, median, interquartile range, skewness, excess kurtosis). Descriptors marked with a shorter list are summarised only by those statistics, and scalars are already clip-level. Naming is \ttf{<family>\_<descriptor>\_<statistic>} throughout, which is what makes an attribution over a column a claim about an acoustic quantity.
 
-Analysis frames are \SI{512}{point} FFT, \SI{400}{sample} window, \SI{160}{sample} hop at \SI{16}{\kilo\hertz} --- \SI{25}{\milli\second} windows every \SI{10}{\milli\second}. Praat measures use a \SIrange{75}{500}{\hertz} pitch range.
+Analysis frames are \SI{512}{point} FFT, \SI{400}{sample} window, \SI{160}{sample} hop at \SI{16}{\kilo\hertz}, which gives \SI{25}{\milli\second} windows every \SI{10}{\milli\second}. Praat measures use a \SIrange{75}{500}{\hertz} pitch range.
 
 \subsection{Descriptors and their definitions}
 
 \begin{table}[!ht]
-\caption{Spectral descriptors --- 114 columns of 436.}
+\caption{Spectral descriptors. 114 columns of 436.}
 \label{tab:app-spectral}
 \centering\scriptsize\setlength{\tabcolsep}{3pt}
 \begin{tabular}{@{}p{1.9cm}p{3.5cm}p{1.5cm}r@{}}
 \toprule
 Descriptor & Definition & Statistics & $n$\\
 \midrule
-Spectral centroid & First moment of the power spectrum; the frequency about which spectral energy is balanced. Correlates with perceived brightness. & mean, std, min, max, median, IQR, skew, kurtosis & 8\\
-Spectral bandwidth & Power-weighted second moment about the centroid; how widely energy is spread in frequency. & mean, std, min, max, median, IQR, skew, kurtosis & 8\\
+Spectral centroid & First moment of the power spectrum. It is the frequency about which spectral energy is balanced. Correlates with perceived brightness. & mean, std, min, max, median, IQR, skew, kurtosis & 8\\
+Spectral bandwidth & Power-weighted second moment about the centroid. It measures how widely energy is spread in frequency. & mean, std, min, max, median, IQR, skew, kurtosis & 8\\
 Spectral roll-off (85\,\%) & Frequency below which 85\,\% of the frame's spectral energy lies. & mean, std, min, max, median, IQR, skew, kurtosis & 8\\
 Spectral roll-off (95\,\%) & As above at 95\,\%. Directly sensitive to codec low-pass behaviour. & mean, std, min, max, median, IQR, skew, kurtosis & 8\\
-Spectral flatness & Geometric mean of the magnitude spectrum divided by its arithmetic mean. Approaches 1 for noise-like frames and 0 for tonal ones; collapses when an encoder zeroes masked bins. & mean, std, min, max, median, IQR, skew, kurtosis & 8\\
-Zero-crossing rate & Fraction of adjacent sample pairs with a sign change; a cheap voicing and frication proxy. & mean, std, min, max, median, IQR, skew, kurtosis & 8\\
-Frame RMS energy & Root-mean-square magnitude per frame; the loudness contour. & mean, std, min, max, median, IQR, skew, kurtosis & 8\\
-Spectral flux & Euclidean norm of the frame-to-frame difference of the magnitude spectrum; how fast the spectrum is changing. & mean, std, min, max, median, IQR, skew, kurtosis & 8\\
-Spectral entropy & Shannon entropy of the power spectrum normalised to its own bin count (Eq.~\ref{eq:specent}); a scale-free measure of how evenly energy is distributed across frequency. & mean, std, min, max, median, IQR, skew, kurtosis & 8\\
-Spectral slope & Least-squares slope of magnitude regressed on frequency, per frame; spectral tilt. & mean, std, min, max, median, IQR, skew, kurtosis & 8\\
+Spectral flatness & Geometric mean of the magnitude spectrum divided by its arithmetic mean. It approaches 1 for noise-like frames and 0 for tonal ones, and it collapses when an encoder sets masked bins to zero. & mean, std, min, max, median, IQR, skew, kurtosis & 8\\
+Zero-crossing rate & Fraction of adjacent sample pairs with a sign change. It is a cheap proxy for voicing and frication. & mean, std, min, max, median, IQR, skew, kurtosis & 8\\
+Frame RMS energy & Root-mean-square magnitude per frame, which gives the loudness contour. & mean, std, min, max, median, IQR, skew, kurtosis & 8\\
+Spectral flux & Euclidean norm of the frame-to-frame difference of the magnitude spectrum. It measures how fast the spectrum is changing. & mean, std, min, max, median, IQR, skew, kurtosis & 8\\
+Spectral entropy & Shannon entropy of the power spectrum normalised to its own bin count (Eq.~\ref{eq:specent}). It is a scale-free measure of how evenly energy is distributed across frequency. & mean, std, min, max, median, IQR, skew, kurtosis & 8\\
+Spectral slope & Least-squares slope of magnitude regressed on frequency, per frame. This is the spectral tilt. & mean, std, min, max, median, IQR, skew, kurtosis & 8\\
 Band-energy ratios (8 bands) & Fraction of frame energy in each of 0--500, 500--1000, 1000--2000, 2000--3000, 3000--4000, 4000--5000, 5000--6000, 6000--8000\,Hz. Energy-normalised, so these describe spectral \emph{shape} rather than level. & mean, std & 16\\
 High-frequency survival ratios & Fraction of frame energy above 4 and above 6\,kHz. The most direct probes of lossy-codec low-pass behaviour in the inventory. & mean, std & 4\\
 Spectral contrast (7 sub-bands) & Per-band difference between spectral peaks and valleys in decibels. Band 6 covers 6--8\,kHz and is the single most codec-displaced column in the table (Section~\ref{sec:signal}). & mean, std & 14\\
@@ -35,7 +35,7 @@ Spectral contrast (7 sub-bands) & Per-band difference between spectral peaks and
 \end{table}
 
 \begin{table}[!ht]
-\caption{Cepstral descriptors --- 240 columns of 436.}
+\caption{Cepstral descriptors. 240 columns of 436.}
 \label{tab:app-mfcc}
 \centering\scriptsize\setlength{\tabcolsep}{3pt}
 \begin{tabular}{@{}p{1.9cm}p{3.5cm}p{1.5cm}r@{}}
@@ -44,39 +44,39 @@ Descriptor & Definition & Statistics & $n$\\
 \midrule
 $\Delta$MFCC (20) & First-order temporal derivative of each MFCC, over a 9-frame window. & mean, std & 40\\
 $\Delta\Delta$MFCC (20) & Second-order temporal derivative of each MFCC. & mean, std & 40\\
-MFCC (20) & Discrete cosine transform of the log mel-filterbank energies; the standard SER front end. MFCC-0 tracks overall log energy, so its derivatives measure how fast loudness changes. & mean, std, min, max, median, IQR, skew, kurtosis & 160\\
+MFCC (20) & Discrete cosine transform of the log mel-filterbank energies, which is the standard SER front end. MFCC-0 tracks overall log energy, so its derivatives measure how fast loudness changes. & mean, std, min, max, median, IQR, skew, kurtosis & 160\\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \begin{table}[!ht]
-\caption{Prosodic and voice-quality descriptors (Praat) --- 56 columns of 436.}
+\caption{Prosodic and voice-quality descriptors (Praat). 56 columns of 436.}
 \label{tab:app-prosody}
 \centering\scriptsize\setlength{\tabcolsep}{3pt}
 \begin{tabular}{@{}p{1.9cm}p{3.5cm}p{1.5cm}r@{}}
 \toprule
 Descriptor & Definition & Statistics & $n$\\
 \midrule
-$F_0$ slope (mean $|\cdot|$) & Mean absolute first difference of the voiced $F_0$ contour, per second; pitch movement rate. & scalar & 1\\
+$F_0$ slope (mean $|\cdot|$) & Mean absolute first difference of the voiced $F_0$ contour, per second. It is the rate of pitch movement. & scalar & 1\\
 Fundamental frequency $F_0$ & Praat autocorrelation pitch over voiced frames only. & mean, std, min, max, median, IQR, skew, kurtosis & 8\\
 Jitter (4 variants) & Cycle-to-cycle variation in glottal period: local, RAP, PPQ5, DDP. A perturbation measure of the voice source. & scalar & 4\\
 Shimmer (6 variants) & Cycle-to-cycle variation in glottal amplitude: local, local\,dB, APQ3, APQ5, APQ11, DDA. APQ11 needs eleven consecutive periods and is the one column in the table with non-trivial missingness (11.3\,\%). & scalar & 6\\
-Harmonics-to-noise ratio & Ratio of periodic to aperiodic energy in decibels; a hoarseness and breathiness correlate. & mean, std, min, max, median & 5\\
+Harmonics-to-noise ratio & Ratio of periodic to aperiodic energy in decibels. It correlates with hoarseness and breathiness. & mean, std, min, max, median & 5\\
 Formant bandwidths $B_1$--$B_3$ & Median $-3$\,dB bandwidth of the first three formants (Burg estimator). & median & 1\\
-Formants $F_1$--$F_5$ & Burg-estimator formant frequencies; the vocal-tract filter. $F_2$ movement is the strongest single correlate of disgust in this corpus. & mean, std, median & 17\\
+Formants $F_1$--$F_5$ & Burg-estimator formant frequencies, which describe the vocal-tract filter. $F_2$ movement is the strongest single correlate of disgust in this corpus. & mean, std, median & 17\\
 Intensity & Praat short-term intensity contour in decibels. Its standard deviation is among the top-ranked features for every model family in the study. & mean, std, min, max, median, IQR, skew, kurtosis & 8\\
 Voiced fraction & Proportion of frames with a defined $F_0$. & scalar & 1\\
-Pause fraction & Complement of the voiced fraction; definitionally $1 -$ voiced fraction ($r = -1.00$). & scalar & 1\\
+Pause fraction & Complement of the voiced fraction. By definition it equals $1 -$ voiced fraction ($r = -1.00$). & scalar & 1\\
 Voiced-segment count & Number of maximal runs of voiced frames. & scalar & 1\\
-Voiced-segment rate & Voiced segments per second; a speech-rate proxy. & scalar & 1\\
+Voiced-segment rate & Voiced segments per second, which is a proxy for speech rate. & scalar & 1\\
 Mean voiced-segment duration & Mean length in seconds of a voiced run. & scalar & 1\\
-CPPS & Smoothed cepstral peak prominence; the standard acoustic correlate of breathy phonation. Drives both sadness and neutrality in every attribution method applied here. & scalar & 1\\
+CPPS & Smoothed cepstral peak prominence, which is the standard acoustic correlate of breathy phonation. Drives both sadness and neutrality in every attribution method applied here. & scalar & 1\\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \begin{table}[!ht]
-\caption{Chroma descriptors --- 24 columns of 436.}
+\caption{Chroma descriptors. 24 columns of 436.}
 \label{tab:app-chroma}
 \centering\scriptsize\setlength{\tabcolsep}{3pt}
 \begin{tabular}{@{}p{1.9cm}p{3.5cm}p{1.5cm}r@{}}
@@ -89,7 +89,7 @@ Chroma (12 pitch classes) & Energy folded onto the twelve semitone pitch classes
 \end{table}
 
 \begin{table}[!ht]
-\caption{Global descriptors --- 2 columns of 436.}
+\caption{Global descriptors. 2 columns of 436.}
 \label{tab:app-global}
 \centering\scriptsize\setlength{\tabcolsep}{3pt}
 \begin{tabular}{@{}p{1.9cm}p{3.5cm}p{1.5cm}r@{}}

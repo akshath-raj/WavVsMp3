@@ -4,7 +4,7 @@
 in Explainable Speech Emotion Recognition**
 
 Formatted for **IEEE Transactions on Affective Computing** (IEEEtran journal
-class, IEEE numeric citations). 19 pages including two appendices and
+class, IEEE numeric citations). 20 pages including two appendices and
 references.
 
 Confined to interpretable models over named acoustic descriptors — fifteen

@@ -40,7 +40,7 @@ Explainable Speech Emotion Recognition}
 \thanks{Manuscript prepared \today.}%
 \thanks{A.~R is an independent researcher (e-mail: akshath.r333@gmail.com).}%
 \thanks{Code, stimulus manifests, the feature table schema, and every result
-file underlying the tables and figures are released with this paper; see the
+file underlying the tables and figures are released with this paper. See the
 Data Availability Statement.}}
 
 \markboth{IEEE Transactions on Affective Computing}%
@@ -49,34 +49,37 @@ Data Availability Statement.}}
 \maketitle
 
 \begin{abstract}
-Speech emotion recognition is validated on uncompressed audio and deployed on
-coded audio. Whether that gap matters has been asked of accuracy; we ask it of
-the evidence, using models whose evidence can be read exactly. Fifteen
-classifiers and a small neural network are fitted to 436 \emph{named} acoustic
-descriptors over CREMA-D, rendered in four conditions from one canonical
-reference: uncompressed WAV, MP3 and MP4/AAC at
-\SI{64}{\kilo\bit\per\second}, and an AAC re-wrap that holds the codec output
-fixed while changing the container. Three results follow. First, the
-catastrophic cross-format collapse is train/serve mismatch and nothing else: a
-kernel machine trained on WAV scores 0.203 balanced accuracy on MP3, but the
-same model \emph{trained} on MP3 scores 0.589 against 0.586 on clean audio, so
-the affective information survives the codec intact. Second, what the model
-learns from that information does change, and the change is legible because the
-features are named: an entropy tree fitted per condition selects the same root
-descriptor (\ttf{prosody\_intensity\_std}) in all four conditions with
-information gain stable to 0.003 bits, but AAC displaces the threshold by
-1.3\,\% and replaces the depth-1 descriptor, while the MP3 tree does not.
-Third --- and this is the methodological contribution --- a codec effect on a
-feature-importance ranking is uninterpretable without a null, because the
-ranking is fragile. Refitting on identical audio with different tie-breaking
-retains 24.2 of 25 top features, but an \emph{informationally empty} container
-re-wrap already costs 8.4 of them. Against that floor the codec effects are real
-but far smaller than they look: MP3 retains 12.6 and AAC 10.7
-($p\leq1.1\times10^{-3}$, paired within resampled training sets), so roughly
-three fifths of the apparent displacement is generic perturbation sensitivity,
-not codec-specific. We report the complete 436-column inventory and the full
-per-condition split structure, and argue that attribution-shift claims in
-affective computing require a matched empty-perturbation control as standard.
+Speech emotion recognition systems are validated on uncompressed audio and then
+deployed on coded audio. Earlier work has asked whether that gap matters for
+accuracy. This paper asks whether it matters for the evidence a model uses, and
+it uses models whose evidence can be read exactly. Fifteen classifiers and a
+small neural network were fitted to 436 \emph{named} acoustic descriptors
+extracted from CREMA-D. Every clip was rendered in four conditions derived from
+a single canonical reference: uncompressed WAV, MP3 at
+\SI{64}{\kilo\bit\per\second}, MP4/AAC at \SI{64}{\kilo\bit\per\second}, and an
+AAC re-wrap that holds the codec output fixed while changing only the container.
+We report three results. The first result is that the severe loss observed
+across formats is caused by train/serve mismatch and by nothing else. A kernel
+machine trained on WAV scores 0.203 balanced accuracy on MP3, but the same model
+\emph{trained} on MP3 scores 0.589 against 0.586 on clean audio. The affective
+information therefore survives the codec intact. The second result is that what
+the model learns from that information does change, and the change is readable
+because the features are named. An entropy tree fitted separately on each
+condition selects the same root descriptor (\ttf{prosody\_intensity\_std}) in
+all four conditions, with information gain stable to within 0.003 bits. AAC then
+moves the threshold by 1.3\,\% and replaces the descriptor at depth 1, while the
+MP3 tree does not. The third result is methodological. A codec effect on a
+feature-importance ranking cannot be interpreted without a null, because the
+ranking itself is fragile. Refitting on identical audio with different
+tie-breaking retains 24.2 of 25 top features, but an \emph{informationally
+empty} container re-wrap already costs 8.4 of them. Measured against that floor,
+the codec effects are real but much smaller than they first appear. MP3 retains
+12.6 top features and AAC retains 10.7 ($p\leq1.1\times10^{-3}$, paired within
+resampled training sets). Roughly three fifths of the apparent displacement is
+therefore generic sensitivity to perturbation rather than a codec-specific
+effect. We report the complete 436-column inventory and the full per-condition
+split structure, and we argue that attribution-shift claims in affective
+computing should require a matched empty-perturbation control as standard.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -86,166 +89,179 @@ shift, null calibration, affective computing.
 \end{IEEEkeywords}
 
 \section{Introduction}
-\IEEEPARstart{A}{udio} almost never reaches an inference endpoint in the
-representation in which it was captured. Contact-centre archives hold MP3;
-streaming clients negotiate Opus or AAC; broadcast pipelines resample and
-requantise. Evaluation practice runs the other way: benchmarks are distributed
-as uncompressed WAV and read directly from disk.
+\IEEEPARstart{A}{udio} almost never reaches an inference endpoint in the same
+representation in which it was captured. Contact-centre archives hold MP3.
+Streaming clients negotiate Opus or AAC. Broadcast pipelines resample and
+requantise. Evaluation practice runs the other way, because benchmarks are
+distributed as uncompressed WAV and are read directly from disk.
 
-The gap is usually dismissed on a reasonable argument. Any ingestion path
-decodes to linear PCM before feature extraction, so the delivery format is an
-implementation detail. Where the argument has been tested, it has been tested on
-accuracy, and the answers are mixed: Reddy and
+This gap is usually dismissed on a reasonable argument. Any ingestion path
+decodes the audio to linear PCM before features are extracted, so the delivery
+format looks like an implementation detail. Where the argument has been tested,
+it has been tested on accuracy, and the answers are mixed. Reddy and
 Vijayarajan~\cite{reddy2020compression} report codec effects on speech emotion
 recognition (SER) that are real, modest, and dependent on the front end.
 
 Accuracy is the wrong instrument for a system that is increasingly required to
-say not only \emph{what} it concluded but \emph{why}. A deployed affective
-system may surface an attribution over acoustic evidence to a clinician, an
-auditor, or a quality-assurance analyst. That second output has its own
-robustness properties, and they are not implied by the first. Ghorbani et
-al.~\cite{ghorbani2019fragile} established for image classifiers that
-perceptually indistinguishable inputs receiving identical predictions can be
-assigned materially different attributions; Alvarez-Melis and
-Jaakkola~\cite{alvarez2018robustness} showed the same fragility more generally.
-Both used adversarially constructed perturbations. A transcode is not
-adversarial. It is routine, ubiquitous, and nobody logs it.
+report both \emph{what} it concluded and \emph{why}. A deployed
+affective system may present an attribution over acoustic evidence to a
+clinician, an auditor, or a quality-assurance analyst. That second output has
+its own robustness properties, and those properties do not follow from the
+accuracy of the first. Ghorbani et al.~\cite{ghorbani2019fragile} established
+for image classifiers that inputs which are indistinguishable to a human
+observer, and which receive identical predictions, can still be assigned very
+different attributions. Alvarez-Melis and Jaakkola~\cite{alvarez2018robustness}
+showed the same fragility in a more general setting. Both studies used
+perturbations that were constructed adversarially. A transcode is not
+adversarial. It is routine, it is everywhere, and it is almost never logged.
 
 \subsection{Why interpretable models, and why named features}
-Answering an evidential question requires a model whose evidence can be
-inspected, and inspectability is not one property. An end-to-end audio model
-learns its own representation, so an attribution over one of its latent
-dimensions is not a claim about anything an acoustician would recognise. A model
-fitted to \emph{named} descriptors in the GeMAPS~\cite{eyben2016gemaps} and
-openSMILE~\cite{eyben2010opensmile} tradition is different: an attribution over
-\ttf{prosody\_cpps} is a claim about breathiness, and a decision-tree split on
-\ttf{spectral\_contrast\_6\_mean} is a claim about the \SIrange{6}{8}{\kilo\hertz}
-band. This paper is confined to that regime deliberately. Everything reported
-here is exact rather than estimated, checkable against an acoustic reading, and
-reproducible from the released artefacts.
+Answering a question about evidence requires a model whose evidence can be
+inspected, and inspectability is not a single property. An end-to-end audio
+model learns its own representation, so an attribution placed on one of its
+latent dimensions is not a claim about anything an acoustician would recognise.
+A model fitted to \emph{named} descriptors in the
+GeMAPS~\cite{eyben2016gemaps} and openSMILE~\cite{eyben2010opensmile} tradition
+behaves differently. An attribution on \ttf{prosody\_cpps} is a claim about
+breathiness, and a decision-tree split on \ttf{spectral\_contrast\_6\_mean} is a
+claim about the \SIrange{6}{8}{\kilo\hertz} band. This paper is confined to that
+regime deliberately. Everything reported here is exact rather than estimated, it
+can be checked against an acoustic reading, and it can be reproduced from the
+released artefacts.
 
 \subsection{The problem with attribution-shift claims}
 A claim of the form ``compression changed which features the model relies on''
-is easy to produce and hard to justify. Feature-importance rankings are
-notoriously unstable: two descriptors that split almost equally well can swap,
-and one swap near a tree's root reroutes every descendant. A ranking can
-therefore move a long way without the data having moved at all. The literature
-already contains the general warning --- Adebayo et al.~\cite{adebayo2018sanity}
-show that some saliency methods are independent of the model they claim to
-explain, and Krishna et al.~\cite{krishna2022disagreement} show that different
-methods disagree on the same fitted model --- but the specific discipline it
-implies, measuring the shift induced by a manipulation that carries no
-information, is not standard practice.
+is easy to produce and hard to justify. Feature-importance rankings are known to
+be unstable. Two descriptors that split the data almost equally well can trade
+places, and a single swap near the root of a tree reroutes every node below it.
+A ranking can therefore move a long way even when the data has not moved at all.
+The literature already contains the general warning. Adebayo et
+al.~\cite{adebayo2018sanity} show that some saliency methods are independent of
+the model they claim to explain, and Krishna et
+al.~\cite{krishna2022disagreement} show that different methods disagree on the
+same fitted model. The specific discipline that this warning implies, which is
+to measure the shift induced by a manipulation that carries no information, is
+not yet standard practice.
 
-We adopt it here, and it changes the answer. Our design supplies a natural empty
-perturbation: the same codec output routed through two containers. Once that
-floor is measured, most of the apparent codec effect on importance rankings
-turns out to be generic sensitivity to any input perturbation.
+We adopt that discipline here, and it changes the answer. Our design supplies a
+natural empty perturbation, which is the same codec output routed through two
+different containers. Once that floor is measured, most of the apparent codec
+effect on importance rankings turns out to be generic sensitivity to any input
+perturbation.
 
 \subsection{Contributions}
 \begin{enumerate}
 \item \textbf{A matched-format decomposition of the codec effect.} Training and
-      serving in the same coded condition recovers essentially all of a
-      catastrophic cross-format loss --- up to 38.6 balanced-accuracy points ---
-      establishing that \SI{64}{\kilo\bit\per\second} coding does not remove the
-      affective information, it moves it out of the range the model was fitted
-      on (Section~\ref{sec:matched}).
+      serving in the same coded condition recovers almost all of a severe
+      cross-format loss, which reaches 38.6 balanced-accuracy points. This
+      establishes that \SI{64}{\kilo\bit\per\second} coding does not remove the
+      affective information. It moves that information out of the range the
+      model was fitted on (Section~\ref{sec:matched}).
 \item \textbf{Per-condition tree structure as a readable attribution.} An
-      entropy tree fitted independently on each condition exposes exactly which
-      test the codec changes and which it leaves alone, at the level of a named
-      descriptor and a numeric threshold (Section~\ref{sec:trees}).
-\item \textbf{Null calibration for feature-importance shift.} Three floors ---
-      estimator tie-breaking, actor resampling, and an informationally empty
-      container re-wrap --- with a paired within-sample design that separates the
-      codec effect from all three (Section~\ref{sec:null}).
-\item \textbf{A diagnosable and cheap repair.} Neutralising a single named
-      descriptor recovers 98\,\% of a kernel machine's loss and 92\,\% of a
-      network's, at no cost on uncompressed audio
-      (Section~\ref{sec:neutralise}).
-\item \textbf{Two negative results retained rather than smoothed.} Post-hoc
-      attribution methods disagree substantially on the same fitted model, and a
-      global attribution ranking can report ``nothing changed'' while the
-      classifier has stopped working (Sections~\ref{sec:methods-disagree},
-      \ref{sec:blindspot}).
-\item \textbf{A complete, released inventory.} All 436 descriptors are defined
-      and enumerated (Appendix~\ref{app:features}), and every internal node of
-      every per-condition tree is tabulated (Appendix~\ref{app:splits}).
+      entropy tree fitted independently on each condition shows exactly which
+      test the codec changes and which test it leaves alone, at the level of a
+      named descriptor and a numeric threshold (Section~\ref{sec:trees}).
+\item \textbf{Null calibration for feature-importance shift.} We measure three
+      floors, namely estimator tie-breaking, actor resampling, and an
+      informationally empty container re-wrap. A paired within-sample design
+      then separates the codec effect from all three of them
+      (Section~\ref{sec:null}).
+\item \textbf{A repair that is both diagnosable and cheap.} Neutralising a
+      single named descriptor recovers 98\,\% of a kernel machine's loss and
+      92\,\% of a neural network's loss, and it costs nothing on uncompressed
+      audio (Section~\ref{sec:neutralise}).
+\item \textbf{Two negative results that we report rather than smooth over.}
+      Post-hoc attribution methods disagree substantially on the same fitted
+      model, and a global attribution ranking can report that nothing has
+      changed while the classifier has in fact stopped working
+      (Sections~\ref{sec:methods-disagree}, \ref{sec:blindspot}).
+\item \textbf{A complete inventory, released with the paper.} All 436
+      descriptors are defined and enumerated (Appendix~\ref{app:features}), and
+      every internal node of every per-condition tree is tabulated
+      (Appendix~\ref{app:splits}).
 \end{enumerate}
 
 \section{Related Work}
 
 \subsection{Perceptual coding and speech task degradation}
-Degradation of speech systems under lossy coding is documented but shallowly
-characterised. Reddy and Vijayarajan~\cite{reddy2020compression} find that
-standard codecs reduce SER accuracy with a magnitude conditional on both codec
-family and feature representation, which already implies that coding interacts
-with the front end rather than degrading performance uniformly.
+The degradation of speech systems under lossy coding is documented, but it is
+not characterised in much depth. Reddy and Vijayarajan~\cite{reddy2020compression}
+find that standard codecs reduce SER accuracy by an amount that depends on both
+the codec family and the feature representation. That result already implies
+that coding interacts with the front end rather than degrading performance
+uniformly.
 
-Of greater methodological consequence is a result from neural codec
-benchmarking. Wu et al.~\cite{wu2024codecsuperb} demonstrate that signal-domain
-fidelity metrics \emph{fail to predict} the retention of task-relevant
-information: a codec can score well under reconstruction error while discarding
-paralinguistic content that downstream tasks require. We take this seriously
-enough to report signal-domain displacement and model behaviour as separate
-quantities throughout, treating neither as a surrogate for the other.
+A result from neural codec benchmarking carries more methodological weight. Wu
+et al.~\cite{wu2024codecsuperb} demonstrate that signal-domain fidelity metrics
+\emph{fail to predict} whether task-relevant information is retained. A codec
+can score well on reconstruction error while discarding the paralinguistic
+content that downstream tasks require. We take this finding seriously enough to
+report signal-domain displacement and model behaviour as two separate
+quantities throughout the paper, and we treat neither one as a substitute for
+the other.
 
 \subsection{Interpretability for tabular and audio models}
-Post-hoc attribution has converged on a small set of workhorses: local surrogate
-fitting~\cite{ribeiro2016lime}, Shapley-value
-attribution~\cite{lundberg2017shap} with an exact polynomial-time algorithm for
-tree ensembles~\cite{lundberg2020treeshap}, and permutation importance. For
-differentiable models, path-integral methods~\cite{sundararajan2017ig} and
-reference-based decompositions~\cite{shrikumar2017deeplift} are standard, and
-are available in consolidated form~\cite{kokhlikyan2020captum}. Broad surveys
-map the space~\cite{guidotti2018survey}; Rudin~\cite{rudin2019stop} argues that
-for high-stakes decisions the post-hoc layer should be replaced by an
-intrinsically interpretable model, a position our
-Section~\ref{sec:leaderboard} result speaks to directly and unfavourably.
+Post-hoc attribution has converged on a small set of standard tools. These are
+local surrogate fitting~\cite{ribeiro2016lime}, Shapley-value
+attribution~\cite{lundberg2017shap} together with an exact polynomial-time
+algorithm for tree ensembles~\cite{lundberg2020treeshap}, and permutation
+importance. For differentiable models, path-integral
+methods~\cite{sundararajan2017ig} and reference-based
+decompositions~\cite{shrikumar2017deeplift} are standard, and consolidated
+implementations are available~\cite{kokhlikyan2020captum}. Broad surveys map the
+field~\cite{guidotti2018survey}. Rudin~\cite{rudin2019stop} argues that for
+high-stakes decisions the post-hoc layer should be replaced by an intrinsically
+interpretable model. Our result in Section~\ref{sec:leaderboard} speaks to that
+position directly, and it does not support it.
 
-Transfer of these methods to audio is contested. Haunschmid et
+Whether these methods transfer to audio is contested. Haunschmid et
 al.~\cite{haunschmid2020audiolime} argue that audio explanations should satisfy
-a \emph{listenability} criterion and that transplanting image-segmentation logic
-onto time--frequency representations yields components with no perceptual
+a \emph{listenability} criterion, and that transplanting image-segmentation
+logic onto time-frequency representations produces components with no perceptual
 correlate. Related formulations appear in~\cite{becker2018audiomnist}
-and~\cite{sotirou2024musiclime}, and Nasr et al.~\cite{nasr2025beyond} extend
-the critique to speech emotion specifically, observing that a salient
-time--frequency region is not thereby an acoustically meaningful one. Attributing
-over named acoustic descriptors sidesteps this objection rather than answering
-it: every unit of attribution here has a phonetic reading by construction, at
-the cost of confining the model to hand-designed features.
+and~\cite{sotirou2024musiclime}. Nasr et al.~\cite{nasr2025beyond} extend the
+critique to speech emotion specifically, and observe that a salient
+time-frequency region is not for that reason an acoustically meaningful one.
+Attributing over named acoustic descriptors avoids this objection rather than
+answering it. Every unit of attribution in this paper has a phonetic reading by
+construction, and the cost of that guarantee is that the model is confined to
+hand-designed features.
 
 \subsection{Attribution stability as a validity requirement}
-The literature most directly load-bearing for this paper concerns the fragility
-of attribution itself. Ghorbani et al.~\cite{ghorbani2019fragile} show that
-attributions can be substantially altered by perturbations below the threshold
-of perception while predictions and confidences remain stable. Adebayo et
-al.~\cite{adebayo2018sanity} demonstrate that certain widely deployed saliency
-methods are statistically independent of both model parameters and
-data-generating process, producing outputs with the surface form of explanation
-and none of its content. Krishna et al.~\cite{krishna2022disagreement} document
-that different explanation methods routinely disagree on the same model, and
-that practitioners resolve the disagreement by unprincipled means.
+The literature that bears most directly on this paper concerns the fragility of
+attribution itself. Ghorbani et al.~\cite{ghorbani2019fragile} show that
+attributions can be altered substantially by perturbations that fall below the
+threshold of human perception, while predictions and confidences remain stable.
+Adebayo et al.~\cite{adebayo2018sanity} demonstrate that certain widely deployed
+saliency methods are statistically independent of both the model parameters and
+the data-generating process. Those methods produce outputs that have the surface
+form of an explanation and none of its content. Krishna et
+al.~\cite{krishna2022disagreement} document that different explanation methods
+routinely disagree on the same model, and that practitioners resolve the
+disagreement by means that have no principled basis.
 
-The joint implication is that attribution stability must be \emph{measured
-against a null}, not presumed. Section~\ref{sec:null} operationalises that
-requirement for the specific object at issue here, a feature-importance ranking,
-and finds that the requirement is not a formality: it changes the size of the
-reported effect by a factor of roughly two and a half.
+Taken together, these results imply that attribution stability must be
+\emph{measured against a null} rather than assumed. Section~\ref{sec:null} puts
+that requirement into practice for the specific object at issue here, which is a
+feature-importance ranking. The requirement turns out not to be a formality,
+because applying it changes the size of the reported effect by a factor of
+roughly two and a half.
 
 \subsection{Distribution shift}
-The mechanism we identify is textbook covariate
+The mechanism we identify is a textbook case of covariate
 shift~\cite{morenotorres2012shift}, with one unusual property. The shifted
-variable is not a proxy for anything the label depends on --- masking it costs
-nothing on clean audio (Section~\ref{sec:neutralise}) --- so the shift is pure
-contamination rather than a change in the predictive relationship. That is what
-makes the repair as cheap as it turns out to be.
+variable is not a proxy for anything that the label depends on, because masking
+it costs nothing on clean audio (Section~\ref{sec:neutralise}). The shift is
+therefore pure contamination rather than a change in the predictive
+relationship, and that is why the repair turns out to be so cheap.
 
 \subsection{Where the gap lies}
-Coding effects are characterised for accuracy but not for evidence. Attribution
-fragility is characterised for vision under adversarial perturbation but not for
-audio under ecologically routine degradation. We identify no prior work that
-isolates the container under a verified signal-invariance constraint, and none
-that calibrates a feature-importance shift against a matched empty perturbation.
+Coding effects have been characterised for accuracy but not for evidence.
+Attribution fragility has been characterised for vision under adversarial
+perturbation but not for audio under the routine degradation that occurs in
+practice. We identify no prior work that isolates the container under a verified
+constraint of signal invariance, and none that calibrates a feature-importance
+shift against a matched empty perturbation.
 
 \section{Corpus, Stimuli, and Conditions}\label{sec:design}
 
@@ -275,7 +291,7 @@ that calibrates a feature-importance shift against a matched empty perturbation.
 
 \node[proc, text width=118mm, anchor=north] (feat) at (55,-21)
   {\textbf{436 named acoustic descriptors} (librosa $+$ Praat), 29{,}768 files,
-   speaker-independent 60/11/20 actor split --- Appendix~\ref{app:features}};
+   speaker-independent 60/11/20 actor split (Appendix~\ref{app:features})};
 
 \node[proc, text width=56mm, anchor=north east] (mis) at (52,-33)
   {\textbf{train/serve mismatch}\\
@@ -296,16 +312,17 @@ that calibrates a feature-importance shift against a matched empty perturbation.
 \draw[ar, densely dashed] (mat.south) -- (86,-52);
 
 \node[lbl, anchor=north, below=1.6mm of null]
-  {\ttf{roundtrip\_wav} carries the same codec output as \ttf{mp4\_aac64};
-   any difference between them is decoding, not coding.};
+  {\ttf{roundtrip\_wav} carries the same codec output as \ttf{mp4\_aac64}, so
+   any difference between them is decoding and not coding.};
 \end{tikzpicture}
-\caption{The design. Every condition descends from a single canonical reference
-$x$, so no format contrast can be confounded by a divergent resampling or gain
-path. The same models are fitted twice --- once on uncompressed audio and served
-compressed, once trained and served in the same condition --- and the difference
-between those two readings is the paper's first result. Every attribution claim
-is evaluated against a floor measured on a manipulation that carries no coding
-information.}
+\caption{The experimental design. Every condition descends from a single
+canonical reference $x$, so no comparison between formats can be confounded by a
+different resampling path or a different gain path. The same models are fitted
+twice. They are fitted once on uncompressed audio and then served compressed
+audio, and they are fitted a second time and served in the same condition they
+were trained on. The difference between those two readings is the first result
+of this paper. Every attribution claim is then evaluated against a floor
+measured on a manipulation that carries no coding information.}
 \label{fig:framework}
 \end{figure*}
 
@@ -315,17 +332,19 @@ delivering one of twelve fixed sentences in one of six acted emotions (anger,
 disgust, fear, happiness, neutral, sadness), with crowd ratings collected
 separately for voice-only, face-only and audio-visual presentation.
 
-The fixed lexical inventory is methodologically load-bearing. Holding the words
+The fixed set of sentences carries real methodological weight. Holding the words
 constant across emotions and conditions removes the lexical channel as a source
-of discriminative variance, so any recovered signal must be carried by acoustic
-realisation --- which is precisely what perceptual coding operates on.
+of discriminative variance. Any signal the models recover must therefore be
+carried by acoustic realisation, and acoustic realisation is exactly what
+perceptual coding operates on.
 
-For reference throughout: CREMA-D's own crowd raters, hearing audio alone,
-matched the actor's intended emotion on only 45.5\,\% of clips, with per-class
-recall ranging from 0.966 (neutral) to 0.164 (sad). Models trained on the
-\emph{intended} label can exceed this because they exploit systematic acting
-cues human listeners do not consciously decode; the figure is reported as
-context for absolute accuracy, not as a target.
+One figure is worth stating here for reference throughout the paper. CREMA-D's
+own crowd raters, hearing the audio alone, matched the actor's intended emotion
+on only 45.5\,\% of clips, with per-class recall ranging from 0.966 for neutral
+down to 0.164 for sad. Models trained on the \emph{intended} label can exceed
+that figure because they exploit systematic acting cues that human listeners do
+not consciously decode. We report the figure as context for the absolute
+accuracies below, and not as a target.
 
 \subsection{Reference construction and conditions}
 The canonical reference is \SI{16}{\kilo\hertz} monophonic 16-bit linear PCM,
@@ -334,138 +353,153 @@ TP${}=\SI{-2}{\decibel}$). Coded conditions are produced from that reference by 
 single encoder invocation each, and all decoding passes through one identical
 FFmpeg call so that the decoder never confounds the codec.
 
-The fourth condition is the identification device. \ttf{roundtrip\_wav} is the
-AAC bitstream of \ttf{mp4\_aac64} decoded and re-wrapped as WAV: the same codec
-output, a different container and one additional int16 quantisation. It is not
-bit-identical to the direct MP4 decode --- the WAV path requantises --- but its
-median standardised feature difference is $|\mathrm{SMD}|=7.6\times10^{-5}$,
-with only 12 of 436 descriptors exceeding $0.05$. That is the noise floor of
-this study, and Section~\ref{sec:null} uses it as an informationally empty
-perturbation rather than merely reporting it as small.
+The fourth condition is the device that lets us identify the codec effect.
+\ttf{roundtrip\_wav} is the AAC bitstream of \ttf{mp4\_aac64}, decoded and then
+re-wrapped as WAV. It carries the same codec output through a different
+container, with one additional int16 quantisation. It is not bit-identical to
+the direct MP4 decode, because the WAV path requantises the samples. Its median
+standardised feature difference is nevertheless
+$|\mathrm{SMD}|=7.6\times10^{-5}$, and only 12 of the 436 descriptors exceed
+$0.05$. That value is the noise floor of this study.
+Section~\ref{sec:null} uses this condition as an informationally empty
+perturbation rather than simply reporting that the difference is small.
 
-Extraction over $7{,}442\times4=29{,}768$ files failed on exactly one clip in
-all four conditions, \ttf{1076\_MTI\_SAD\_XX}, which the corpus documentation
-lists as having no audio. The remaining 7{,}441 clips form the analysis set.
+Feature extraction over $7{,}442\times4=29{,}768$ files failed on exactly one
+clip in all four conditions. That clip is \ttf{1076\_MTI\_SAD\_XX}, which the
+corpus documentation lists as containing no audio. The remaining 7{,}441 clips
+form the analysis set.
 
 \subsection{What the codec does to the descriptors}\label{sec:signal}
-Fig.~\ref{fig:signal} characterises the manipulation before any model is
-involved. Two mechanisms are distinguishable and they behave differently.
+Fig.~\ref{fig:signal} characterises the coding manipulation before any model is
+involved. Two mechanisms can be distinguished, and they behave differently from
+each other.
 
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=\textwidth]{figs/fig_signal.pdf}
 \caption{The coding manipulation, measured on the feature table over 7{,}441
-clips. (a)~The six most displaced descriptors under each codec. MP3's
-displacement is concentrated: \ttf{spectral\_contrast\_6\_mean}, which summarises
-the \SIrange{6}{8}{\kilo\hertz} band, moves by 37.7 pooled standard deviations.
-AAC's is diffuse and lands on delta-MFCC means, the frame-aligned temporal
-derivatives. (b)~Empirical CDF of the absolute standardised mean difference of
-all 436 descriptors. The median shift is negligible ($\approx0.02$); the tail is
-not. (c)~AAC inserts encoder priming samples, lengthening every clip by
-\SI{32.68}{\milli\second}; MP3 adds \SI{0.15}{\milli\second}.}
+clips. (a)~The six most displaced descriptors under each codec. The displacement
+caused by MP3 is concentrated on a single descriptor.
+\ttf{spectral\_contrast\_6\_mean}, which summarises the
+\SIrange{6}{8}{\kilo\hertz} band, moves by 37.7 pooled standard deviations. The
+displacement caused by AAC is diffuse, and it lands on the delta-MFCC means,
+which are the frame-aligned temporal derivatives. (b)~Empirical cumulative
+distribution function of the absolute standardised mean difference over all 436
+descriptors. The median shift is negligible at roughly 0.02, but the tail is
+not. (c)~AAC inserts encoder priming samples, which lengthen every clip by
+\SI{32.68}{\milli\second}. MP3 adds only \SI{0.15}{\milli\second}.}
 \label{fig:signal}
 \end{figure*}
 
 \textbf{MP3 abandons the top octave.} Perceptual bit allocation quantises the
-highest band coarsely and zeroes masked bins, so
-\ttf{spectral\_contrast\_6\_mean} moves from 16.38 to 46.54 and spectral flatness
-collapses in parallel (mean $0.0189\rightarrow0.0066$) because the residual
-spectrum is far less noise-like. Measured in \emph{training-set} standard
-deviations the shift is $38.6\sigma$: the descriptor arrives at inference time in
-a range no model fitted on clean audio has ever seen.
+highest band coarsely and sets masked bins to zero. As a result,
+\ttf{spectral\_contrast\_6\_mean} moves from 16.38 to 46.54, and spectral
+flatness collapses at the same time, with its mean falling from 0.0189 to
+0.0066, because the residual spectrum is far less noise-like than the original.
+Measured in \emph{training-set} standard deviations, this shift is $38.6\sigma$.
+The descriptor therefore arrives at inference time in a range that no model
+fitted on clean audio has ever seen.
 
-\textbf{AAC shifts frame alignment.} Encoder priming lengthens every clip by
-\SI{32.68}{\milli\second}, uniformly, which perturbs every frame-aligned
-temporal derivative a little rather than destroying one band. The largest AAC
-shifts are consequently all delta-MFCC means (\ttf{mfcc\_d1\_01\_mean},
-$\mathrm{SMD}=-4.16$). We flag a caveat here rather than in the limitations,
-because it bears on how the number should be read: delta means sit near zero
-with small standard deviations, so their standardised shifts are inflated
-relative to their absolute change. The duration measurement is the harder
-evidence for the padding mechanism.
+\textbf{AAC shifts frame alignment.} Encoder priming lengthens every clip
+uniformly by \SI{32.68}{\milli\second}. This perturbs every frame-aligned
+temporal derivative a little, rather than destroying a single band. The largest
+AAC shifts are therefore all delta-MFCC means, led by \ttf{mfcc\_d1\_01\_mean}
+at $\mathrm{SMD}=-4.16$. We raise one caveat here rather than in the limitations
+section, because it affects how these numbers should be read. Delta means sit
+near zero and have small standard deviations, so their standardised shifts are
+inflated relative to their absolute change. The duration measurement is the
+stronger evidence for the padding mechanism.
 
 \section{Feature Representation}\label{sec:features}
 
-Each file is reduced to 436 named descriptors in four families, every
-frame-level contour collapsed to eight order statistics (mean, standard
-deviation, minimum, maximum, median, interquartile range, skewness, excess
-kurtosis). Appendix~\ref{app:features} defines every descriptor and enumerates
-every column; the summary is:
+Each file is reduced to 436 named descriptors in four families. Every
+frame-level contour is collapsed to eight order statistics, which are the mean,
+standard deviation, minimum, maximum, median, interquartile range, skewness, and
+excess kurtosis. Appendix~\ref{app:features} defines every descriptor and
+enumerates every column. The families are summarised below.
 
 \begin{itemize}
-\item \textbf{spectral} (114): centroid, bandwidth, roll-off (85/95\,\%),
-flatness, flux, entropy, slope, zero-crossing rate, RMS, seven-band spectral
-contrast, eight band-energy ratios, and explicit high-frequency survival ratios
-above 4 and \SI{6}{\kilo\hertz};
-\item \textbf{cepstral} (240): 20 MFCCs with $\Delta$ and $\Delta\Delta$;
-\item \textbf{prosodic} (56), computed in Praat via
-Parselmouth~\cite{jadoul2018parselmouth}: $F_0$ statistics and slope, jitter
-(local, RAP, PPQ5, DDP), shimmer (local, dB, APQ3, APQ5, APQ11, DDA), HNR,
-formants $F_1$--$F_5$ with bandwidths, intensity, voiced-segment timing, and
-smoothed cepstral peak prominence (CPPS);
-\item \textbf{chroma} (24) and two global descriptors (duration, peak
-amplitude).
+\item \textbf{Spectral} (114 descriptors). These are the centroid, bandwidth,
+roll-off at 85\,\% and 95\,\%, flatness, flux, entropy, slope, zero-crossing
+rate, RMS energy, seven-band spectral contrast, eight band-energy ratios, and
+explicit high-frequency survival ratios above 4 and \SI{6}{\kilo\hertz}.
+\item \textbf{Cepstral} (240 descriptors). These are 20 MFCCs together with
+their first and second temporal derivatives, $\Delta$ and $\Delta\Delta$.
+\item \textbf{Prosodic} (56 descriptors), computed in Praat through
+Parselmouth~\cite{jadoul2018parselmouth}. These are $F_0$ statistics and slope,
+jitter in its local, RAP, PPQ5 and DDP variants, shimmer in its local, dB, APQ3,
+APQ5, APQ11 and DDA variants, harmonics-to-noise ratio, the formants $F_1$ to
+$F_5$ with their bandwidths, intensity, voiced-segment timing, and smoothed
+cepstral peak prominence (CPPS).
+\item \textbf{Chroma} (24 descriptors), together with two global descriptors,
+which are clip duration and peak amplitude.
 \end{itemize}
 
 Spectral and cepstral descriptors are computed with
-librosa~\cite{mcfee2015librosa} at \SI{512}{\point} FFT, \SI{400}{\sample}
-window, \SI{160}{\sample} hop. Chroma tuning is pinned to zero rather than
-estimated, because an estimated tuning could itself shift under compression and
-would silently become part of the effect being measured.
+librosa~\cite{mcfee2015librosa} using a \SI{512}{\point} FFT, a
+\SI{400}{\sample} window, and a \SI{160}{\sample} hop. Chroma tuning is pinned to
+zero rather than estimated. An estimated tuning could itself shift under
+compression, and it would then become part of the effect we are trying to
+measure without our noticing.
 
-One descriptor is defined here because it recurs in the results and because its
-formula is the same one the trees of Section~\ref{sec:trees} use for a different
-purpose. Per-frame spectral entropy is the Shannon entropy of the power spectrum
-normalised by its own bin count,
+We define one descriptor explicitly here, because it recurs in the results and
+because its formula is the same one that the trees of Section~\ref{sec:trees}
+apply for a different purpose. Per-frame spectral entropy is the Shannon entropy
+of the power spectrum, normalised by its own bin count,
 \begin{equation}\label{eq:specent}
 H_t \;=\; -\frac{1}{\ln K}\sum_{k=1}^{K} P_{k,t}\,\ln P_{k,t},
 \qquad
 P_{k,t} \;=\; \frac{S_{k,t}}{\sum_{j=1}^{K} S_{j,t}},
 \end{equation}
-where $S_{k,t}$ is the power in bin $k$ of frame $t$ and $K$ is the number of
-bins. Normalisation puts $H_t\in[0,1]$ and makes it scale-free: $H_t\to1$ for a
-frame whose energy is spread evenly across frequency and $H_t\to0$ for a pure
-tone. It falls when an encoder zeroes masked bins, which is why it moves under
-MP3 before the MFCCs do.
+where $S_{k,t}$ is the power in bin $k$ of frame $t$, and $K$ is the number of
+bins. The normalisation constrains $H_t$ to the interval $[0,1]$ and makes it
+scale-free. The value approaches 1 for a frame whose energy is spread evenly
+across frequency, and it approaches 0 for a pure tone. Spectral entropy falls
+when an encoder sets masked bins to zero, and that is why it moves under MP3
+before the MFCCs do.
 
 \subsection{Splitting}
-Actors are partitioned 60/11/20 into train, validation and test with sex balance
-preserved, yielding 4{,}905/896/1{,}640 clips. Speaker-independent splitting is
-not a nicety here. A variance decomposition over the feature table gives mean
-$\eta^2=0.178$ for speaker against $0.098$ for emotion, with 340 of 436
-descriptors speaker-dominant; a random row split would leak voice identity into
-the test set and inflate every score reported below. Item alignment is enforced:
-the same clips appear in every condition, so a cross-condition comparison differs
-only in coding.
+Actors are partitioned into training, validation and test sets in a 60/11/20
+ratio, with sex balance preserved. This yields 4{,}905, 896 and 1{,}640 clips
+respectively. Speaker-independent splitting is not a mere refinement in this
+corpus. A variance decomposition over the feature table gives a mean
+$\eta^2$ of 0.178 for speaker against 0.098 for emotion, and 340 of the 436
+descriptors are speaker-dominant. A random split over rows would therefore leak
+voice identity into the test set and inflate every score reported below. Item
+alignment is also enforced, meaning that the same clips appear in every
+condition, so that any comparison across conditions differs only in the coding.
 
 \subsection{Separability}
-397 of 436 descriptors separate emotion at Bonferroni-corrected significance.
-The strongest single descriptors are \ttf{mfcc\_d1\_00\_std} ($F=1194$),
-\ttf{mfcc\_00\_std} ($F=1159$) and \ttf{prosody\_intensity\_std} ($F=1078$) ---
-all \emph{variability} measures, not mean levels. Emotion in acted speech lives
-in the dynamics, a fact that recurs in every attribution result below. By mutual
-information the ranking of families inverts the ranking by column count: chroma
-(0.098) $>$ prosody (0.087) $>$ spectral (0.082) $>$ MFCC (0.061). MFCCs win on
-count, not on information per column. Fifty-one principal components are needed
-for 95\,\% of the variance, so the space is genuinely high-dimensional rather
-than a few latent factors wearing 436 names.
+397 of the 436 descriptors separate emotion at Bonferroni-corrected
+significance. The strongest single descriptors are \ttf{mfcc\_d1\_00\_std} with
+$F=1194$, \ttf{mfcc\_00\_std} with $F=1159$, and \ttf{prosody\_intensity\_std}
+with $F=1078$. All three are measures of \emph{variability} rather than of mean
+level. Emotion in acted speech lives in the dynamics of the signal, and this
+fact recurs in every attribution result reported below. Ranking the families by
+mutual information inverts the ranking by column count, giving chroma at 0.098,
+then prosody at 0.087, then spectral at 0.082, and finally MFCC at 0.061. MFCCs
+therefore lead on column count and not on information per column. Fifty-one
+principal components are needed to account for 95\,\% of the variance, so this
+feature space is genuinely high-dimensional rather than a handful of latent
+factors carrying 436 different names.
 
 \section{Models and the Splitting Criterion}\label{sec:models}
 
 \subsection{The zoo}
-Fourteen scikit-learn classifiers spanning tree
+We fit fourteen scikit-learn classifiers, which span tree
 ensembles~\cite{breiman2001rf,chen2016xgboost}, kernel
 machines~\cite{cortes1995svm}, linear and discriminant models, and
-instance-based and probabilistic baselines~\cite{pedregosa2011sklearn}, plus a
-PyTorch MLP (512-256-128 with batch normalisation and dropout 0.3, AdamW with a
-cosine schedule, class-weighted cross-entropy with label smoothing, early
-stopping on validation balanced accuracy) --- fifteen trained models in all.
+instance-based and probabilistic baselines~\cite{pedregosa2011sklearn}. To these
+we add a PyTorch MLP with layer widths of 512, 256 and 128, batch normalisation,
+and dropout of 0.3. It is trained with AdamW under a cosine schedule, using
+class-weighted cross-entropy with label smoothing, and early stopping on
+validation balanced accuracy. This gives fifteen trained models in total.
 
 \subsection{Entropy and information gain}
-Trees are grown with the Shannon-entropy criterion rather than Gini, so that the
-split rule reported in Section~\ref{sec:trees} is the one these equations
-describe. For a node $S$ carrying class weights $w_c$ for each of the six
-emotions, with $w=\sum_c w_c$, the node entropy in bits is
+Trees are grown with the Shannon-entropy criterion rather than with the Gini
+criterion, so that the split rule reported in Section~\ref{sec:trees} is exactly
+the rule these equations describe. For a node $S$ carrying class weights $w_c$
+for each of the six emotions, with $w=\sum_c w_c$, the node entropy in bits is
 \begin{equation}\label{eq:entropy}
 H(S) \;=\; -\sum_{c=1}^{6} p_c \log_2 p_c,
 \qquad p_c \;=\; \frac{w_c}{w}.
@@ -475,10 +509,11 @@ $S_L=\{x: x_f\leq\tau\}$ and $S_R$, and is scored by the information gain
 \begin{equation}\label{eq:ig}
 \mathrm{IG}(S,f,\tau) \;=\; H(S) \;-\; \frac{w_L}{w}H(S_L) \;-\; \frac{w_R}{w}H(S_R).
 \end{equation}
-The tree selects the $(f,\tau)$ maximising Eq.~\ref{eq:ig} at every node. Class
-weights are \texttt{balanced}, so $w_c$ is the inverse class frequency rather
-than a raw count; CREMA-D is nearly balanced (1{,}271 clips for each of five
-emotions, 1{,}087 neutral), so the weights are all close to unity.
+At every node the tree selects the pair $(f,\tau)$ that maximises
+Eq.~\ref{eq:ig}. Class weights are set to \texttt{balanced}, so each $w_c$ is
+the inverse class frequency rather than a raw count. CREMA-D is close to
+balanced already, with 1{,}271 clips for each of five emotions and 1{,}087
+neutral clips, so all of the weights are close to unity.
 
 \subsection{A worked example}
 Because the weights equalise the classes exactly, the root entropy of every tree
@@ -487,29 +522,32 @@ in this paper is
 H(S_{\text{root}}) \;=\; -\sum_{c=1}^{6}\tfrac{1}{6}\log_2\tfrac{1}{6}
 \;=\; \log_2 6 \;=\; 2.5850 bits.
 \end{equation}
-On uncompressed audio the maximising test is
-$\ttf{prosody\_intensity\_std}\leq8.2184$, which sends $w_L=3098.67$ of
-$w=4905.00$ weighted samples left and $w_R=1806.33$ right, with
-$H(S_L)=2.3849$ and $H(S_R)=2.0891$ bits. Substituting into Eq.~\ref{eq:ig},
+On uncompressed audio the test that maximises the gain is
+$\ttf{prosody\_intensity\_std}\leq8.2184$. This test sends $w_L=3098.67$ of the
+$w=4905.00$ weighted samples to the left branch and $w_R=1806.33$ to the right
+branch, with $H(S_L)=2.3849$ bits and $H(S_R)=2.0891$ bits. Substituting these
+values into Eq.~\ref{eq:ig} gives
 \begin{align}
 \mathrm{IG} &= 2.5850 - \tfrac{3098.67}{4905.00}(2.3849)
                       - \tfrac{1806.33}{4905.00}(2.0891)\nonumber\\
             &= 2.5850 - 1.5066 - 0.7693 \;=\; 0.3090 bits.
 \end{align}
-So the single most informative question about a CREMA-D clip --- \emph{how much
-does its loudness vary?} --- resolves 12\,\% of the total label uncertainty.
-Every threshold, entropy and gain reported below is computed this way, and the
-complete node tables are in Appendix~\ref{app:splits}.
+The single most informative question that can be asked about a CREMA-D clip is
+therefore \emph{how much does its loudness vary}, and the answer to that
+question resolves 12\,\% of the total label uncertainty. Every threshold,
+entropy and information gain reported below is computed in this way, and the
+complete node tables appear in Appendix~\ref{app:splits}.
 
 \section{Results}
 
 \subsection{In-format performance}\label{sec:leaderboard}
-Table~\ref{tab:leaderboard} gives the uncompressed leaderboard. Two points
-matter for what follows, and neither is about the winner.
+Table~\ref{tab:leaderboard} gives the leaderboard on uncompressed audio. Two
+points matter for what follows, and neither of them concerns which model won.
 
 \begin{table}[!t]
-\caption{Trained and tested on uncompressed audio, 20 held-out speakers,
-six-way. Chance ${}=0.167$; human voice-only ${}=0.455$.}
+\caption{Models trained and tested on uncompressed audio, evaluated on 20
+held-out speakers in the six-way task. Chance performance is 0.167 and the
+human voice-only ceiling is 0.455.}
 \label{tab:leaderboard}
 \centering
 \footnotesize
@@ -538,32 +576,35 @@ Dummy (majority)       & 0.171 & 0.167 & 0.049 & 0.000\\
 \end{tabular}
 \end{table}
 
-First, a single decision tree --- the one model a human can read end to end ---
-reaches $0.391$ balanced accuracy against $0.599$ for the network. Intrinsic
-interpretability costs a third of the achievable performance on this task. That
-is an argument against Rudin's prescription~\cite{rudin2019stop} in this
-specific setting, and in favour of post-hoc attribution over a strong model.
+First, a single decision tree reaches 0.391 balanced accuracy against 0.599 for
+the neural network. The decision tree is the one model in the zoo that a human
+can read from beginning to end, so intrinsic interpretability costs a third of
+the performance that is achievable on this task. That result argues against
+Rudin's prescription~\cite{rudin2019stop} in this specific setting, and it
+argues in favour of applying post-hoc attribution to a strong model.
 Section~\ref{sec:methods-disagree} then shows what that trade buys and what it
 costs.
 
-Second, the spread between the top eight models is under three points, so the
-leaderboard ordering carries little information. The differences that matter in
-this paper are 10 to 38 points and appear only when the coding condition
-changes.
+Second, the spread between the top eight models is less than three points, so
+the ordering of the leaderboard carries little information. The differences that
+matter in this paper range from 10 to 38 points, and they appear only when the
+coding condition changes.
 
 \subsection{Train/serve mismatch}\label{sec:mismatch}
 Table~\ref{tab:crossformat} and Fig.~\ref{fig:crossformat} report what happens
 when a model fitted on clean audio is served coded audio. The result is
-categorical rather than graded. Every tree-based model sits within $\pm0.014$ of
-its clean score on MP3. Every model that consumes descriptor values as
-continuous magnitudes loses between 12 and 38 points.
+categorical rather than graded. Every tree-based model stays within 0.014
+balanced accuracy of its clean score on MP3, in either direction. Every model
+that consumes descriptor values as continuous magnitudes loses between 12 and 38
+points.
 
 \begin{table*}[!t]
-\caption{All models trained on uncompressed audio and served compressed.
-Balanced accuracy on 20 held-out speakers. Models are grouped by how they
-consume a descriptor value. \ttf{roundtrip} is AAC output re-wrapped as WAV ---
-the container control, whose difference from \ttf{mp4\_aac64} has a median of
-0.003 and a maximum of 0.010 (kNN) across the fifteen models.}
+\caption{All models trained on uncompressed audio and served compressed audio.
+Balanced accuracy is measured on 20 held-out speakers. Models are grouped by how
+they consume a descriptor value. \ttf{roundtrip} is the AAC output re-wrapped as
+WAV, and it acts as the container control. Across the fifteen models its
+difference from \ttf{mp4\_aac64} has a median of 0.003 and a maximum of 0.010,
+reached by kNN.}
 \label{tab:crossformat}
 \centering
 \footnotesize
@@ -598,46 +639,49 @@ the container control, whose difference from \ttf{mp4\_aac64} has a median of
 \centering
 \includegraphics[width=\textwidth]{figs/fig_crossformat.pdf}
 \caption{Robustness to lossy coding under train/serve mismatch is determined by
-how a model consumes its inputs, not by how accurate it is. (a)~Under MP3 at
-\SI{64}{\kilo\bit\per\second} the tree family is flat while the
-magnitude-sensitive family collapses through the human ceiling toward chance.
-(b)~Under MP4/AAC the same models degrade broadly and mildly, consistent with a
-diffuse frame-alignment perturbation rather than a single-band blowout. All
-models were trained on uncompressed audio only.}
+how a model consumes its inputs, and not by how accurate that model is. (a)~Under
+MP3 at \SI{64}{\kilo\bit\per\second} the tree family stays flat, while the
+magnitude-sensitive family falls through the human ceiling and towards chance.
+(b)~Under MP4/AAC the same models degrade broadly and mildly, which is
+consistent with a diffuse frame-alignment perturbation rather than with the
+failure of a single band. All models were trained on uncompressed audio only.}
 \label{fig:crossformat}
 \end{figure*}
 
-The mechanism is legible because the descriptors are named. A tree asks whether
-\ttf{spectral\_contrast\_6\_mean} exceeds a threshold near 17; the answer is
-unchanged whether the descriptor reads 16.4 or 46.5. A linear or kernel model
-multiplies that $38\sigma$ excursion straight into its decision function.
+The mechanism is readable because the descriptors are named. A tree asks whether
+\ttf{spectral\_contrast\_6\_mean} exceeds a threshold near 17, and the answer to
+that question is the same whether the descriptor reads 16.4 or 46.5. A linear or
+kernel model instead multiplies that $38\sigma$ excursion directly into its
+decision function.
 
-We name the two groups by the property that separates them rather than by model
-family, because two members do not fit the obvious label. $k$NN computes
-distances and Gaussian NB evaluates per-descriptor likelihoods; neither
-multiplies a descriptor by a learned weight. What all eight share is that a
-descriptor's \emph{magnitude} enters the decision continuously, whereas the seven
-tree-based models only ever ask on which side of a threshold it falls.
+We name the two groups after the property that separates them rather than after
+a model family, because two members do not fit the obvious label. $k$NN computes
+distances and Gaussian NB evaluates per-descriptor likelihoods, and neither one
+multiplies a descriptor by a learned weight. What all eight models share is that
+the \emph{magnitude} of a descriptor enters the decision continuously. The seven
+tree-based models only ever ask on which side of a threshold that magnitude
+falls.
 
-MP4/AAC behaves differently, costing everyone something and nobody very much
-(0.7 to 11 points regardless of family), consistent with the diffuse padding
-mechanism of Fig.~\ref{fig:signal}(c). Container routing has no material effect:
-across the fifteen models the median difference between \ttf{roundtrip} and
-\ttf{mp4\_aac64} is $0.003$ balanced accuracy and the maximum is $0.010$,
-against codec effects one to two orders of magnitude larger.
+MP4/AAC behaves differently. It costs every model something and no model very
+much, with losses of 0.7 to 11 points regardless of family. This pattern is
+consistent with the diffuse padding mechanism shown in
+Fig.~\ref{fig:signal}(c). Container routing has no material effect. Across the
+fifteen models, the median difference between \ttf{roundtrip} and
+\ttf{mp4\_aac64} is 0.003 balanced accuracy and the maximum is 0.010, whereas
+the codec effects are one to two orders of magnitude larger.
 
 \subsection{Matched-format training}\label{sec:matched}
-The mismatch result is a statement about deployment, not about the codec. To
-separate them, every model was refitted \emph{within} each condition --- same
-actors, same items, same hyper-parameters, coded audio in both training and
-test. Table~\ref{tab:matched} and Fig.~\ref{fig:matched} give the outcome, and
-it is unambiguous.
+The mismatch result is a statement about deployment and not about the codec. To
+separate the two, every model was refitted \emph{within} each condition, using
+the same actors, the same items, and the same hyper-parameters, with coded audio
+in both training and test. Table~\ref{tab:matched} and Fig.~\ref{fig:matched}
+give the outcome, and it is unambiguous.
 
 \begin{table}[!t]
-\caption{Matched-format training: balanced accuracy when a model is fitted and
-evaluated in the \emph{same} condition. The rightmost column is the spread
-across all four conditions. Contrast with Table~\ref{tab:crossformat}, where the
-same models lose up to 38 points.}
+\caption{Matched-format training. Balanced accuracy when a model is fitted and
+evaluated in the \emph{same} condition. The rightmost column gives the spread
+across all four conditions. These values should be contrasted with
+Table~\ref{tab:crossformat}, where the same models lose up to 38 points.}
 \label{tab:matched}
 \centering
 \footnotesize
@@ -662,71 +706,76 @@ Decision tree ($d=3$) & 0.407 & 0.408 & 0.389 & 0.389 & 0.019\\
 \centering
 \includegraphics[width=\textwidth]{figs/fig_matched.pdf}
 \caption{Matched-format training removes the damage that mismatch creates.
-(a)~Every model, fitted and evaluated in the same condition, sits within 0.008
-to 0.039 balanced accuracy of its uncompressed score --- including the two that
-lose 33 and 38 points under mismatch. (b)~The same comparison on MP3 only.
-The affective information survives \SI{64}{\kilo\bit\per\second} coding; what
-fails is the mismatch between the distribution a model was fitted on and the one
-it is served.}
+(a)~Every model that is fitted and evaluated in the same condition stays within
+0.008 to 0.039 balanced accuracy of its uncompressed score. This includes the
+two models that lose 33 and 38 points under mismatch. (b)~The same comparison
+restricted to MP3. The affective information survives coding at
+\SI{64}{\kilo\bit\per\second}. What fails is the mismatch between the
+distribution a model was fitted on and the distribution it is served.}
 \label{fig:matched}
 \end{figure*}
 
-The RBF-SVM scores $0.589$ on MP3 when trained on MP3, against $0.586$ on clean
-audio --- a recovery of \textbf{38.6 balanced-accuracy points} over its
-mismatched score of $0.203$. Logistic regression recovers 33.0 points, LDA 24.8,
-the shallow MLP 18.2. No model's spread across the four conditions exceeds
-0.039, and the two largest spreads belong to the single decision tree, whose
-variance is high for reasons Section~\ref{sec:null} makes precise.
+The RBF-SVM scores 0.589 on MP3 when it is trained on MP3, against 0.586 on
+clean audio. That is a recovery of \textbf{38.6 balanced-accuracy points} over
+its mismatched score of 0.203. Logistic regression recovers 33.0 points, LDA
+recovers 24.8 points, and the shallow MLP recovers 18.2 points. No model has a
+spread greater than 0.039 across the four conditions. The two largest spreads
+both belong to the single decision tree, whose variance is high for reasons that
+Section~\ref{sec:null} makes precise.
 
-Three consequences follow.
+Three consequences follow from this table.
 
-\textbf{The codec does not remove the affective information.} If
-\SI{64}{\kilo\bit\per\second} MP3 destroyed the acoustic correlates of emotion,
-a model fitted on MP3 could not recover them. It does, to within three
-thousandths of the clean-audio score. The catastrophic column of
-Table~\ref{tab:crossformat} measures an artefact of deployment practice, not a
-property of the codec.
+\textbf{The codec does not remove the affective information.} If MP3 at
+\SI{64}{\kilo\bit\per\second} destroyed the acoustic correlates of emotion, then
+a model fitted on MP3 could not recover them. Such a model does recover them, to
+within three thousandths of the clean-audio score. The column of
+Table~\ref{tab:crossformat} that shows catastrophic losses therefore measures an
+artefact of deployment practice rather than a property of the codec.
 
-\textbf{The tree family's advantage is an advantage under mismatch only.} Under
-matched training, LightGBM's lead over the RBF-SVM is 0.008 on clean audio and
-$-0.006$ on MP3. The robustness ordering of Section~\ref{sec:mismatch} is
-entirely a statement about out-of-range inputs.
+\textbf{The advantage held by the tree family exists only under mismatch.} Under
+matched training, LightGBM leads the RBF-SVM by 0.008 on clean audio and trails
+it by 0.006 on MP3. The robustness ordering established in
+Section~\ref{sec:mismatch} is therefore entirely a statement about inputs that
+fall outside the fitted range.
 
-\textbf{The fix is format-specific, not general.} Trained on \ttf{mp4\_aac64}
-and served MP3, the RBF-SVM falls to $0.167$ --- exactly chance. Matched-format
-training immunises against the codec it was trained on and no other, which is
-why Section~\ref{sec:neutralise}'s descriptor-level repair is the more practical
-remedy when the delivery format is not known in advance.
+\textbf{The fix is specific to one format rather than general.} When the RBF-SVM
+is trained on \ttf{mp4\_aac64} and served MP3, it falls to 0.167, which is
+exactly chance. Matched-format training immunises a model against the codec it
+was trained on and against no other codec. That is why the descriptor-level
+repair described in Section~\ref{sec:neutralise} is the more practical remedy
+when the delivery format is not known in advance.
 
 \subsection{What the tree splits on, per condition}\label{sec:trees}
-Accuracy parity does not entail evidential parity. Because the models are fitted
-to named descriptors, the question can be asked directly: given audio that
-supports the same accuracy, does the model reach it by asking the same
+Equal accuracy does not imply equal evidence. Because the models are fitted to
+named descriptors, we can ask the question directly. Given audio that supports
+the same accuracy, does the model reach that accuracy by asking the same
 questions?
 
 Fig.~\ref{fig:trees} and Table~\ref{tab:splits} show the top two levels of a
 depth-3 entropy tree fitted independently on each condition. Every internal node
-of all four trees is in Appendix~\ref{app:splits}.
+of all four trees appears in Appendix~\ref{app:splits}.
 
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=\textwidth]{figs/fig_trees.pdf}
 \caption{The top two levels of the depth-3 entropy tree, fitted separately on
-each condition with the same actors and the same items. The root test is
-codec-invariant in identity and near-invariant in threshold and information
-gain. Divergence begins one level down, and it begins under AAC rather than
-under MP3: the AAC and roundtrip trees abandon the frame-aligned delta
-descriptor \ttf{mfcc\_d1\_00\_std} for the static dispersion measure
-\ttf{mfcc\_00\_iqr}, which is what the \SI{32.68}{\milli\second} priming shift
-predicts. AAC and roundtrip --- the same codec output through two containers ---
-select identical descriptors with thresholds agreeing to four decimal places.}
+each condition using the same actors and the same items. The identity of the
+root test does not change with the codec, and its threshold and information gain
+change very little. The trees begin to diverge one level below the root, and
+they diverge under AAC rather than under MP3. The AAC and roundtrip trees
+abandon the frame-aligned delta descriptor \ttf{mfcc\_d1\_00\_std} in favour of
+the static dispersion measure \ttf{mfcc\_00\_iqr}, which is what the
+\SI{32.68}{\milli\second} priming shift predicts. AAC and roundtrip carry the
+same codec output through two different containers, and they select identical
+descriptors with thresholds that agree to four decimal places.}
 \label{fig:trees}
 \end{figure*}
 
 \begin{table}[!t]
-\caption{Root and depth-1 splits by condition, from the depth-3 entropy tree.
-$H$ and IG are in bits (Eqs.~\ref{eq:entropy}--\ref{eq:ig}). \ttf{L} is the
-branch taken when the root test is satisfied.}
+\caption{Root and depth-1 splits by condition, taken from the depth-3 entropy
+tree. $H$ and IG are reported in bits, following Eq.~\ref{eq:entropy} and
+Eq.~\ref{eq:ig}. \ttf{L} denotes the branch taken when the root test is
+satisfied.}
 \label{tab:splits}
 \centering
 \scriptsize
@@ -750,59 +799,63 @@ Condition & Descriptor & Threshold & IG\\
 \end{tabular}
 \end{table}
 
-Four observations, in increasing order of interest.
+We draw four observations from this table, in increasing order of interest.
 
-\textbf{The primary evidence is codec-invariant.} All four trees select
-\ttf{prosody\_intensity\_std} at the root and extract almost exactly the same
-information from it: 0.3090 bits under WAV and MP3, 0.3064 under AAC. Whatever
-coding does to this feature space, it does not change the single most
-discriminative question about a clip.
+\textbf{The primary evidence does not change with the codec.} All four trees
+select \ttf{prosody\_intensity\_std} at the root, and they extract almost
+exactly the same amount of information from it. The gain is 0.3090 bits under
+WAV and MP3, and 0.3064 bits under AAC. Whatever coding does to this feature
+space, it does not change the single most discriminative question that can be
+asked about a clip.
 
-\textbf{The threshold moves, and it moves with the mechanism.} MP3 shifts the
-root threshold by 0.03\,\% ($8.2184\rightarrow8.2210$); AAC shifts it by
-1.29\,\% ($\rightarrow8.3241$). Intensity standard deviation is computed over
-frames, and AAC's priming adds \SI{32.68}{\milli\second} of near-silent lead-in
-to every clip, which raises the dispersion of the intensity contour. The tree
-compensates by raising its threshold. This is the padding mechanism of
-Fig.~\ref{fig:signal}(c) surfacing as a number in a decision rule.
+\textbf{The threshold moves, and it moves in step with the mechanism.} MP3
+shifts the root threshold by 0.03\,\%, from 8.2184 to 8.2210. AAC shifts it by
+1.29\,\%, to 8.3241. The standard deviation of intensity is computed over
+frames, and the AAC priming adds \SI{32.68}{\milli\second} of near-silent
+lead-in to every clip, which raises the dispersion of the intensity contour. The
+tree compensates by raising its threshold. This is the padding mechanism of
+Fig.~\ref{fig:signal}(c) appearing as a number inside a decision rule.
 
-\textbf{Divergence appears at depth 1, under AAC and not under MP3.} The
-uncompressed and MP3 trees both ask about \ttf{mfcc\_d1\_00\_std}, the standard
-deviation of the first temporal derivative of MFCC-0. The AAC and roundtrip
-trees abandon it for \ttf{mfcc\_00\_iqr}, a \emph{static} dispersion measure of
-the same coefficient. That is precisely what a frame-alignment perturbation
-should do: it corrupts derivatives while leaving the distribution of the
-underlying contour intact, so the tree switches from a temporal statistic to a
-positional one at almost identical information gain (0.1408 vs 0.1415 bits).
-The model finds an equally good question that the codec has not damaged.
+\textbf{The trees diverge at depth 1, under AAC and not under MP3.} The
+uncompressed tree and the MP3 tree both ask about \ttf{mfcc\_d1\_00\_std}, which
+is the standard deviation of the first temporal derivative of MFCC-0. The AAC
+and roundtrip trees abandon that descriptor in favour of \ttf{mfcc\_00\_iqr},
+which is a \emph{static} dispersion measure of the same coefficient. This is
+precisely what a frame-alignment perturbation should do. It corrupts the
+derivatives while leaving the distribution of the underlying contour intact, so
+the tree switches from a temporal statistic to a positional one at almost
+identical information gain, namely 0.1408 bits against 0.1415 bits. The model
+finds an equally good question that the codec has not damaged.
 
-\textbf{The container control reproduces at the structural level.}
+\textbf{The container control reproduces at the level of tree structure.}
 \ttf{mp4\_aac64} and \ttf{roundtrip\_wav} carry the same codec output through
 different containers. Their trees select identical descriptors at every node of
-the top two levels, with thresholds agreeing to $8.3241$ vs $8.3241$ at the root
-and $60.5853$ vs $60.5802$ at depth 1. Two conditions that differ only in
-container produce the same model; two conditions that differ in codec do not.
-The container/codec distinction, previously visible only as a difference in
-accuracy, is here visible as a difference in the learned decision rule.
+the top two levels. The root thresholds are 8.3241 in both cases, and the
+depth-1 thresholds are 60.5853 and 60.5802. Two conditions that differ only in
+container therefore produce the same model, and two conditions that differ in
+codec do not. The distinction between container and codec was previously visible
+only as a difference in accuracy. Here it is visible as a difference in the
+learned decision rule itself.
 
 \subsection{Null calibration of the importance ranking}\label{sec:null}
-The obvious next step is to compare the models' full importance rankings across
-conditions, and the obvious result is dramatic: the tree's top-25 descriptors
-under MP3 share only 12 members with its top-25 under WAV, and the rank
-correlation over the descriptors either tree uses is $\rho=0.017$ --- no
-relationship at all. Read naively, coding has almost completely rewritten what
-the model considers important.
+The obvious next step is to compare the full importance rankings of the models
+across conditions, and the obvious result is a dramatic one. The tree's top-25
+descriptors under MP3 share only 12 members with its top-25 descriptors under
+WAV, and the rank correlation over the descriptors that either tree uses is
+$\rho=0.017$, which indicates no relationship at all. Read at face value, this
+says that coding has almost completely rewritten what the model considers
+important.
 
-That reading is not supportable, and establishing why is this paper's
-methodological contribution. A decision tree's deep importance ranking is a
-fragile object. We measure three floors, all on the estimator that produced the
-effect.
+That reading cannot be supported, and establishing why is the methodological
+contribution of this paper. The deep importance ranking of a decision tree is a
+fragile object. We therefore measure three floors, all of them on the same
+estimator that produced the effect.
 
 \begin{table}[!t]
-\caption{Null calibration for the decision tree's importance ranking. Rows above
-the rule are manipulations carrying no coding information; rows below are the
-coding conditions. $\rho$ is Spearman rank correlation over the descriptors at
-least one of the two fits actually used.}
+\caption{Null calibration for the importance ranking of the decision tree. The
+rows above the rule are manipulations that carry no coding information, and the
+rows below it are the coding conditions. $\rho$ is the Spearman rank correlation
+computed over the descriptors that at least one of the two fits actually used.}
 \label{tab:null}
 \centering
 \scriptsize
@@ -811,9 +864,9 @@ least one of the two fits actually used.}
 \toprule
 Comparison & top-25 kept & $\rho$ & What it varies\\
 \midrule
-Tie-breaking      & 23.5 & $+0.946$ & estimator only; data fixed\\
-Actor bootstrap   & \phantom{0}8.0 & $-0.200$ & training actors; codec fixed\\
-Container re-wrap & 16.0 & $+0.184$ & decode path; codec output fixed\\
+Tie-breaking      & 23.5 & $+0.946$ & estimator only, data fixed\\
+Actor bootstrap   & \phantom{0}8.0 & $-0.200$ & training actors, codec fixed\\
+Container re-wrap & 16.0 & $+0.184$ & decode path, codec output fixed\\
 \midrule
 MP3 @ 64k         & 12.0 & $+0.017$ & codec\\
 MP4/AAC @ 64k     & \phantom{0}9.0 & $-0.082$ & codec\\
@@ -822,39 +875,43 @@ Roundtrip WAV     & 10.0 & $-0.123$ & codec\\
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:null} and Fig.~\ref{fig:nullcal}(a) show why the naive reading
-fails. Resampling \emph{which actors} the tree is fitted on --- with the codec
-held fixed at uncompressed --- retains only 8.0 of 25 descriptors, worse than
-any codec condition. Marginally compared, every codec effect sits inside the
-sampling floor, and no codec claim can be made at all.
+Table~\ref{tab:null} and Fig.~\ref{fig:nullcal}(a) show why the face-value
+reading fails. Resampling \emph{which actors} the tree is fitted on, while
+holding the codec fixed at uncompressed, retains only 8.0 of the 25 descriptors.
+That is worse than any codec condition. When the comparison is made marginally,
+every codec effect sits inside the sampling floor, and no claim about the codec
+can be made at all.
 
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=\textwidth]{figs/fig_nullcal.pdf}
-\caption{A codec effect on a feature-importance ranking is uninterpretable
-without a null. (a)~Compared marginally, the actor-resampling floor is so wide
-that every codec effect falls inside it. (b)~Measured \emph{inside} the same
-resampled training set --- 20 draws of 51 of the 60 training actors, with the
-floor and the effect computed on the same draw --- the codec effect separates
-cleanly. The decisive control is the rightmost group: an informationally empty
-container re-wrap already costs 8.4 of 25 descriptors, so only the gap between
-that line and the codec bars is codec-attributable.}
+\caption{A codec effect on a feature-importance ranking cannot be interpreted
+without a null. (a)~When the comparison is made marginally, the actor-resampling
+floor is so wide that every codec effect falls inside it. (b)~When floor and
+effect are measured \emph{inside} the same resampled training set, using 20
+draws of 51 of the 60 training actors and computing both quantities on the same
+draw, the codec effect separates cleanly. The decisive control is the rightmost
+group. An informationally empty container re-wrap already costs 8.4 of the 25
+descriptors, so only the gap between that line and the codec bars can be
+attributed to the codec.}
 \label{fig:nullcal}
 \end{figure*}
 
-The marginal comparison is the wrong one, because it varies two things at once:
-the floor is estimated on one training set and the effect on another. We
-therefore measure both \emph{inside the same draw}. On each of 20 draws, 51 of
-the 60 training actors are sampled without replacement; the tree is fitted twice
-on those actors' uncompressed audio under different tie-breaking, giving that
-draw's floor, and once on the same actors' coded audio, giving that draw's
-effect. Sampling variance is thereby held fixed by construction, and no actor is
+The marginal comparison is the wrong one, because it varies two things at the
+same time. The floor is estimated on one training set and the effect is
+estimated on another. We therefore measure both quantities \emph{inside the same
+draw}. On each of 20 draws, 51 of the 60 training actors are sampled without
+replacement. The tree is then fitted twice on the uncompressed audio of those
+actors under different tie-breaking, which gives the floor for that draw, and
+once on the coded audio of the same actors, which gives the effect for that
+draw. Sampling variance is held fixed by construction, and no actor is
 duplicated.
 
 \begin{table}[!t]
-\caption{Paired within-draw comparison, 20 draws of 51 of 60 training actors.
-The floor is a refit on the same actors' \emph{uncompressed} audio under
-different tie-breaking. Wilcoxon signed-rank on the paired per-draw difference.}
+\caption{Paired within-draw comparison over 20 draws of 51 of the 60 training
+actors. The floor is a refit on the \emph{uncompressed} audio of the same actors
+under different tie-breaking. The $p$ values come from a Wilcoxon signed-rank
+test on the paired per-draw difference.}
 \label{tab:paired}
 \centering
 \scriptsize
@@ -863,7 +920,7 @@ different tie-breaking. Wilcoxon signed-rank on the paired per-draw difference.}
 \toprule
 & top-25 kept & $\rho$ & $p$ vs.\ floor\\
 \midrule
-\textit{floor} (same audio, refit) & \textit{24.15} & $+0.958$ & ---\\
+\textit{floor} (same audio, refit) & \textit{24.15} & $+0.958$ & n/a\\
 \midrule
 Container re-wrap (empty)          & 15.80 & $+0.196$ & $8.1\times10^{-5}$\\
 MP3 @ 64k                          & 12.55 & $-0.068$ & $8.4\times10^{-5}$\\
@@ -876,69 +933,74 @@ Roundtrip WAV                      & \phantom{0}9.95 & $-0.126$ & $7.9\times10^{
 Table~\ref{tab:paired} and Fig.~\ref{fig:nullcal}(b) give the result, and it has
 three layers.
 
-\textbf{The estimator is reproducible.} With the data fixed and only
-tie-breaking varied, the tree retains 24.15 of 25 top descriptors
-($\rho=0.958$). Whatever else is fragile, the fitting procedure is not.
+\textbf{The estimator is reproducible.} With the data held fixed and only the
+tie-breaking varied, the tree retains 24.15 of its 25 top descriptors, at
+$\rho=0.958$. Whatever else in this analysis is fragile, the fitting procedure
+is not.
 
 \textbf{An informationally empty perturbation is expensive.} The container
-re-wrap changes no codec information --- it is the same AAC bitstream, decoded
-identically, differing only by one int16 requantisation whose median feature
-effect is $7.6\times10^{-5}$ standardised units. It nonetheless costs
-\textbf{8.35 of 25} top descriptors ($24.15\rightarrow15.80$,
-$p=8.1\times10^{-5}$). A ranking that turns over by a third under a manipulation
-that carries no information cannot be read as a description of what the model
-needs.
+re-wrap changes no codec information whatsoever. It is the same AAC bitstream,
+decoded in the same way, and it differs only by a single int16 requantisation
+whose median effect on the features is $7.6\times10^{-5}$ standardised units. It
+nonetheless costs \textbf{8.35 of the 25} top descriptors, moving the retention
+from 24.15 to 15.80 at $p=8.1\times10^{-5}$. A ranking that turns over by a
+third under a manipulation carrying no information cannot be read as a
+description of what the model needs.
 
-\textbf{The codec effect is real but roughly two-fifths the size it appears.}
-Against the empty-perturbation floor of 15.80, MP3 retains 12.55
-($p=1.1\times10^{-3}$, $d_z=1.20$) and AAC 10.65 ($p=1.2\times10^{-4}$,
-$d_z=2.39$). So of the 13.5 descriptors that AAC appears to displace relative to
-a clean refit, 8.35 are attributable to generic perturbation sensitivity and
-only 5.15 to the codec. A study reporting the raw figure would over-attribute by
-a factor of about $2.6$.
+\textbf{The codec effect is real, but it is roughly two fifths of the size it
+appears to be.} Measured against the empty-perturbation floor of 15.80, MP3
+retains 12.55 descriptors ($p=1.1\times10^{-3}$, $d_z=1.20$) and AAC retains
+10.65 ($p=1.2\times10^{-4}$, $d_z=2.39$). Of the 13.5 descriptors that AAC
+appears to displace relative to a clean refit, 8.35 are therefore attributable
+to generic sensitivity to perturbation, and only 5.15 are attributable to the
+codec. A study that reported the raw figure would over-attribute the effect by a
+factor of about 2.6.
 
-The direction of the codec-specific component is consistent with
-Section~\ref{sec:trees}: AAC displaces more than MP3 in the ranking
-($10.65$ vs $12.55$, $p=4.2\times10^{-3}$, $d_z=0.84$, paired), which is the
-reverse of the accuracy ordering under mismatch, where MP3 is catastrophic and
-AAC mild. Coding that perturbs every temporal derivative slightly reorganises a
-tree more than coding that blows out one band the tree can simply threshold
-around --- which is also what Section~\ref{sec:trees} shows structurally, since
-it is the AAC tree and not the MP3 tree that replaces its depth-1 descriptor.
+The direction of the codec-specific component agrees with
+Section~\ref{sec:trees}. AAC displaces more of the ranking than MP3 does, with
+retentions of 10.65 against 12.55 ($p=4.2\times10^{-3}$, $d_z=0.84$, paired).
+That ordering is the reverse of the accuracy ordering under mismatch, where MP3
+is catastrophic and AAC is mild. Coding that perturbs every temporal derivative
+slightly reorganises a tree more than coding that destroys one band which the
+tree can simply threshold around. Section~\ref{sec:trees} shows the same thing
+structurally, because it is the AAC tree and not the MP3 tree that replaces its
+depth-1 descriptor.
 
 \subsection{Post-hoc attribution and its disagreements}
-Attribution was computed on the held-out speakers using TreeSHAP for the
+Attribution was computed on the held-out speakers. We used TreeSHAP for the
 ensembles~\cite{lundberg2020treeshap}, LinearSHAP for the linear models, LIME
 for local surrogates~\cite{ribeiro2016lime}, permutation importance, partial
-dependence, a depth-4 global surrogate tree, and, for the network, six methods
-from Captum~\cite{kokhlikyan2020captum}: Saliency, Input$\times$Gradient,
-Integrated Gradients~\cite{sundararajan2017ig},
+dependence, and a depth-4 global surrogate tree. For the neural network we used
+six methods from Captum~\cite{kokhlikyan2020captum}, which are Saliency,
+Input$\times$Gradient, Integrated Gradients~\cite{sundararajan2017ig},
 DeepLIFT~\cite{shrikumar2017deeplift}, GradientSHAP and Feature Ablation.
 
 \subsubsection{Convergent evidence across families}
 On uncompressed audio, five model families and four attribution algorithms
 select the same acoustic evidence. The top SHAP descriptors for XGBoost and
-LightGBM are identical in the first five (\ttf{mfcc\_d1\_00\_std},
-\ttf{mfcc\_d2\_00\_std}, \ttf{duration\_s}, \ttf{prosody\_intensity\_std},
-\ttf{mfcc\_00\_std}); the decision tree leads with
-\ttf{prosody\_intensity\_std}, matching its root split; and all six gradient
-methods on the network return \ttf{mfcc\_d1\_00\_std},
+LightGBM are identical in their first five entries, which are
+\ttf{mfcc\_d1\_00\_std}, \ttf{mfcc\_d2\_00\_std}, \ttf{duration\_s},
+\ttf{prosody\_intensity\_std} and \ttf{mfcc\_00\_std}. The decision tree leads
+with \ttf{prosody\_intensity\_std}, which matches its own root split. All six
+gradient methods applied to the network return \ttf{mfcc\_d1\_00\_std},
 \ttf{mfcc\_d2\_00\_std}, \ttf{prosody\_cpps} and \ttf{duration\_s}. The two
-leaders are the standard deviations of the first and second derivative of
-MFCC-0 --- \emph{how variable the rate of change of overall loudness is} --- a
-direct formalisation of vocal agitation.
+leading descriptors are the standard deviations of the first and second
+derivative of MFCC-0. They measure how variable the rate of change of overall
+loudness is, which is a direct formalisation of vocal agitation.
 
-Attribution mass is spread across families rather than concentrated
-(Table~\ref{tab:famshare}), and the pattern matches the mutual-information
-result of Section~\ref{sec:features}: MFCCs hold 55\,\% of the columns and take
-roughly 55\,\% of the attribution, so they carry no per-descriptor advantage.
-The single decision tree is the outlier, leaning harder on prosody --- which is
-what makes it readable and also what caps its accuracy.
+Attribution mass is spread across the families rather than concentrated in one
+of them, as Table~\ref{tab:famshare} shows. The pattern matches the
+mutual-information result of Section~\ref{sec:features}. MFCCs hold 55\,\% of
+the columns and take roughly 55\,\% of the attribution, so they carry no
+advantage per descriptor. The single decision tree is the one outlier, because
+it leans more heavily on prosody. That reliance is what makes the tree readable,
+and it is also what limits its accuracy.
 
 \begin{table}[!t]
-\caption{Share of total attribution mass by descriptor family, on uncompressed
-audio. Column share is the proportion of the 436 descriptors each family
-contributes. SHAP except the ANN, which uses integrated gradients.}
+\caption{Share of total attribution mass by descriptor family, measured on
+uncompressed audio. Column share is the proportion of the 436 descriptors that
+each family contributes. All rows use SHAP except the ANN row, which uses
+integrated gradients.}
 \label{tab:famshare}
 \centering
 \scriptsize
@@ -959,95 +1021,100 @@ ANN (int.\ grad.)    & 0.542 & 0.238 & 0.153 & 0.057 & 0.009\\
 \end{tabular}
 \end{table}
 
-Per-emotion attributions are acoustically sensible. CPPS, a breathiness
-correlate, drives both sadness and neutrality; $F_0$ median drives fear; $F_2$
-movement drives disgust; and loudness dynamics drive anger. The network was told
-none of this.
+The per-emotion attributions are acoustically sensible. CPPS, which correlates
+with breathiness, drives both sadness and neutrality. The median $F_0$ drives
+fear, movement in $F_2$ drives disgust, and loudness dynamics drive anger. The
+network was given none of this information in advance.
 
 \subsubsection{The methods disagree with each other}\label{sec:methods-disagree}
-Fig.~\ref{fig:methods}(a) is the uncomfortable result. SHAP agrees closely with
-a model's \emph{intrinsic} importance for the simpler models ($\rho=0.98$ for
-both the decision tree and logistic regression), but LIME and permutation
-importance are close to unrelated to it. On the decision tree, LIME and SHAP
-rank descriptors at $\rho=0.008$ --- no relationship at all --- while still
-sharing 10 of their top 20. This reproduces the disagreement problem Krishna et
-al.~\cite{krishna2022disagreement} document, on a model simple enough that no
-approximation error can be blamed.
+Fig.~\ref{fig:methods}(a) presents an uncomfortable result. For the simpler
+models, SHAP agrees closely with a model's \emph{intrinsic} importance, reaching
+$\rho=0.98$ for both the decision tree and logistic regression. LIME and
+permutation importance are close to unrelated to that intrinsic importance. On
+the decision tree, LIME and SHAP rank descriptors at $\rho=0.008$, which is no
+relationship at all, and yet the two methods still share 10 of their top 20
+descriptors. This reproduces the disagreement problem documented by Krishna et
+al.~\cite{krishna2022disagreement}, and it reproduces it on a model simple
+enough that approximation error cannot be blamed.
 
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=\textwidth]{figs/fig_methods.pdf}
-\caption{Explanation-method agreement, measured as Spearman rank correlation
-over all 436 descriptors. (a)~Post-hoc methods applied to the same fitted
-tabular model. SHAP tracks intrinsic importance closely for the simpler models
-but LIME and permutation importance are nearly unrelated to it; on the decision
-tree, LIME and SHAP agree at $\rho=0.008$. (b)~The six gradient-family methods
-applied to the network agree almost perfectly ($\rho\geq0.94$ pairwise), which
-shows that the disagreement in (a) is a property of the method families rather
-than of this feature space.}
+\caption{Agreement between explanation methods, measured as Spearman rank
+correlation over all 436 descriptors. (a)~Post-hoc methods applied to the same
+fitted tabular model. SHAP tracks intrinsic importance closely for the simpler
+models, while LIME and permutation importance are nearly unrelated to it. On the
+decision tree, LIME and SHAP agree at only $\rho=0.008$. (b)~The six methods of
+the gradient family, applied to the network, agree almost perfectly, at
+$\rho\geq0.94$ for every pair. This shows that the disagreement in panel (a) is
+a property of the method families rather than of this feature space.}
 \label{fig:methods}
 \end{figure*}
 
-Panel~(b) sharpens the point rather than softening it. The six gradient-family
-methods on the network agree almost perfectly ($\rho\geq0.94$ pairwise, with
-Integrated Gradients and DeepLIFT at $0.998$). High agreement within a method
-family is therefore not evidence of correctness --- these methods share a
-mathematical lineage, and their consensus reflects that lineage. The practical
-consequence is that a single-method claim about which acoustic descriptors
-matter is not reproducible across methods. Only descriptors surviving all four
-independent views should be reported as robust; here that set is
+Panel~(b) sharpens this point rather than softening it. The six gradient-family
+methods applied to the network agree almost perfectly, at $\rho\geq0.94$ for
+every pair, with Integrated Gradients and DeepLIFT reaching 0.998. High
+agreement within a single method family is therefore not evidence of
+correctness. These methods share a mathematical lineage, and their consensus
+reflects that shared lineage. The practical consequence is that a claim about
+which acoustic descriptors matter, made from one method alone, does not
+reproduce across methods. Only the descriptors that survive all four independent
+views should be reported as robust. In this study that set consists of
 \ttf{mfcc\_d1\_00\_std}, \ttf{prosody\_intensity\_std}, \ttf{duration\_s},
 \ttf{prosody\_cpps} and \ttf{prosody\_f0\_median}.
 
-Two further calibrations belong with this result. A depth-4 global surrogate
-reproduces its target model's predictions only 57 to 74\,\% of the time (random
-forest 73.9\,\%, LightGBM 63.4\,\%, XGBoost 62.1\,\%, SVM 58.7\,\%, logistic
-regression 57.1\,\%), so surrogate rules summarise a majority of a model, not a
-model; reporting them without their fidelity would overstate what has been
-explained. And the network's attributions pass the Adebayo model-randomisation
-check (Fig.~\ref{fig:sanity}): correlation between attributions from the trained
-network and a randomly initialised one of identical architecture ranges from
-$-0.011$ to $0.206$ across all six methods. These explanations describe the
-trained model, not merely the input distribution.
+Two further calibrations belong with this result. First, a depth-4 global
+surrogate reproduces the predictions of its target model only 57 to 74\,\% of
+the time. The fidelity is 73.9\,\% for the random forest, 63.4\,\% for LightGBM,
+62.1\,\% for XGBoost, 58.7\,\% for the SVM, and 57.1\,\% for logistic
+regression. Surrogate rules therefore summarise a majority of a model rather
+than the whole model, and reporting them without their fidelity would overstate
+what has been explained. Second, the attributions produced for the network pass
+the Adebayo model-randomisation check shown in Fig.~\ref{fig:sanity}. The
+correlation between attributions from the trained network and attributions from
+a randomly initialised network of identical architecture ranges from $-0.011$ to
+0.206 across all six methods. These explanations therefore describe the trained
+model and not merely the input distribution.
 
 \begin{figure}[!t]
 \centering
 \includegraphics[width=\columnwidth]{figs/fig_sanity.pdf}
 \caption{Model-randomisation sanity check~\cite{adebayo2018sanity} for the six
-gradient-family methods. A method whose attributions correlate with those of a
-randomly initialised network of identical architecture is describing the input
-distribution rather than the model. All six sit near zero, so the failure mode
-does not apply here.}
+methods of the gradient family. A method whose attributions correlate with those
+of a randomly initialised network of identical architecture is describing the
+input distribution rather than the model. All six methods sit near zero, so this
+failure mode does not apply here.}
 \label{fig:sanity}
 \end{figure}
 
 \subsubsection{An estimator that failed loudly}\label{sec:kernelshap}
-The RBF-SVM has no exact explainer, so it was given KernelSHAP with 100 sampled
-coalitions over 436 descriptors. KernelSHAP fits a weighted least-squares
-regression with one unknown per descriptor; with 100 coalitions for 436 unknowns
-that system is rank-deficient, and the result diverged --- maximum mean
-$|$SHAP$|$ of $2.1\times10^{12}$ against a median of $5.3\times10^{-4}$, with
-entire descriptor families assigned exactly zero. A cheap tell that this had
-gone wrong: a well-behaved additive attribution over 7{,}441 clips does not
-assign a whole family exactly 0.000.
+The RBF-SVM has no exact explainer, so we applied KernelSHAP to it with 100
+sampled coalitions over 436 descriptors. KernelSHAP fits a weighted
+least-squares regression with one unknown per descriptor. With 100 coalitions
+available for 436 unknowns, that system is rank-deficient, and the result
+diverged. The maximum mean $|$SHAP$|$ value reached $2.1\times10^{12}$ against a
+median of $5.3\times10^{-4}$, and entire descriptor families were assigned
+exactly zero. There is a cheap way to detect this failure. A well-behaved
+additive attribution computed over 7{,}441 clips does not assign a whole family
+a value of exactly 0.000.
 
-The SVM's KernelSHAP ranking is excluded from every conclusion in this paper as
-an estimation artefact, and the implementation now raises when the coalition
-budget does not exceed the descriptor count. The SVM contributes accuracy and
-robustness results but no attribution row; its trustworthy views are permutation
-importance and LIME, whose top descriptors reproduce the consensus every other
-model reaches.
+We exclude the KernelSHAP ranking for the SVM from every conclusion in this
+paper, treating it as an estimation artefact, and the implementation now raises
+an error when the coalition budget does not exceed the descriptor count. The SVM
+therefore contributes accuracy and robustness results but no attribution row.
+Its trustworthy views are permutation importance and LIME, whose top descriptors
+reproduce the consensus that every other model reaches.
 
 \subsection{Attribution stability under coding}\label{sec:stability}
-Table~\ref{tab:stability} reports SHAP rank stability under train/serve
-mismatch. Tree and linear attributions barely move; the network's move
-substantially.
+Table~\ref{tab:stability} reports the stability of SHAP rankings under
+train/serve mismatch. The attributions of the tree and linear models barely
+move, while those of the network move substantially.
 
 \begin{table}[!t]
-\caption{Attribution stability under mismatch: Spearman $\rho$ over all 436
-descriptors against the uncompressed condition, with the number of top-25
-descriptors retained in parentheses. SHAP for all rows except the ANN, which
-uses integrated gradients.}
+\caption{Attribution stability under mismatch. Values are Spearman $\rho$ over
+all 436 descriptors, measured against the uncompressed condition, with the
+number of top-25 descriptors retained given in parentheses. All rows use SHAP
+except the ANN row, which uses integrated gradients.}
 \label{tab:stability}
 \centering
 \scriptsize
@@ -1066,68 +1133,71 @@ ANN (int.\ grad.)   & \textbf{0.677 (11)} & 0.891 (16) & 0.887 (16) & $-0.246$\\
 \end{tabular}
 \end{table}
 
-These rows measure something different from Section~\ref{sec:null}, and the
-distinction matters. Here the \emph{model is fixed} and only its input changes,
-so the comparison is between two attributions of one fitted object. In
-Section~\ref{sec:null} the model is refitted, so the comparison is between two
-learned objects. The first is stable because a fitted tree's split structure
-does not move when you feed it slightly different numbers; the second is not,
-because the fitting procedure can reach an equally good structure by a different
-route.
+These rows measure something different from what Section~\ref{sec:null}
+measures, and the distinction matters. Here the \emph{model is held fixed} and
+only its input changes, so the comparison is between two attributions of a
+single fitted object. In Section~\ref{sec:null} the model is refitted, so the
+comparison is between two separately learned objects. The first comparison is
+stable, because the split structure of a fitted tree does not move when it is
+fed slightly different numbers. The second is not stable, because the fitting
+procedure can arrive at an equally good structure by a different route.
 
-Even so, the accuracy figure understates the attribution figure throughout.
-XGBoost loses 2.2 accuracy points on AAC and still swaps 3 of its top 25; the
-network loses 8.7 points and swaps 9. An accuracy-only benchmark would call the
-first negligible and the second modest.
+Even so, the accuracy figure understates the attribution figure throughout the
+table. XGBoost loses 2.2 accuracy points on AAC and still swaps 3 of its top 25
+descriptors. The network loses 8.7 points and swaps 9. A benchmark based on
+accuracy alone would call the first change negligible and the second change
+modest.
 
-What replaces what is readable only because the descriptors are named. Under
-MP3 the descriptors \emph{entering} the network's top 25 are almost all encoder
-artefacts --- \ttf{spectral\_flatness} in five statistics, plus
-\ttf{spectral\_contrast\_6\_mean} --- while those \emph{leaving} are genuine
-voice-quality and prosodic measures: \ttf{prosody\_cpps},
-\ttf{prosody\_f0\_skew}, \ttf{prosody\_f2\_mean}, \ttf{prosody\_f2\_std},
+Which descriptors replace which is readable only because the descriptors are
+named. Under MP3, the descriptors \emph{entering} the network's top 25 are
+almost all encoder artefacts. They are \ttf{spectral\_flatness} in five
+different statistics, together with \ttf{spectral\_contrast\_6\_mean}. The
+descriptors \emph{leaving} the top 25 are genuine measures of voice quality and
+prosody, namely \ttf{prosody\_cpps}, \ttf{prosody\_f0\_skew},
+\ttf{prosody\_f2\_mean}, \ttf{prosody\_f2\_std} and
 \ttf{prosody\_f3\_bw\_median}. Under mismatch, the model stops listening to the
 voice and starts listening to the encoder.
 
 \subsubsection{A blind spot in global attribution metrics}\label{sec:blindspot}
 The logistic regression row of Table~\ref{tab:stability} is the most important
 negative result in this paper. Its SHAP ranking is essentially unchanged under
-MP3 ($\rho=0.987$, 22 of 25 top descriptors retained) while its balanced
-accuracy collapses from $0.567$ to $0.233$. The coefficients did not change;
-only the inputs went out of range, and a global mean-$|$SHAP$|$ ranking is
-largely blind to that.
+MP3, at $\rho=0.987$ with 22 of the 25 top descriptors retained, while its
+balanced accuracy collapses from 0.567 to 0.233. The coefficients of the model
+did not change. Only the inputs moved out of range, and a global ranking based
+on mean $|$SHAP$|$ is largely blind to that kind of movement.
 
-This is a caution about the method, not about the model. \textbf{A global
-attribution-stability metric can report ``nothing changed'' while the classifier
-has effectively stopped working.} Any deployment that monitors explanation
-stability as a proxy for model health must pair it with input-range monitoring
-or local, per-instance attribution; the global ranking alone will not raise the
-alarm.
+This is a caution about the method rather than about the model. \textbf{A global
+attribution-stability metric can report that nothing has changed while the
+classifier has effectively stopped working.} Any deployment that monitors
+explanation stability as a proxy for model health must therefore pair that
+monitor with input-range monitoring or with local, per-instance attribution. The
+global ranking on its own will not raise the alarm.
 
 \subsection{Diagnosis and repair}\label{sec:neutralise}
-Because the descriptors are named, the mismatch failure is not merely observable
-but addressable. Descriptors were ranked by how far each codec moves them in
-units of \emph{training} standard deviation, then progressively replaced with
-training medians in both the compressed and the clean test set --- the clean
-column controlling for whatever real signal the masking itself destroys.
+Because the descriptors are named, the mismatch failure is not only observable
+but also addressable. We ranked the descriptors by how far each codec moves them
+in units of \emph{training} standard deviation. We then replaced them
+progressively with training medians, in both the compressed test set and the
+clean test set. The clean column controls for whatever real signal
+the masking itself destroys.
 
 \begin{figure}[!t]
 \centering
 \includegraphics[width=\columnwidth]{figs/fig_neutralise.pdf}
-\caption{Neutralisation on MP3 at \SI{64}{\kilo\bit\per\second}: replacing the
-most codec-shifted descriptors with their training medians. Masking one
-descriptor recovers almost the entire collapse for every affected model; the
-tree models were never affected and are flat throughout. Beyond roughly 20
+\caption{Neutralisation on MP3 at \SI{64}{\kilo\bit\per\second}, which replaces
+the most codec-shifted descriptors with their training medians. Masking a single
+descriptor recovers almost the entire collapse for every affected model. The
+tree models were never affected and stay flat throughout. Beyond roughly 20
 descriptors the masking begins to destroy real evidence. On uncompressed audio
-the same masking costs nothing out to 20 descriptors, confirming these columns
-were never load-bearing evidence.}
+the same masking costs nothing out to 20 descriptors, which confirms that these
+columns never carried load-bearing evidence.}
 \label{fig:neutralise}
 \end{figure}
 
 \begin{table}[!t]
 \caption{Balanced accuracy on MP3 as the most codec-shifted descriptors are
-replaced by training medians. Italic row: the model's own clean-audio score.
-Tree columns are flat because they had nothing to recover.}
+replaced by training medians. The italic row gives each model's own clean-audio
+score. The tree columns stay flat because those models had nothing to recover.}
 \label{tab:neutralise}
 \centering
 \footnotesize
@@ -1147,217 +1217,235 @@ Masked & SVM & Log.\ reg. & ANN & MLP & XGBoost & Dec.\ tree\\
 \end{tabular}
 \end{table}
 
-The single masked descriptor is \ttf{spectral\_contrast\_6\_mean}. Masking it
-alone recovers 98\,\% of the RBF-SVM's 38.3-point loss and 92\,\% of the
-network's 24.6-point loss; three descriptors bring logistic regression to
-$0.562$ against its $0.567$ clean-audio score.
+The single masked descriptor is \ttf{spectral\_contrast\_6\_mean}. Masking that
+descriptor alone recovers 98\,\% of the 38.3-point loss suffered by the RBF-SVM
+and 92\,\% of the 24.6-point loss suffered by the network. Masking three
+descriptors brings logistic regression to 0.562 against its clean-audio score of
+0.567.
 
-Two controls make this a diagnosis rather than a coincidence. On uncompressed
-audio the identical masking costs nothing out to 20 descriptors --- the
-network's clean control sits at $0.607$--$0.609$, marginally \emph{above} its
-$0.599$ unmasked baseline --- so these columns were never load-bearing evidence;
-they were the channel through which the encoder's fingerprint entered the model.
-And the AAC case behaves as its different mechanism predicts: no single
-descriptor dominates, with the network's best recovery arriving at 10
-descriptors masked ($0.513\rightarrow0.560$) and the SVM's at 40
-($0.499\rightarrow0.542$).
+Two controls make this a diagnosis rather than a coincidence. First, on
+uncompressed audio the identical masking costs nothing out to 20 descriptors.
+The clean control for the network sits between 0.607 and 0.609, which is
+marginally \emph{above} its unmasked baseline of 0.599. These columns therefore
+never carried load-bearing evidence. They were the channel through which the
+encoder's fingerprint entered the model. Second, the AAC case behaves as its
+different mechanism predicts, in that no single descriptor dominates. The best
+recovery for the network arrives at 10 descriptors masked, moving it from 0.513
+to 0.560, and the best recovery for the SVM arrives at 40 descriptors masked,
+moving it from 0.499 to 0.542.
 
 The diagnosis is therefore covariate shift on a small set of identifiable
-descriptors, not loss of emotional information --- which is exactly what
-Section~\ref{sec:matched} establishes independently, by a different route.
+descriptors rather than a loss of emotional information. That is exactly what
+Section~\ref{sec:matched} establishes independently, by a completely different
+route.
 
 \section{Discussion}
 
 \subsection{Three questions that are usually one}
-This study separates three things that a single accuracy number conflates.
-\emph{Does the codec destroy the information?} No: matched-format training
-recovers 38.6 points and lands within 0.003 of the clean score.
-\emph{Does the codec break deployed models?} Severely, if they consume
-descriptor magnitudes and were fitted on clean audio.
-\emph{Does the codec change what the model learns?} Yes, but by much less than
-the raw numbers suggest, and only a properly nulled comparison can say by how
-much.
+This study separates three questions that a single accuracy number runs
+together. The first is whether the codec destroys the information. It does not,
+because matched-format training recovers 38.6 points and lands within 0.003 of
+the clean score. The second is whether the codec breaks deployed models. It
+breaks them severely, provided that those models consume descriptor magnitudes
+and were fitted on clean audio. The third is whether the codec changes what the
+model learns. It does, but by much less than the raw numbers suggest, and only a
+properly nulled comparison can say by how much.
 
-An evaluation reporting only the second question --- which is what
-cross-format benchmarking does --- would conclude that
-\SI{64}{\kilo\bit\per\second} MP3 is unusable for SER. The first question shows
-that conclusion is about the pipeline, not the codec.
+An evaluation that reports only the second question, which is what cross-format
+benchmarking does, would conclude that MP3 at \SI{64}{\kilo\bit\per\second} is
+unusable for SER. The first question shows that this conclusion is really about
+the pipeline and not about the codec.
 
 \subsection{Null calibration is not optional}
-The container re-wrap changes no coding information and still turns over a third
-of the tree's top-25 ranking. Any claim of the form ``manipulation $M$ changed
-which features the model uses'' is therefore uninterpretable without a
-perturbation matched in every respect except informational content. We propose
-this as standard practice for feature-attribution claims in affective computing.
-The cost is one additional condition and one additional model fit; the benefit
-is that the claim becomes falsifiable, and in our case that it shrinks by a
-factor of 2.6 rather than being reported at face value.
+The container re-wrap changes no coding information at all, and it still turns
+over a third of the tree's top-25 ranking. Any claim of the form ``manipulation
+$M$ changed which features the model uses'' is therefore impossible to interpret
+without a perturbation that is matched in every respect except informational
+content. We propose this as standard practice for feature-attribution claims in
+affective computing. The cost is one additional condition and one additional
+model fit. The benefit is that the claim becomes falsifiable. In our case the
+benefit is also that the claim shrinks by a factor of 2.6 rather than being
+reported at face value.
 
-The paired design matters as much as the null itself. Compared marginally, the
-actor-resampling floor was wide enough to swallow every codec effect
-(Fig.~\ref{fig:nullcal}(a)) and we would have reported nothing. Measuring floor
-and effect inside the same resampled training set removes sampling variance by
-construction and recovers a clean answer.
+The paired design matters as much as the null itself does. When the comparison
+was made marginally, the actor-resampling floor was wide enough to swallow every
+codec effect, as Fig.~\ref{fig:nullcal}(a) shows, and we would have reported
+nothing at all. Measuring the floor and the effect inside the same resampled
+training set removes sampling variance by construction and recovers a clean
+answer.
 
 \subsection{What a threshold buys, and what it does not}
-Under mismatch, axis-aligned models are almost perfectly robust to a
-$38\sigma$ excursion, because a threshold test is invariant to how far past the
-threshold a value lands. That is a real and cheap engineering advantage. But
-Section~\ref{sec:matched} shows it disappears under matched training, and
-Section~\ref{sec:null} shows the same models' learned structure is \emph{more}
-sensitive to a small diffuse perturbation than a large concentrated one. The
-threshold protects the decision, not the evidence.
+Under mismatch, axis-aligned models are almost perfectly robust to a $38\sigma$
+excursion, because a threshold test does not care how far past the threshold a
+value lands. That is a real engineering advantage and a cheap one. However,
+Section~\ref{sec:matched} shows that the advantage disappears under matched
+training, and Section~\ref{sec:null} shows that the learned structure of the
+same models is \emph{more} sensitive to a small diffuse perturbation than to a
+large concentrated one. A threshold protects the decision, and it does not
+protect the evidence.
 
 \subsection{Auditing and the archive problem}
-Per-instance rationales are increasingly surfaced to operators and auditors. Our
-results indicate that such rationales are not invariant across a transcoding
-step that may leave the decision invariant. Where an audit is conducted on
-archived compressed material while inference runs on uncompressed input --- or
-the converse --- the decisions will agree while the explanations will not. An
-explanation is not reproducible unless the delivery format is part of the
-record, and to our knowledge no SER benchmark currently reports it.
+Per-instance rationales are increasingly presented to operators and auditors.
+Our results indicate that such rationales are not invariant across a transcoding
+step, even when that step leaves the decision invariant. Consider an audit
+conducted on archived compressed material while inference runs on uncompressed
+input, or the same situation reversed. In either case the decisions will agree
+while the explanations will not. An explanation is not reproducible unless the
+delivery format forms part of the record, and to our knowledge no SER benchmark
+currently reports it.
 
 \subsection{What named descriptors buy}
-The repair in Section~\ref{sec:neutralise} has no analogue in a system whose
-front end is learned. Identifying \ttf{spectral\_contrast\_6\_mean} as the
-contaminated channel required attribution over units with acoustic meaning;
-neutralising it required reaching into the representation. So did reading the
-codec's frame-alignment mechanism off a decision threshold
-(Section~\ref{sec:trees}).
+The repair described in Section~\ref{sec:neutralise} has no counterpart in a
+system whose front end is learned. Identifying \ttf{spectral\_contrast\_6\_mean}
+as the contaminated channel required attribution over units that carry acoustic
+meaning, and neutralising it required reaching into the representation itself.
+Reading the codec's frame-alignment mechanism off a decision threshold in
+Section~\ref{sec:trees} required the same thing.
 
 This is a narrower claim than Rudin's~\cite{rudin2019stop}. We are not arguing
-that interpretable models should replace strong ones ---
+that interpretable models should replace strong ones.
 Table~\ref{tab:leaderboard} shows the single interpretable model in our zoo
-costing a third of achievable performance, and the best model overall is a
+costing a third of the achievable performance, and the best model overall is a
 neural network. We are arguing that a \emph{named-descriptor front end} retains
-a diagnostic and repair capability that end-to-end pipelines lack, and that in
-codec-heterogeneous deployments this capability has measurable value: 98\,\% of
-a 38-point loss, recovered by masking one column.
+a capability for diagnosis and repair that end-to-end pipelines lack, and that
+in deployments with heterogeneous codecs this capability has measurable value.
+In our case that value was 98\,\% of a 38-point loss, recovered by masking a
+single column.
 
 \section{Limitations}
 \begin{enumerate}
-\item \textbf{Acted, not spontaneous, emotion.} CREMA-D actors perform
-prescribed emotions on 12 fixed sentences. Absolute accuracies do not transfer
-to spontaneous speech, and the human voice-only ceiling of 45.5\,\% shows the
-labels are themselves only loosely recoverable from audio.
+\item \textbf{The emotion is acted rather than spontaneous.} CREMA-D actors
+perform prescribed emotions on 12 fixed sentences. The absolute accuracies
+reported here do not transfer to spontaneous speech, and the human voice-only
+ceiling of 45.5\,\% shows that the labels themselves are only loosely
+recoverable from audio.
 
-\item \textbf{One split, not repeated cross-validation, for the headline
-tables.} Tables~\ref{tab:leaderboard}--\ref{tab:matched} come from a single
-deterministic 60/11/20 actor partition. Differences of a point or two should not
-be over-read. The null-calibration analysis of Section~\ref{sec:null} does
-resample (20 draws), and is the only place we make a claim that depends on
-resampling.
+\item \textbf{The headline tables use one split rather than repeated
+cross-validation.} Table~\ref{tab:leaderboard} through Table~\ref{tab:matched}
+come from a single deterministic 60/11/20 partition over actors. Differences of
+one or two points should not be over-read. The null-calibration analysis of
+Section~\ref{sec:null} does resample, using 20 draws, and it is the only place
+where we make a claim that depends on resampling.
 
-\item \textbf{Two codecs, one bitrate.} Only \SI{64}{\kilo\bit\per\second} MP3
-and AAC were tested. The MP3 mismatch result is severe partly \emph{because}
-\SI{64}{\kilo\bit\per\second} is aggressive for that codec; higher bitrates
-would likely show a gradient, and Opus --- now the dominant conversational codec
---- is untested.
+\item \textbf{We test two codecs at one bitrate.} Only MP3 and AAC at
+\SI{64}{\kilo\bit\per\second} were tested. The MP3 mismatch result is severe
+partly \emph{because} \SI{64}{\kilo\bit\per\second} is an aggressive setting for
+that codec. Higher bitrates would probably show a gradient. Opus, which is now
+the dominant conversational codec, remains untested here.
 
 \item \textbf{Summary statistics discard time.} Every frame contour is collapsed
-to eight order statistics, so no attribution here localises \emph{when} in a
-clip the evidence sits. The AAC padding mechanism is inferred from duration and
-from which descriptors move, not observed directly in time.
+to eight order statistics, so no attribution reported here can localise
+\emph{when} in a clip the evidence sits. The AAC padding mechanism is inferred
+from duration and from which descriptors move, and it is not observed directly
+in time.
 
 \item \textbf{The container control is not a perfect null.} \ttf{roundtrip\_wav}
 differs from \ttf{mp4\_aac64} by an int16 requantisation, so it is an
-\emph{almost} empty perturbation rather than an exactly empty one. It is
-conservative in the right direction --- a truly empty perturbation would have a
-lower floor and make the codec effects look larger --- but a bit-exact container
-null would be a stronger instrument.
+\emph{almost} empty perturbation rather than an exactly empty one. The error
+runs in the conservative direction, because a truly empty perturbation would
+have a lower floor and would make the codec effects look larger. A bit-exact
+container null would nevertheless be a stronger instrument.
 
-\item \textbf{The null calibration covers one estimator.} Section~\ref{sec:null}
-calibrates the decision tree, chosen because it is the paper's readable model
-and the one whose ranking is most obviously fragile. Whether ensemble or
-gradient attributions need floors of the same size is not established here,
-though Table~\ref{tab:stability}'s fixed-model comparison suggests they are more
-stable.
+\item \textbf{The null calibration covers a single estimator.}
+Section~\ref{sec:null} calibrates the decision tree, which we chose because it
+is the readable model of this paper and the one whose ranking is most obviously
+fragile. We do not establish whether ensemble or gradient attributions require
+floors of the same size, although the fixed-model comparison in
+Table~\ref{tab:stability} suggests that they are more stable.
 
-\item \textbf{Attribution comparisons are global.} Spearman $\rho$ and top-$k$
-overlap over mean-$|$attribution$|$ are coarse instruments, and
-Section~\ref{sec:blindspot} shows they can miss a total accuracy collapse. A
-local, per-instance stability analysis would be stronger and is not attempted.
+\item \textbf{The attribution comparisons are global.} Spearman $\rho$ and
+top-$k$ overlap computed over the mean $|$attribution$|$ are coarse instruments,
+and Section~\ref{sec:blindspot} shows that they can miss a total collapse in
+accuracy. A local, per-instance stability analysis would be stronger, and we do
+not attempt one.
 
-\item \textbf{Speaker-dominance limits what importance rankings can mean.} With
-mean $\eta^2=0.178$ for speaker against $0.098$ for emotion, a substantial part
-of any importance ranking describes which voices are in the training set. The
-actor-bootstrap floor in Table~\ref{tab:null} quantifies this and it is large.
+\item \textbf{Speaker dominance limits what an importance ranking can mean.}
+With a mean $\eta^2$ of 0.178 for speaker against 0.098 for emotion, a
+substantial part of any importance ranking describes which voices happen to be
+in the training set. The actor-bootstrap floor in Table~\ref{tab:null}
+quantifies this contribution, and it is large.
 
-\item \textbf{Exploratory, not confirmatory.} The per-condition and
-null-calibration analyses were designed after inspecting the cross-format
-results. Confirmatory status requires preregistered replication.
+\item \textbf{The work is exploratory rather than confirmatory.} The
+per-condition and null-calibration analyses were designed after we had inspected
+the cross-format results. Confirmatory status would require preregistered
+replication.
 \end{enumerate}
 
 \section{Future Work}
-Three directions follow from specific results. A bit-exact container null ---
-achievable by comparing two lossless containers carrying identical PCM --- would
-tighten the floor of Section~\ref{sec:null} and is cheap. Extending the null
-calibration to SHAP and integrated-gradients rankings under refitting would
-establish whether the fragility we document is specific to trees or general to
-feature attribution. And a bitrate ladder, with Opus alongside MP3 and AAC,
-would turn the two-point comparison in Section~\ref{sec:trees} into a
-dose-response curve for structural displacement.
+Three directions follow from specific results reported above. First, a bit-exact
+container null would tighten the floor of Section~\ref{sec:null}, and it is
+cheap to obtain by comparing two lossless containers that carry identical PCM.
+Second, extending the null calibration to SHAP and integrated-gradients rankings
+under refitting would establish whether the fragility we document is specific to
+trees or general to feature attribution. Third, a bitrate ladder that includes
+Opus alongside MP3 and AAC would turn the two-point comparison of
+Section~\ref{sec:trees} into a dose-response curve for structural displacement.
 
-Beyond emotion, speaker identity, vocal stress and voice quality are carried by
-precisely the spectral detail perceptual coding discards, and the matched-format
-result may not transfer: a task whose evidence lives in the top octave has less
-to fall back on than one whose evidence lives in loudness dynamics.
+Beyond emotion, the tasks of speaker identification, vocal stress detection and
+voice-quality assessment rely on precisely the spectral detail that perceptual
+coding discards. The matched-format result may not transfer to them. A task
+whose evidence lives in the top octave has less to fall back on than a task
+whose evidence lives in loudness dynamics.
 
 \section{Conclusion}
 We asked whether perceptual audio coding changes what a speech emotion model
-relies on, using models whose evidence is a named acoustic descriptor rather
-than a latent dimension.
+relies on. We answered that question with models whose evidence is a named
+acoustic descriptor rather than a latent dimension.
 
-Coding does not remove the affective information: a kernel machine that scores
-0.203 on MP3 when fitted to clean audio scores 0.589 when fitted to MP3 itself,
-against 0.586 on clean audio. The catastrophic cross-format losses in the
-literature and in our own Table~\ref{tab:crossformat} are train/serve mismatch,
-and they are repairable either by matched training or by neutralising a single
-contaminated descriptor.
+Coding does not remove the affective information. A kernel machine that scores
+0.203 on MP3 when it is fitted to clean audio scores 0.589 when it is fitted to
+MP3 itself, against 0.586 on clean audio. The catastrophic cross-format losses
+reported in the literature, and those in our own
+Table~\ref{tab:crossformat}, are caused by train/serve mismatch. They can be
+repaired either by matched training or by neutralising a single contaminated
+descriptor.
 
-What coding does change is the structure the model learns. An entropy tree keeps
-the same root question in every condition and extracts the same information from
-it, but AAC moves the root threshold by 1.3\,\% and replaces the depth-1
-descriptor with one its frame-alignment perturbation leaves intact --- while the
-same two conditions carrying identical codec output through different containers
-produce identical trees.
+What coding does change is the structure that the model learns. An entropy tree
+keeps the same root question in every condition and extracts the same
+information from it. AAC nevertheless moves the root threshold by 1.3\,\% and
+replaces the depth-1 descriptor with one that its own frame-alignment
+perturbation leaves intact. At the same time, two conditions that carry
+identical codec output through different containers produce identical trees.
 
 The size of that change is easy to overstate, and the discipline that prevents
-it is the paper's most transportable result. An informationally empty container
-re-wrap already displaces 8.35 of a tree's 25 most important descriptors. Only
-the gap beyond that floor --- 3.25 descriptors for MP3, 5.15 for AAC --- is
-codec-attributable. We would ask reviewers of affective computing systems to
-require, alongside any claim that an intervention changed a model's explanation,
-the divergence induced by an intervention carrying no information. Without it,
-the claim cannot be evaluated; with it, ours shrinks by a factor of two and a
-half and becomes defensible.
+the overstatement is the most transportable result in this paper. An
+informationally empty container re-wrap already displaces 8.35 of a tree's 25
+most important descriptors. Only the gap beyond that floor can be attributed to
+the codec, and that gap is 3.25 descriptors for MP3 and 5.15 for AAC. We would
+ask reviewers of affective computing systems to require, alongside any claim
+that an intervention changed a model's explanation, a measurement of the
+divergence induced by an intervention that carries no information. Without such
+a measurement the claim cannot be evaluated. With it, our own claim shrinks by a
+factor of two and a half and becomes defensible.
 
 \section*{Data Availability Statement}
 CREMA-D is publicly available from its authors under the terms stated
-in~\cite{cao2014cremad}. All derived artefacts are released with this paper: the
-stimulus construction scripts and condition manifests, the JSON schema of the
-436-descriptor table over 29{,}768 rendered files, the per-condition and
-null-calibration result files, and the JSON/CSV files from which every table and
-figure is generated. The figure- and appendix-generation scripts read only these
-committed artefacts and hard-code no numbers. The feature table itself
-(\SI{243}{\mega\byte}) and the rendered audio are regenerable from the committed
-extraction code and configuration.
+in~\cite{cao2014cremad}. All derived artefacts are released with this paper.
+These comprise the stimulus construction scripts and condition manifests, the
+JSON schema of the 436-descriptor table over 29{,}768 rendered files, the
+per-condition and null-calibration result files, and the JSON and CSV files from
+which every table and figure is generated. The scripts that generate the figures
+and the appendices read only these committed artefacts, and they hard-code no
+numbers. The feature table itself occupies \SI{243}{\mega\byte}, and both it and
+the rendered audio can be regenerated from the committed extraction code and
+configuration.
 
 \section*{Ethics Declaration}
 This study involves no human subjects and no personally identifying data. It
 uses a published corpus of consenting professional actors performing scripted
-sentences, collected and released for research use by its original authors under
-their own ethical approval~\cite{cao2014cremad}. No new recordings were made. We
-note that speech emotion recognition is a dual-use technology; the findings here
-concern robustness and explanation validity and are, if anything, cautionary
-about deploying such systems on heterogeneous audio without format-aware
-validation. Nothing here should be read as evidence that automatic emotion
-inference is accurate, fair, or appropriate in consequential settings.
+sentences, which was collected and released for research use by its original
+authors under their own ethical approval~\cite{cao2014cremad}. No new recordings
+were made. We note that speech emotion recognition is a dual-use technology. The
+findings reported here concern robustness and the validity of explanations, and
+if anything they are cautionary about deploying such systems on heterogeneous
+audio without format-aware validation. Nothing in this paper should be read as
+evidence that automatic emotion inference is accurate, fair, or appropriate in
+consequential settings.
 
 \section*{Author Contributions (CRediT)}
 \textbf{Akshath~R:} Conceptualization, Methodology, Software, Validation, Formal
-analysis, Investigation, Data curation, Writing --- original draft, Writing ---
-review \& editing, Visualization, Project administration.
+analysis, Investigation, Data curation, Writing (original draft), Writing
+(review and editing), Visualization, Project administration.
 
 \section*{Conflict of Interest Statement}
 The author declares no competing financial or non-financial interests.
@@ -1368,10 +1456,11 @@ commercial, or not-for-profit sectors. Compute costs were borne by the author.
 
 \section*{Declaration of Generative AI Use}
 Generative AI tools were used to assist with code implementation, figure
-generation, and manuscript drafting. All experimental design decisions, all
-analyses, and all interpretations are the author's. Every numerical value
-reported was produced by the committed pipeline and traced to its source
-artefact. The author takes full responsibility for the content.
+generation, and manuscript drafting. All decisions about experimental design,
+all analyses, and all interpretations are the author's own. Every numerical
+value reported in this paper was produced by the committed pipeline and traced
+back to its source artefact. The author takes full responsibility for the
+content.
 
 \input{appendix_features}
 \input{appendix_splits}
