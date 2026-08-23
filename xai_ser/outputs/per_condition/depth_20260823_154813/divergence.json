@@ -1,0 +1,261 @@
+{
+ "floor_tiebreak": {
+  "pair": [
+   "ref",
+   "_tiebreak"
+  ],
+  "n_identical_nodes": 61,
+  "identical_to_depth": 6,
+  "first_divergences": []
+ },
+ "floor_container": {
+  "pair": [
+   "mp4_aac64",
+   "roundtrip_wav"
+  ],
+  "n_identical_nodes": 38,
+  "identical_to_depth": 3,
+  "first_divergences": [
+   {
+    "path": "LLLL",
+    "depth": 4,
+    "reason": "different descriptor",
+    "feature_a": "mfcc_05_iqr",
+    "feature_b": "mfcc_02_min"
+   },
+   {
+    "path": "LLLR",
+    "depth": 4,
+    "reason": "different descriptor",
+    "feature_a": "prosody_f2_std",
+    "feature_b": "spectral_flatness_median"
+   },
+   {
+    "path": "LRLR",
+    "depth": 4,
+    "reason": "different descriptor",
+    "feature_a": "prosody_cpps",
+    "feature_b": "prosody_f1_bw_median"
+   },
+   {
+    "path": "RRLL",
+    "depth": 4,
+    "reason": "different descriptor",
+    "feature_a": "mfcc_05_median",
+    "feature_b": "spectral_hf_ratio_4000_std"
+   },
+   {
+    "path": "RRRL",
+    "depth": 4,
+    "reason": "different descriptor",
+    "feature_a": "prosody_f4_median",
+    "feature_b": "spectral_band_0_500_mean"
+   },
+   {
+    "path": "LLRRL",
+    "depth": 5,
+    "reason": "different descriptor",
+    "feature_a": "spectral_band_0_500_mean",
+    "feature_b": "mfcc_10_std"
+   },
+   {
+    "path": "RLLLL",
+    "depth": 5,
+    "reason": "different descriptor",
+    "feature_a": "mfcc_14_iqr",
+    "feature_b": "spectral_slope_median"
+   },
+   {
+    "path": "RRLRR",
+    "depth": 5,
+    "reason": "different descriptor",
+    "feature_a": "mfcc_12_max",
+    "feature_b": "mfcc_12_std"
+   },
+   {
+    "path": "RRRRL",
+    "depth": 5,
+    "reason": "different descriptor",
+    "feature_a": "spectral_band_500_1000_mean",
+    "feature_b": "spectral_band_0_500_std"
+   },
+   {
+    "path": "RRRRR",
+    "depth": 5,
+    "reason": "different descriptor",
+    "feature_a": "prosody_hnr_mean",
+    "feature_b": "mfcc_d1_00_std"
+   }
+  ]
+ },
+ "codec_mp3_64": {
+  "pair": [
+   "ref",
+   "mp3_64"
+  ],
+  "n_identical_nodes": 20,
+  "identical_to_depth": 2,
+  "first_divergences": [
+   {
+    "path": "LRL",
+    "depth": 3,
+    "reason": "different descriptor",
+    "feature_a": "spectral_centroid_iqr",
+    "feature_b": "spectral_band_0_500_std"
+   },
+   {
+    "path": "LRR",
+    "depth": 3,
+    "reason": "different descriptor",
+    "feature_a": "prosody_f0_max",
+    "feature_b": "mfcc_02_std"
+   },
+   {
+    "path": "RLR",
+    "depth": 3,
+    "reason": "different descriptor",
+    "feature_a": "prosody_f0_min",
+    "feature_b": "spectral_band_0_500_mean"
+   },
+   {
+    "path": "RRL",
+    "depth": 3,
+    "reason": "different descriptor",
+    "feature_a": "mfcc_03_max",
+    "feature_b": "spectral_band_3000_4000_mean"
+   },
+   {
+    "path": "LLLR",
+    "depth": 4,
+    "reason": "different descriptor",
+    "feature_a": "mfcc_07_mean",
+    "feature_b": "spectral_flatness_mean"
+   },
+   {
+    "path": "RLLL",
+    "depth": 4,
+    "reason": "different descriptor",
+    "feature_a": "spectral_contrast_1_std",
+    "feature_b": "mfcc_05_median"
+   },
+   {
+    "path": "RRRR",
+    "depth": 4,
+    "reason": "different descriptor",
+    "feature_a": "mfcc_03_max",
+    "feature_b": "mfcc_d2_12_std"
+   },
+   {
+    "path": "LLLLL",
+    "depth": 5,
+    "reason": "different descriptor",
+    "feature_a": "prosody_mean_voiced_seg_s",
+    "feature_b": "chroma_05_std"
+   },
+   {
+    "path": "LLLLR",
+    "depth": 5,
+    "reason": "different descriptor",
+    "feature_a": "mfcc_18_max",
+    "feature_b": "mfcc_02_mean"
+   },
+   {
+    "path": "LLRLR",
+    "depth": 5,
+    "reason": "different descriptor",
+    "feature_a": "prosody_f1_median",
+    "feature_b": "mfcc_16_skew"
+   },
+   {
+    "path": "LLRRL",
+    "depth": 5,
+    "reason": "different descriptor",
+    "feature_a": "mfcc_08_mean",
+    "feature_b": "mfcc_d2_08_mean"
+   },
+   {
+    "path": "RLLRR",
+    "depth": 5,
+    "reason": "different descriptor",
+    "feature_a": "mfcc_d2_16_mean",
+    "feature_b": "mfcc_02_iqr"
+   }
+  ]
+ },
+ "codec_mp4_aac64": {
+  "pair": [
+   "ref",
+   "mp4_aac64"
+  ],
+  "n_identical_nodes": 3,
+  "identical_to_depth": 0,
+  "first_divergences": [
+   {
+    "path": "L",
+    "depth": 1,
+    "reason": "different descriptor",
+    "feature_a": "mfcc_d1_00_std",
+    "feature_b": "mfcc_00_iqr"
+   },
+   {
+    "path": "RR",
+    "depth": 2,
+    "reason": "different descriptor",
+    "feature_a": "prosody_intensity_min",
+    "feature_b": "prosody_intensity_std"
+   },
+   {
+    "path": "RLL",
+    "depth": 3,
+    "reason": "different descriptor",
+    "feature_a": "spectral_centroid_iqr",
+    "feature_b": "spectral_band_1000_2000_std"
+   },
+   {
+    "path": "RLR",
+    "depth": 3,
+    "reason": "different descriptor",
+    "feature_a": "prosody_f0_min",
+    "feature_b": "spectral_band_0_500_mean"
+   }
+  ]
+ },
+ "codec_roundtrip_wav": {
+  "pair": [
+   "ref",
+   "roundtrip_wav"
+  ],
+  "n_identical_nodes": 3,
+  "identical_to_depth": 0,
+  "first_divergences": [
+   {
+    "path": "L",
+    "depth": 1,
+    "reason": "different descriptor",
+    "feature_a": "mfcc_d1_00_std",
+    "feature_b": "mfcc_00_iqr"
+   },
+   {
+    "path": "RR",
+    "depth": 2,
+    "reason": "different descriptor",
+    "feature_a": "prosody_intensity_min",
+    "feature_b": "prosody_intensity_std"
+   },
+   {
+    "path": "RLL",
+    "depth": 3,
+    "reason": "different descriptor",
+    "feature_a": "spectral_centroid_iqr",
+    "feature_b": "spectral_band_1000_2000_std"
+   },
+   {
+    "path": "RLR",
+    "depth": 3,
+    "reason": "different descriptor",
+    "feature_a": "prosody_f0_min",
+    "feature_b": "spectral_band_0_500_mean"
+   }
+  ]
+ }
+}

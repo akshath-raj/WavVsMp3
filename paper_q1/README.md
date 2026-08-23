@@ -4,7 +4,7 @@
 in Explainable Speech Emotion Recognition**
 
 Formatted for **IEEE Transactions on Affective Computing** (IEEEtran journal
-class, IEEE numeric citations). 20 pages including two appendices and
+class, IEEE numeric citations). 23 pages including two appendices and
 references.
 
 Confined to interpretable models over named acoustic descriptors — fifteen
@@ -31,10 +31,10 @@ itself, so the appendix cannot drift from the data the models were fitted on.
 ```
 main.tex                 manuscript
 refs.bib                 28 references, all cited
-make_figures.py          8 figures, PDF (vector) + PNG mirror
+make_figures.py          9 figures, PDF (vector) + PNG mirror
 make_appendix.py         Appendix A (feature inventory) + Appendix B (tree splits)
 appendix_features.tex    GENERATED — 436 descriptors, defined and enumerated
-appendix_splits.tex      GENERATED — every internal node of all four trees
+appendix_splits.tex      GENERATED — all 31 internal nodes to depth 4, all four trees
 figs/                    GENERATED
 REVIEW_ROUND1.md         simulated 5-seat peer-review panel on the previous draft
 ```
@@ -49,18 +49,20 @@ matplotlib.
 | Corpus, separability, codec drift (§III–IV) | `xai_ser/outputs/eda/` |
 | In-format leaderboard, train/serve mismatch (§VI-A–B) | `xai_ser/outputs/models/20260818_045719/` |
 | **Matched-format training (§VI-C)** | `xai_ser/outputs/per_condition/20260823_094134/` |
-| **Per-condition tree splits (§VI-D, App. B)** | same run, `dt_top_splits.json` |
-| **Null calibration (§VI-E)** | `per_condition/null_20260823_094903/`, `paired_20260823_095359/` |
-| Post-hoc + deep attribution (§VI-F–G) | `xai_ser/outputs/xai/` |
-| Neutralisation (§VI-H) | `xai_ser/outputs/robustness/20260818_051057/` |
+| **Per-condition tree splits (§VI-D)** | same run, `dt_top_splits.json` |
+| **Tree depth profile (§VI-E, App. B)** | `per_condition/depth_20260823_155134/` |
+| **Null calibration (§VI-F)** | `per_condition/null_20260823_094903/`, `paired_20260823_095359/` |
+| Post-hoc + deep attribution (§VI-G–H) | `xai_ser/outputs/xai/` |
+| Neutralisation (§VI-I) | `xai_ser/outputs/robustness/20260818_051057/` |
 
-The three per-condition runs are reproduced by:
+The four per-condition runs are reproduced by:
 
 ```bash
 cd ../xai_ser
 PYTHONPATH=src .venv/bin/python -m xai_ser.per_condition
 PYTHONPATH=src .venv/bin/python -m xai_ser.per_condition_null --n-rep 20
 PYTHONPATH=src .venv/bin/python -m xai_ser.per_condition_null --paired --n-rep 20
+PYTHONPATH=src .venv/bin/python -m xai_ser.per_condition_depth --max-depth 6 --n-rep 20
 ```
 
 ## Notes on the numbers
@@ -71,13 +73,18 @@ PYTHONPATH=src .venv/bin/python -m xai_ser.per_condition_null --paired --n-rep 2
 2. **Model count.** The zoo is 14 scikit-learn classifiers plus a PyTorch ANN —
    15 trained models. The "16" in the findings document counts the two dummy
    baselines.
-3. **Two floors, two meanings.** §VI-G measures attribution stability with the
-   model *fixed* and its input changed; §VI-E measures ranking stability with the
-   model *refitted*. The first is high (ρ ≥ 0.98 for trees), the second is not.
+3. **The tie-breaking floor needs a seed panel.** `per_condition_depth.py`
+   averages it over 10 reseeds. Most seeds leave the depth-6 tree untouched and
+   some displace one deep node, so a single reseed reports this floor as either
+   perfect or one node short depending on which seed is drawn.
+4. **Three floors, three meanings.** §VI-H measures attribution stability with
+   the model *fixed* and its input changed; §VI-F measures importance-ranking
+   stability with the model *refitted*; §VI-E measures *structural* stability,
+   also with the model refitted. The first is high (ρ ≥ 0.98 for trees), the second is not.
    These are different quantities and the paper says so explicitly.
-4. **The RBF-SVM's KernelSHAP estimate** is rank-deficient (100 coalitions, 436
+5. **The RBF-SVM's KernelSHAP estimate** is rank-deficient (100 coalitions, 436
    descriptors) and is excluded from every attribution conclusion; this is stated
    in the manuscript rather than silently dropped.
-5. **Descriptor count.** 436 columns. The extraction schema JSON lists 435
+6. **Descriptor count.** 436 columns. The extraction schema JSON lists 435
    because `peak_amplitude` is emitted outside the family functions; the
    appendix is built from the table's actual columns.

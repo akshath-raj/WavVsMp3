@@ -137,6 +137,11 @@ def load_all():
         d["paired"]["table"] = pd.read_csv(pdir / "paired_draws.csv")
     except FileNotFoundError:
         d["paired"] = None
+
+    # how far down the tree the codec-invariance survives
+    ddir = _newest(PC_DIR, "depth_2*")
+    d["depth"] = json.loads((ddir / "depth_profile.json").read_text())
+    d["depth_nodes"] = pd.read_csv(ddir / "node_table.csv")
     return d
 
 
@@ -587,6 +592,97 @@ def fig_trees(d):
     save(fig, "fig_trees")
 
 
+# ============================================================== Fig. 5b
+# label, colour, linestyle, marker, short label, y-offset for overplotting.
+# AAC and roundtrip agree exactly at every depth, so one is nudged off the
+# other to keep both visible; the offset is cosmetic and stated in the caption.
+PAIR_STYLE = {
+    "floor_tiebreak":      ("tie-breaking (data fixed)", GREEN, "--", "o",
+                            "tie-breaking\n(data fixed)", 0.0),
+    "floor_container":     ("container re-wrap (empty)", YELLOW, "--", "s",
+                            "container\nre-wrap", 0.0),
+    "codec_mp3_64":        ("MP3 64k", ORANGE, "-", "o", "MP3\n64k", 0.0),
+    "codec_mp4_aac64":     ("MP4/AAC 64k", BLUE, "-", "o", "MP4/AAC\n64k", 1.4),
+    "codec_roundtrip_wav": ("roundtrip WAV", SKY, "-", "^", "roundtrip\nWAV", -1.4),
+}
+
+
+def fig_depth(d):
+    """How far down the tree the agreement survives, against its own floors."""
+    dp = d["depth"]
+    max_depth = dp["max_depth"]
+    fig, axes = plt.subplots(1, 2, figsize=(DCOL, 2.5))
+
+    # --- (a) descriptor agreement at path-aligned nodes, by depth ----------
+    ax = axes[0]
+    for key, (label, colour, ls, mk, _short, dy) in PAIR_STYLE.items():
+        by = dp["depth_profile"][key]["by_depth"]
+        xs, ys = [], []
+        for k in range(max_depth):
+            r = by.get(str(k))
+            if r and r["agreement"] is not None:
+                xs.append(k)
+                ys.append(100 * r["agreement"] + dy)
+        ax.plot(xs, ys, ls, color=colour, marker=mk, ms=3, lw=1.2,
+                label=label, zorder=3 if ls == "-" else 2,
+                markeredgecolor=BLACK, markeredgewidth=0.25)
+
+    ax.set_xlabel("depth in the tree", fontsize=7)
+    ax.set_ylabel("nodes selecting the same descriptor (%)", fontsize=7)
+    ax.set_xticks(range(max_depth))
+    ax.set_ylim(-8, 112)
+    ax.set_yticks([0, 20, 40, 60, 80, 100])
+    ax.grid(axis="y", lw=0.3, alpha=0.4)
+    ax.set_title("(a) agreement decays with depth, in codec order",
+                 fontsize=7.4, pad=4)
+    ax.legend(frameon=False, fontsize=5.7, loc="lower left",
+              bbox_to_anchor=(0.005, 0.005), handlelength=2.0,
+              labelspacing=0.30)
+
+    # --- (b) depth to which the two trees are strictly identical -----------
+    ax = axes[1]
+    res = dp.get("resampled")
+    keys = list(PAIR_STYLE)
+    xs = np.arange(len(keys))
+    full = [dp["divergence"][k]["identical_to_depth"] for k in keys]
+    colours = [PAIR_STYLE[k][1] for k in keys]
+
+    if res:
+        means = [res[k]["identical_to_depth_mean"] for k in keys]
+        sds = [res[k]["identical_to_depth_sd"] for k in keys]
+        ax.bar(xs, means, yerr=sds, capsize=2.5, color=colours,
+               edgecolor=BLACK, lw=0.5, width=0.62, zorder=2,
+               error_kw={"lw": 0.7, "ecolor": BLACK})
+        ax.plot(xs, full, "D", color=BLACK, ms=3.6, zorder=4,
+                label="full training set")
+        ax.legend(frameon=False, fontsize=5.9, loc="upper right",
+                  bbox_to_anchor=(1.02, 1.02))
+    else:
+        ax.bar(xs, full, color=colours, edgecolor=BLACK, lw=0.5, width=0.62)
+
+    ax.axhline(0, color=BLACK, lw=0.6)
+    # the floor an informationally empty perturbation already sits at
+    if res:
+        ax.axhline(res["floor_container"]["identical_to_depth_mean"],
+                   color=BLACK, lw=0.7, ls=":", zorder=1)
+        ax.text(len(keys) - 0.45,
+                res["floor_container"]["identical_to_depth_mean"] + 0.12,
+                "empty-perturbation floor", fontsize=5.4, ha="right",
+                va="bottom", color=BLACK)
+    ax.set_xticks(xs)
+    ax.set_xticklabels([PAIR_STYLE[k][4] for k in keys], fontsize=5.8)
+    ax.set_ylabel("deepest fully identical level", fontsize=7)
+    ax.set_ylim(-1.2, max_depth + 1.2)
+    ax.grid(axis="y", lw=0.3, alpha=0.4)
+    n_rep = dp.get("n_rep") or 0
+    ax.set_title("(b) the codecs sit below a floor that carries no information\n"
+                 f"(bars: {n_rep} paired actor draws, mean $\\pm$ sd)",
+                 fontsize=7.4, pad=4)
+
+    fig.subplots_adjust(wspace=0.28)
+    save(fig, "fig_depth")
+
+
 # ================================================================= Fig. 6
 def fig_nullcal(d):
     """Importance-ranking displacement against its own resampling floor."""
@@ -686,6 +782,7 @@ def main():
     fig_crossformat(d)
     fig_matched(d)
     fig_trees(d)
+    fig_depth(d)
     fig_nullcal(d)
     fig_neutralise(d)
     fig_methods(d)
