@@ -106,6 +106,20 @@ def save(fig, name: str) -> None:
     print(f"  wrote {name}.pdf")
 
 
+def two_line(label: str) -> str:
+    """Split a tick label across two lines at the space nearest its middle.
+
+    Used instead of rotating tick labels: rotated labels read badly in a
+    two-column layout and collide with the axis below them.
+    """
+    if " " not in label:
+        return label
+    mid = len(label) / 2
+    cut = min((i for i, c in enumerate(label) if c == " "),
+              key=lambda i: abs(i - mid))
+    return label[:cut] + "\n" + label[cut + 1:]
+
+
 def panel_tag(ax, text: str, dx: float = -0.16, dy: float = 1.06) -> None:
     ax.text(dx, dy, text, transform=ax.transAxes, fontsize=8.5,
             fontweight="bold", va="top", ha="left")
@@ -197,11 +211,12 @@ def fig_signal(d):
     # annotate the extreme feature
     worst = dr[dr.condition == "mp3_64"].nlargest(1, "abs_smd").iloc[0]
     ax.annotate("spectral_contrast_6_mean\n" + f"{worst.abs_smd:.1f} SD",
-                xy=(worst.abs_smd, 1.0), xytext=(60, 0.60), fontsize=5.5,
-                ha="center", color=VERM,
-                arrowprops=dict(arrowstyle="->", lw=0.5, color=VERM))
-    ax.legend(frameon=False, loc="upper left", handlelength=1.4,
-              bbox_to_anchor=(-0.02, 1.03))
+                xy=(worst.abs_smd, 0.995), xytext=(1.6, 0.55), fontsize=5.5,
+                ha="left", va="bottom", color=VERM,
+                arrowprops=dict(arrowstyle="->", lw=0.5, color=VERM,
+                                shrinkA=1.0, shrinkB=1.5))
+    ax.legend(frameon=False, handlelength=1.4, fontsize=6.0,
+              loc="lower right", bbox_to_anchor=(1.02, -0.02))
     ax.grid(alpha=0.25)
     panel_tag(ax, "(b)")
     ax.set_title("displacement of the whole table", pad=3)
@@ -222,9 +237,11 @@ def fig_signal(d):
     ax.set_ylabel("mean duration change (ms)")
     ax.set_ylim(0, max(delta_ms) * 1.34)
     ax.grid(axis="y", alpha=0.25)
-    ax.annotate("AAC encoder\npriming samples", xy=(0.72, delta_ms[1] * 0.55),
-                xytext=(0.05, delta_ms[1] * 0.30), fontsize=5.9, ha="left",
-                arrowprops=dict(arrowstyle="->", lw=0.5))
+    ax.annotate("AAC encoder\npriming samples", xy=(0.70, delta_ms[1] * 0.42),
+                xytext=(-0.34, delta_ms[1] * 0.60), fontsize=5.7, ha="left",
+                va="center",
+                arrowprops=dict(arrowstyle="->", lw=0.5,
+                                shrinkA=1.0, shrinkB=1.0))
     panel_tag(ax, "(c)")
     ax.set_title("frame alignment", pad=3)
 
@@ -294,18 +311,17 @@ def fig_crossformat(d):
             ["MP3 @ 64 kbps", "MP4/AAC @ 64 kbps"]):
         names = list(piv.index)
         ends = np.array([piv.loc[m, cond] for m in names])
-        lab_y = spread(ends, 0.0225)
+        lab_y = spread(ends, 0.0265)
         for m, y_end, y_lab in zip(names, ends, lab_y):
             col = FAMILY_COLOUR[FAMILY_OF.get(m, "other")]
             ax.plot([0, 1], [piv.loc[m, "ref"], y_end], "-o", color=col, ms=3.0,
                     lw=1.0, alpha=0.9)
             ax.plot([1.0, 1.10], [y_end, y_lab], lw=0.4, color=col, alpha=0.55)
             ax.annotate(PRETTY.get(m, m), (1.12, y_lab), fontsize=5.7,
-                        color=col, va="center", ha="left")
+                        color=col, va="center", ha="left", zorder=5,
+                        bbox=dict(fc="white", ec="none", pad=0.35))
         ax.axhline(0.455, color=BLACK, ls="--", lw=0.6)
-        ax.text(-0.03, 0.462, "human voice-only ceiling", fontsize=5.7)
         ax.axhline(1 / 6, color=GREY, ls=":", lw=0.6)
-        ax.text(-0.03, 0.174, "chance", fontsize=5.7, color=GREY)
         ax.set_xticks([0, 1])
         ax.set_xticklabels(["trained and tested\non WAV", "tested on\n" + title],
                            fontsize=6.3)
@@ -314,7 +330,7 @@ def fig_crossformat(d):
         ax.grid(axis="y", alpha=0.22)
 
     axes[0].set_ylabel("balanced accuracy (20 held-out speakers)")
-    axes[0].set_ylim(0.13, 0.70)
+    axes[0].set_ylim(0.13, 0.72)
     panel_tag(axes[0], "(a)", dx=-0.13)
     panel_tag(axes[1], "(b)", dx=-0.06)
 
@@ -324,8 +340,14 @@ def fig_crossformat(d):
                 ("linear", "linear, discriminant: multiplies them"),
                 ("kernel", "kernel, instance-based: multiplies them"),
                 ("neural", "neural: multiplies them"))]
-    axes[0].legend(handles=handles, frameon=False, loc="lower left",
-                   handlelength=1.4, fontsize=5.9, bbox_to_anchor=(-0.02, 0.045))
+    handles += [
+        Line2D([], [], color=BLACK, ls="--", lw=0.6,
+               label="human voice-only ceiling (0.455)"),
+        Line2D([], [], color=GREY, ls=":", lw=0.6, label="chance (0.167)"),
+    ]
+    fig.legend(handles=handles, frameon=False, ncol=3, handlelength=1.6,
+               fontsize=5.9, columnspacing=1.6, loc="lower center",
+               bbox_to_anchor=(0.5, -0.135))
     fig.subplots_adjust(wspace=0.10)
     save(fig, "fig_crossformat")
 
@@ -375,13 +397,17 @@ def fig_neutralise(d):
     ax.set_xlabel("codec-shifted features replaced by the training median")
     ax.set_ylabel("balanced accuracy on MP3 64k")
     ax.axhline(0.455, color=BLACK, ls="--", lw=0.6)
-    ax.text(0.62, 0.463, "human voice-only ceiling", fontsize=5.7)
-    ax.annotate("masking one feature\n(spectral_contrast_6_mean) recovers\n"
-                "98% of the SVM loss, 92% of the ANN's",
-                xy=(1.05, 0.565), xytext=(1.45, 0.345), fontsize=6.0, ha="left",
-                arrowprops=dict(arrowstyle="->", lw=0.5))
-    ax.legend(frameon=False, loc="lower right", ncol=2, handlelength=1.4,
-              fontsize=6.0, columnspacing=0.9, bbox_to_anchor=(1.02, -0.02))
+    ax.text(0.62, 0.462, "human voice-only ceiling", fontsize=5.6, va="bottom")
+    ax.annotate("masking one descriptor\n(spectral_contrast_6_mean) recovers\n"
+                "98\u2009% of the SVM loss and 92\u2009% of the ANN's",
+                xy=(0.98, 0.45), xytext=(1.5, 0.215), fontsize=5.8, ha="left",
+                va="bottom",
+                arrowprops=dict(arrowstyle="->", lw=0.5, shrinkA=1.0,
+                                shrinkB=2.0,
+                                connectionstyle="arc3,rad=-0.22"))
+    ax.legend(frameon=False, ncol=3, handlelength=1.3, fontsize=5.8,
+              columnspacing=0.9, loc="upper center",
+              bbox_to_anchor=(0.5, 1.30))
     ax.grid(alpha=0.22)
     ax.set_ylim(0.17, 0.66)
     save(fig, "fig_neutralise")
@@ -410,15 +436,16 @@ def fig_methods(d):
     ax.bar(x, perm_v, w, color=BLUE, label="permutation")
     ax.bar(x + w, lime_v, w, color=VERM, label="LIME")
     ax.set_xticks(x)
-    ax.set_xticklabels(models, rotation=22, ha="right", fontsize=6.0)
+    ax.set_xticklabels([two_line(m) for m in models], rotation=0, ha="center",
+                       fontsize=5.6, linespacing=1.0)
     ax.set_ylabel(r"rank agreement with SHAP ($\rho$)")
     ax.set_ylim(-0.05, 1.05)
     ax.axhline(0, color=BLACK, lw=0.6)
-    ax.legend(frameon=False, loc="upper center", ncol=3, handlelength=1.2,
-              fontsize=6.0, columnspacing=0.9)
+    ax.legend(frameon=False, loc="lower center", ncol=3, handlelength=1.2,
+              fontsize=6.0, columnspacing=0.9, bbox_to_anchor=(0.5, 1.20))
     ax.grid(axis="y", alpha=0.22)
     panel_tag(ax, "(a)", dx=-0.13)
-    ax.set_title("post-hoc methods disagree on the same fitted model", pad=3)
+    ax.set_title("post-hoc methods disagree on the same fitted model", pad=15)
 
     # --- (b) gradient family on the ANN: agreement + sanity check ---------
     ax = axes[1]
@@ -427,11 +454,14 @@ def fig_methods(d):
     nice = {"saliency": "Saliency", "input_x_gradient": "Input$\\times$Grad",
             "integrated_gradients": "Int. grad.", "deeplift": "DeepLIFT",
             "gradient_shap": "GradSHAP", "feature_ablation": "Ablation"}
+    stacked = {"saliency": "Sal-\niency", "input_x_gradient": "Input\n$\\times$Grad",
+               "integrated_gradients": "Int.\ngrad.", "deeplift": "Deep\nLIFT",
+               "gradient_shap": "Grad\nSHAP", "feature_ablation": "Abla-\ntion"}
     M = np.array([[ag[a][b] for b in names] for a in names])
     im = ax.imshow(M, vmin=0.9, vmax=1.0, cmap="Greens")
     ax.set_xticks(range(len(names)))
-    ax.set_xticklabels([nice[n] for n in names], rotation=40, ha="right",
-                       fontsize=5.8)
+    ax.set_xticklabels([stacked[n] for n in names], rotation=0, ha="center",
+                       fontsize=5.4, linespacing=1.0)
     ax.set_yticks(range(len(names)))
     ax.set_yticklabels([nice[n] for n in names], fontsize=5.8)
     for i in range(len(names)):
@@ -444,7 +474,7 @@ def fig_methods(d):
     ax.spines[:].set_visible(False)
     ax.tick_params(length=0)
     panel_tag(ax, "(b)", dx=-0.22)
-    ax.set_title("gradient methods agree on the ANN", pad=3)
+    ax.set_title("gradient methods agree on the ANN", pad=15)
 
     fig.subplots_adjust(wspace=0.42)
     save(fig, "fig_methods")
@@ -494,15 +524,16 @@ def fig_matched(d):
                color=COND_COLOUR[cond], label=COND_LABEL[cond].replace("\n", " "),
                edgecolor=BLACK, lw=0.3)
     ax.set_xticks(x)
-    ax.set_xticklabels([PRETTY.get(m, m) for m in models], rotation=24,
-                       ha="right", fontsize=6.0)
+    ax.set_xticklabels([two_line(PRETTY.get(m, m)) for m in models],
+                       rotation=0, ha="center", fontsize=5.2, linespacing=1.0)
     ax.set_ylabel("balanced accuracy")
-    ax.set_ylim(0, 0.68)
+    ax.set_ylim(0, 0.78)
+    ax.set_xlim(-1.02, len(models) - 0.42)
     ax.axhline(0.455, color=BLACK, ls="--", lw=0.6)
-    ax.text(len(models) - 0.45, 0.463, "human voice-only ceiling", fontsize=5.7,
-            ha="right")
+    ax.text(len(models) - 0.45, 0.462, "human ceiling", fontsize=5.6,
+            ha="right", va="bottom")
     ax.axhline(1 / 6, color=GREY, ls=":", lw=0.6)
-    ax.text(len(models) - 0.45, 0.175, "chance", fontsize=5.7, ha="right",
+    ax.text(-0.97, 0.174, "chance", fontsize=5.6, ha="left", va="bottom",
             color=GREY)
     ax.legend(frameon=False, ncol=4, loc="upper center", fontsize=5.9,
               handlelength=1.0, columnspacing=0.9, bbox_to_anchor=(0.5, 1.12))
@@ -542,53 +573,111 @@ def fig_matched(d):
 
 
 # ================================================================= Fig. 5
+def _wrap_feature(name: str, width: int = 21) -> str:
+    """Break a long descriptor name at an underscore so it fits inside a box."""
+    if len(name) <= width:
+        return name
+    cut = name.rfind("_", 0, width + 1)
+    if cut <= 0:
+        cut = width
+    return name[:cut + 1] + "\n" + name[cut + 1:]
+
+
+# Geometry of the three-level tree drawn in each panel: depth -> (y, half-width,
+# list of x centres in the order the paths are enumerated below).
+_TREE_ROWS = {
+    0: (0.855, 0.230, [0.500]),
+    1: (0.530, 0.215, [0.255, 0.745]),
+    2: (0.175, 0.1225, [0.126, 0.376, 0.624, 0.874]),
+}
+_TREE_PATHS = {0: [""], 1: ["L", "R"], 2: ["LL", "LR", "RL", "RR"]}
+_BOX_H = {0: 0.150, 1: 0.150, 2: 0.200}
+
+
 def fig_trees(d):
-    """The top two levels of the entropy tree, fitted separately per condition."""
-    sp = d["pc"]["top_splits"]
-    fig, axes = plt.subplots(1, 4, figsize=(DCOL, 1.55))
+    """The top three levels of the entropy tree, fitted separately per condition.
 
-    for ax, cond in zip(axes, CONDS):
-        nodes = {n["path"]: n for n in sp[cond]}
+    Every node carries its entropy H and its information gain, so the figure
+    shows the calculation of Eq. 2 and Eq. 3 at each node rather than only at
+    the root. Descriptors that differ from the uncompressed tree at the same
+    path are drawn in vermillion.
+    """
+    nt = d["depth_nodes"]
+    by_cond = {c: {r["path"] if r["path"] != "(root)" else "": r
+                   for _, r in nt[nt["condition"] == c].iterrows()}
+               for c in CONDS}
+    ref_nodes = by_cond["ref"]
+
+    fig, axes = plt.subplots(2, 2, figsize=(DCOL, 4.35))
+
+    for ax, cond in zip(axes.ravel(), CONDS):
+        nodes = by_cond[cond]
         ax.set_xlim(0, 1)
-        ax.set_ylim(0.26, 1.02)
+        ax.set_ylim(0.03, 1.0)
         ax.axis("off")
-        ax.set_title(COND_LABEL[cond].replace("\n", " "), pad=4,
-                     color=COND_COLOUR[cond], fontsize=7.4)
+        ax.set_title(COND_LABEL[cond].replace("\n", " "), pad=3,
+                     color=COND_COLOUR[cond], fontsize=7.6)
 
-        def box(path, cx, cy, wid):
-            n = nodes.get(path)
-            if n is None:
-                return
-            same = (n["feature"] == {p["path"]: p for p in sp["ref"]}
-                    .get(path, {}).get("feature"))
-            edge = GREY if same else VERM
-            lw = 0.5 if same else 1.1
-            ax.add_patch(plt.Rectangle((cx - wid / 2, cy - 0.085), wid, 0.17,
-                                       fill=True, facecolor="white",
-                                       edgecolor=edge, lw=lw, zorder=3))
-            ax.text(cx, cy + 0.048, n["feature"], ha="center", va="center",
-                    fontsize=4.3, family="monospace", zorder=4,
-                    color=BLACK if same else VERM)
-            ax.text(cx, cy + 0.002, r"$\leq$ " + f"{n['threshold']:.3f}",
-                    ha="center", va="center", fontsize=4.9, zorder=4)
-            ax.text(cx, cy - 0.048, f"IG {n['information_gain_bits']:.3f} bits",
-                    ha="center", va="center", fontsize=4.4, color=GREY, zorder=4)
+        for depth, (cy, half, xs) in _TREE_ROWS.items():
+            h = _BOX_H[depth]
+            fs_feat = 4.6 if depth < 2 else 3.5
+            fs_thr = 5.0 if depth < 2 else 4.1
+            fs_hig = 4.4 if depth < 2 else 3.5
+            wrap = 21 if depth < 2 else 15
+            for path, cx in zip(_TREE_PATHS[depth], xs):
+                n = nodes.get(path)
+                if n is None:
+                    continue
+                ref = ref_nodes.get(path)
+                same = ref is not None and n["feature"] == ref["feature"]
+                edge = GREY if same else VERM
+                lw = 0.5 if same else 1.15
+                ax.add_patch(plt.Rectangle(
+                    (cx - half, cy - h / 2), 2 * half, h, fill=True,
+                    facecolor="white", edgecolor=edge, lw=lw, zorder=3))
+                ax.text(cx, cy + h * 0.28, _wrap_feature(n["feature"], wrap),
+                        ha="center", va="center", fontsize=fs_feat,
+                        family="monospace", linespacing=0.95, zorder=4,
+                        color=BLACK if same else VERM)
+                ax.text(cx, cy - h * 0.06,
+                        r"$\leq$ " + f"{n['threshold']:.4g}",
+                        ha="center", va="center", fontsize=fs_thr, zorder=4)
+                ax.text(cx, cy - h * 0.34,
+                        f"H {n['entropy_bits']:.3f}  IG {n['information_gain_bits']:.3f}",
+                        ha="center", va="center", fontsize=fs_hig,
+                        color=GREY, zorder=4)
 
-        box("", 0.5, 0.80, 0.92)
-        box("L", 0.26, 0.42, 0.50)
-        box("R", 0.76, 0.42, 0.50)
-        for x0, x1 in ((0.5, 0.26), (0.5, 0.76)):
-            ax.plot([x0, x1], [0.70, 0.51], color=BLACK, lw=0.5, zorder=1)
-        ax.text(0.32, 0.615, "yes", fontsize=4.6, color=GREY)
-        ax.text(0.63, 0.615, "no", fontsize=4.6, color=GREY)
-        ax.text(0.5, 0.955, f"H = {nodes['']['entropy_bits']:.4f} bits",
-                ha="center", fontsize=5.4, color=GREY)
+        # edges, drawn only where the child node exists
+        for parent, child, lab in (("", "L", "yes"), ("", "R", "no"),
+                                   ("L", "LL", "yes"), ("L", "LR", "no"),
+                                   ("R", "RL", "yes"), ("R", "RR", "no")):
+            dp, dc = len(parent), len(child)
+            if child not in nodes:
+                continue
+            px = _TREE_ROWS[dp][2][_TREE_PATHS[dp].index(parent)]
+            cx = _TREE_ROWS[dc][2][_TREE_PATHS[dc].index(child)]
+            py = _TREE_ROWS[dp][0] - _BOX_H[dp] / 2
+            cyy = _TREE_ROWS[dc][0] + _BOX_H[dc] / 2
+            ax.plot([px, cx], [py, cyy], color=BLACK, lw=0.45, zorder=1)
+            ax.text(px + (cx - px) * 0.46, py - (py - cyy) * 0.44, lab,
+                    fontsize=4.2, color=GREY, ha="center", va="center",
+                    bbox=dict(fc="white", ec="none", pad=0.4), zorder=2)
 
-    handles = [Line2D([], [], color=GREY, lw=0.8, label="same feature as uncompressed"),
-               Line2D([], [], color=VERM, lw=1.4, label="different feature")]
-    fig.legend(handles=handles, frameon=False, ncol=2, fontsize=6.2,
-               loc="lower center", bbox_to_anchor=(0.5, -0.10), handlelength=1.6)
-    fig.subplots_adjust(wspace=0.10)
+        # information actually extracted by these three levels
+        cum = sum(nodes[p]["information_gain_bits"] * nodes[p]["w_samples"]
+                  for depth in range(3) for p in _TREE_PATHS[depth]
+                  if p in nodes) / nodes[""]["w_samples"]
+        ax.text(0.5, 0.985, f"cumulative information gain to depth 2 = {cum:.4f} bits",
+                ha="center", va="top", fontsize=5.6, color=BLACK)
+
+    handles = [Line2D([], [], color=GREY, lw=0.8,
+                      label="same descriptor as uncompressed at this path"),
+               Line2D([], [], color=VERM, lw=1.4,
+                      label="different descriptor")]
+    fig.legend(handles=handles, frameon=False, ncol=2, fontsize=6.4,
+               loc="lower center", bbox_to_anchor=(0.5, -0.035),
+               handlelength=1.6)
+    fig.subplots_adjust(wspace=0.06, hspace=0.20, bottom=0.055)
     save(fig, "fig_trees")
 
 
@@ -696,7 +785,7 @@ def fig_nullcal(d):
     bars = [
         ("tie-breaking\n(data fixed)", nl["floors"]["seed"][k]["mean"],
          nl["floors"]["seed"][k]["p05"], nl["floors"]["seed"][k]["p95"], GREEN),
-        ("actor bootstrap\n(codec fixed)", nl["floors"]["bootstrap"][k]["mean"],
+        ("actor\nbootstrap\n(codec fixed)", nl["floors"]["bootstrap"][k]["mean"],
          nl["floors"]["bootstrap"][k]["p05"], nl["floors"]["bootstrap"][k]["p95"],
          ORANGE),
     ]
@@ -707,7 +796,7 @@ def fig_nullcal(d):
                     capsize=2.2)
     labels = [b[0] for b in bars]
     ax.bar(2, nl["floors"]["container"][k], 0.62, color=GREY, edgecolor=BLACK, lw=0.4)
-    labels.append("container\n(same codec)")
+    labels.append("container\nre-wrap\n(same codec)")
     for j, cond in enumerate([c for c in CONDS if c != "ref"]):
         ax.bar(3 + j, nl["effects"][cond][k], 0.62, color=COND_COLOUR[cond],
                edgecolor=BLACK, lw=0.4)
@@ -718,7 +807,8 @@ def fig_nullcal(d):
     ax.text(5.4, nl["floors"]["bootstrap"][k]["p95"] + 0.4,
             "sampling floor", fontsize=5.8, color=ORANGE, ha="right")
     ax.set_xticks(x)
-    ax.set_xticklabels(labels, fontsize=5.3, rotation=30, ha="right")
+    ax.set_xticklabels(labels, fontsize=4.7, rotation=0, ha="center",
+                       linespacing=1.05)
     ax.set_ylabel(f"top-{nl['top_k']} features retained")
     ax.set_ylim(0, 26)
     ax.grid(axis="y", alpha=0.22)

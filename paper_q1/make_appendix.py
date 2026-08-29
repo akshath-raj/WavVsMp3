@@ -28,9 +28,14 @@ import pandas as pd  # noqa: E402
 from xai_ser.datasets import feature_names, family_of  # noqa: E402
 from xai_ser.paths import FEATURES, latest  # noqa: E402
 
-STATS8 = "mean, std, min, max, median, IQR, skew, kurtosis"
+STATS8 = r"all 8"
 STATS2 = "mean, std"
 STATS5 = "mean, std, min, max, median"
+
+
+# ragged-right paragraph column: justified text in a 2 cm measure produces
+# interword rivers and a stream of underfull-hbox warnings
+RAGGED = r">{\raggedright\arraybackslash}p"
 
 
 def esc(s: str) -> str:
@@ -209,13 +214,17 @@ def main() -> None:
     for fam, title in FAMILY_TITLES.items():
         rows = [d for d in DESCRIPTORS if d[4] == fam]
         n = sum(counts.get(d[0], 0) for d in rows)
-        w(r"\begin{table}[!ht]")
-        w(rf"\caption{{{title}. {n} columns of {len(cols)}.}}")
+        w(r"\begin{table}[H]")
+        w(rf"\caption{{{title}. {n} columns of {len(cols)}. ``all 8'' denotes "
+          r"the eight order statistics of Section~\ref{sec:features}: mean, "
+          r"standard deviation, minimum, maximum, median, IQR, skewness and "
+          r"excess kurtosis.}")
         w(rf"\label{{tab:app-{fam}}}")
         w(r"\centering\scriptsize\setlength{\tabcolsep}{3pt}")
-        w(r"\begin{tabular}{@{}p{1.9cm}p{3.5cm}p{1.5cm}r@{}}")
+        w(r"\begin{tabular}{@{}" + RAGGED + r"{2.05cm}" + RAGGED
+          + r"{3.85cm}" + RAGGED + r"{1.20cm}r@{}}")
         w(r"\toprule")
-        w(r"Descriptor & Definition & Statistics & $n$\\")
+        w(r"Descriptor & Definition & Stats & $n$\\")
         w(r"\midrule")
         for prefix, name, definition, stats, _ in rows:
             k = counts.get(prefix, 0)
@@ -238,7 +247,7 @@ def main() -> None:
         if not names:
             continue
         wide = len(names) > 30
-        w(r"\begin{table*}[!ht]" if wide else r"\begin{table}[!ht]")
+        w(r"\begin{table*}[!tp]" if wide else r"\begin{table}[!tp]")
         w(rf"\caption{{{title}: all {len(names)} column names.}}")
         w(rf"\label{{tab:app-list-{fam}}}")
         nc = ncol if wide else 3
@@ -254,6 +263,9 @@ def main() -> None:
         w(r"\end{tabular}")
         w(r"\end{table*}" if wide else r"\end{table}")
         w("")
+
+    w(r"\clearpage")
+    w("")
 
     dest = HERE / "appendix_features.tex"
     dest.write_text("\n".join(out) + "\n")
@@ -336,7 +348,7 @@ def write_splits_appendix() -> None:
     # row inside the measure.
     counts = {}
     for cond in ("ref", "mp3_64", "mp4_aac64", "roundtrip_wav"):
-        w(r"\begin{table}[!ht]")
+        w(r"\begin{table}[H]")
         w(rf"\caption{{Entropy tree fitted on \textbf{{{COND_NAME[cond]}}}, "
           rf"all internal nodes to depth {APPENDIX_DEPTH}.}}")
         w(rf"\label{{tab:app-splits-{cond.replace('_', '-')}}}")

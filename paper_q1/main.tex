@@ -4,6 +4,7 @@
 \usepackage{booktabs}
 \usepackage{amsmath,amssymb}
 \usepackage{multirow}
+\usepackage{float}   % [H] pins the appendix inventory tables in place
 \usepackage{array}
 \usepackage{xcolor}
 \usepackage{tikz}
@@ -17,6 +18,9 @@
 \DeclareSIUnit{\sample}{sample}
 
 \newcommand{\ttf}[1]{\texttt{\footnotesize #1}}
+% size-inheriting monospace, for use inside tikz nodes and small captions where
+% \ttf's hard-coded \footnotesize would be larger than its surroundings
+\newcommand{\ttx}[1]{\texttt{#1}}
 
 % flowchart styles
 \tikzset{
@@ -62,7 +66,11 @@ We report three results. The first result is that the severe loss observed
 across formats is caused by train/serve mismatch and by nothing else. A kernel
 machine trained on WAV scores 0.203 balanced accuracy on MP3, but the same model
 \emph{trained} on MP3 scores 0.589 against 0.586 on clean audio. The affective
-information therefore survives the codec intact. The second result is that what
+information therefore survives the codec intact. Aggregate accuracy nonetheless
+conceals how the mismatched model fails: under MP3 the neural network stops
+emitting three of the six emotion classes altogether and routes 57\,\% of the
+test set into a single class, a collapse that balanced accuracy records as a
+fall to 0.354. The second result is that what
 the model learns from that information does change, and the change is readable
 because the features are named. An entropy tree fitted separately on each
 condition selects the same root descriptor (\ttf{prosody\_intensity\_std}) in
@@ -70,7 +78,12 @@ all four conditions, with information gain stable to within 0.003 bits. AAC then
 moves the threshold by 1.3\,\% and replaces the descriptor at depth 1, while the
 MP3 tree does not. That agreement does not reach far. Grown to depth 6, the MP3
 tree reproduces the reference structure to depth 2 and the AAC tree only to
-depth 0, against depth 3 for an informationally empty container control. The third result is methodological. A codec effect on a
+depth 0, against depth 3 for an informationally empty container control.
+Evaluating the entropy criterion at every node of those trees shows that this
+structural divergence costs nothing informationally: all four extract the same
+total information gain to within 2\,\%, namely 0.875 bits under WAV against
+0.871 under MP3 and 0.859 under AAC. Coding changes which question the model
+asks and leaves the answer worth the same. The third result is methodological. A codec effect on a
 feature-importance ranking cannot be interpreted without a null, because the
 ranking itself is fragile. Refitting on identical audio with different
 tie-breaking retains 24.2 of 25 top features, but an \emph{informationally
@@ -165,7 +178,10 @@ perturbation.
       named descriptor and a numeric threshold (Section~\ref{sec:trees}). A
       depth profile then establishes how far down that agreement reaches, which
       is two levels for MP3 and none for AAC against three levels for an
-      informationally empty control (Section~\ref{sec:depth}).
+      informationally empty control. Evaluating entropy and information gain at
+      every node of the same trees separates structural from informational
+      agreement, and shows that the former is lost while the latter is retained
+      (Section~\ref{sec:depth}).
 \item \textbf{Null calibration for feature-importance shift.} We measure three
       floors, namely estimator tie-breaking, actor resampling, and an
       informationally empty container re-wrap. A paired within-sample design
@@ -175,6 +191,12 @@ perturbation.
       single named descriptor recovers 98\,\% of a kernel machine's loss and
       92\,\% of a neural network's loss, and it costs nothing on uncompressed
       audio (Section~\ref{sec:neutralise}).
+\item \textbf{A class-level reading of the mismatch failure.} Opening the
+      aggregate scores by class shows that the mismatched network does not
+      degrade uniformly but abandons half of the label space, which is a failure
+      mode that balanced accuracy is arithmetically unable to display
+      (Section~\ref{sec:perclass}).
+
 \item \textbf{Two negative results that we report rather than smooth over.}
       Post-hoc attribution methods disagree substantially on the same fitted
       model, and a global attribution ranking can report that nothing has
@@ -280,18 +302,18 @@ shift against a matched empty perturbation.
   {\textbf{canonical reference} $x$\\
    \SI{16}{\kilo\hertz} mono $\cdot$ PCM16\\
    EBU R128 ($I{=}{-}23$, TP${=}{-}2$)};
-\node[data, text width=54mm] (cond) at (110,0)
+\node[data, text width=62mm] (cond) at (106,0)
   {\textbf{four conditions}, all derived from $x$\\[1.5pt]
    \begin{tabular}{@{}l@{\ \ }l@{}}
-   \ttf{ref}           & the canonical reference itself\\
-   \ttf{mp3\_64}       & MP3, libmp3lame, \SI{64}{\kilo\bit\per\second}\\
-   \ttf{mp4\_aac64}    & AAC \SI{64}{\kilo\bit\per\second}, audio-only MP4\\
-   \ttf{roundtrip\_wav}& \ttf{mp4\_aac64} decoded back to WAV\\
+   \ttx{ref}           & the canonical reference itself\\
+   \ttx{mp3\_64}       & MP3, libmp3lame, \SI{64}{\kilo\bit\per\second}\\
+   \ttx{mp4\_aac64}    & AAC \SI{64}{\kilo\bit\per\second}, audio-only MP4\\
+   \ttx{roundtrip\_wav}& \ttx{mp4\_aac64} decoded back to WAV\\
    \end{tabular}};
 \draw[ar] (corpus) -- (ref);
 \draw[ar] (ref) -- (cond);
 
-\draw[line width=0.5pt] (cond.south) -- (110,-15) -- (55,-15);
+\draw[line width=0.5pt] (cond.south) -- (106,-15) -- (55,-15);
 \draw[ar] (55,-15) -- (55,-21);
 
 \node[proc, text width=118mm, anchor=north] (feat) at (55,-21)
@@ -300,7 +322,7 @@ shift against a matched empty perturbation.
 
 \node[proc, text width=56mm, anchor=north east] (mis) at (52,-33)
   {\textbf{train/serve mismatch}\\
-   fit on \ttf{ref}, evaluate on every condition\\
+   fit on \ttx{ref}, evaluate on every condition\\
    \emph{measures deployment exposure}};
 \node[proc, text width=56mm, anchor=north west] (mat) at (58,-33)
   {\textbf{matched-format}\\
@@ -316,8 +338,9 @@ shift against a matched empty perturbation.
 \draw[ar, densely dashed] (mis.south) -- (24,-52);
 \draw[ar, densely dashed] (mat.south) -- (86,-52);
 
-\node[lbl, anchor=north, below=1.6mm of null]
-  {\ttf{roundtrip\_wav} carries the same codec output as \ttf{mp4\_aac64}, so
+\node[lbl, anchor=north, text width=118mm, align=center,
+      below=1.6mm of null]
+  {\ttx{roundtrip\_wav} carries the same codec output as \ttx{mp4\_aac64}, so
    any difference between them is decoding and not coding.};
 \end{tikzpicture}
 \caption{The experimental design. Every condition descends from a single
@@ -525,7 +548,7 @@ Because the weights equalise the classes exactly, the root entropy of every tree
 in this paper is
 \begin{equation}
 H(S_{\text{root}}) \;=\; -\sum_{c=1}^{6}\tfrac{1}{6}\log_2\tfrac{1}{6}
-\;=\; \log_2 6 \;=\; 2.5850 bits.
+\;=\; \log_2 6 \;=\; 2.5850\;\text{bits}.
 \end{equation}
 On uncompressed audio the test that maximises the gain is
 $\ttf{prosody\_intensity\_std}\leq8.2184$. This test sends $w_L=3098.67$ of the
@@ -535,7 +558,7 @@ values into Eq.~\ref{eq:ig} gives
 \begin{align}
 \mathrm{IG} &= 2.5850 - \tfrac{3098.67}{4905.00}(2.3849)
                       - \tfrac{1806.33}{4905.00}(2.0891)\nonumber\\
-            &= 2.5850 - 1.5066 - 0.7693 \;=\; 0.3090 bits.
+            &= 2.5850 - 1.5066 - 0.7693 \;=\; 0.3090\;\text{bits}.
 \end{align}
 The single most informative question that can be asked about a CREMA-D clip is
 therefore \emph{how much does its loudness vary}, and the answer to that
@@ -675,6 +698,74 @@ fifteen models, the median difference between \ttf{roundtrip} and
 \ttf{mp4\_aac64} is 0.003 balanced accuracy and the maximum is 0.010, whereas
 the codec effects are one to two orders of magnitude larger.
 
+\subsection{What the collapse looks like per class}\label{sec:perclass}
+A balanced accuracy of 0.354 is a summary, and summarising is exactly what it
+does. Table~\ref{tab:perclass} opens the neural network's mismatched predictions
+by class, and the failure is not the graceful degradation the aggregate implies.
+
+\begin{table}[!t]
+\caption{The neural network under train/serve mismatch, by class, on the 1{,}640
+held-out clips. The upper block gives per-class $F_1$. The lower block gives the
+number of clips the network assigns to each class, which is the quantity the
+aggregate scores conceal. Under MP3 the network stops emitting three of the six
+classes altogether and routes 57\,\% of the test set into \textsc{fea}.}
+\label{tab:perclass}
+\centering
+\scriptsize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+Condition & \textsc{ang} & \textsc{dis} & \textsc{fea} & \textsc{hap} &
+\textsc{neu} & \textsc{sad}\\
+\midrule
+\multicolumn{7}{@{}l@{}}{\textit{per-class} $F_1$}\\
+\ttf{ref}            & 0.770 & 0.467 & 0.555 & 0.567 & 0.611 & 0.607\\
+\ttf{mp3\_64}        & 0.660 & \textbf{0.000} & 0.407 & 0.429 & \textbf{0.000}
+                     & \textbf{0.000}\\
+\ttf{mp4\_aac64}     & 0.718 & 0.416 & 0.555 & 0.538 & 0.340 & 0.481\\
+\ttf{roundtrip\_wav} & 0.705 & 0.422 & 0.562 & 0.531 & 0.342 & 0.495\\
+\midrule
+\multicolumn{7}{@{}l@{}}{\textit{clips predicted into this class, of 1{,}640}}\\
+\ttf{ref}            & 299 & 221 & 322 & 253 & 248 & 297\\
+\ttf{mp3\_64}        & 375 & \textbf{0} & \textbf{934} & 331 & \textbf{0}
+                     & \textbf{0}\\
+\ttf{mp4\_aac64}     & 319 & 432 & 315 & 292 & \phantom{0}84 & 198\\
+\ttf{roundtrip\_wav} & 293 & 441 & 311 & 308 & \phantom{0}82 & 205\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Under MP3 the network never predicts disgust, neutrality or sadness. Not rarely,
+but never: the three columns contain zero predictions across all 1{,}640 test
+clips. What survives is a three-way classifier that routes 934 clips, or
+57\,\% of the test set, into fear. Balanced accuracy reports this as 0.354. The
+arithmetic that hides the collapse is worth stating: three of the six per-class
+recalls are zero by construction, so the highest score this degenerate model
+could attain is 0.500 even with perfect recall on the classes it still emits.
+The network reaches 0.354 of that, which reads as a moderate degradation rather
+than as a structural failure. Macro $F_1$ is the more honest instrument here and
+falls much further, from 0.596 to 0.249, and top-2 accuracy falls from 0.805 to
+0.477. A monitor watching balanced
+accuracy alone would record a serious but ordinary degradation. A monitor
+watching the predicted-class histogram would see half the label space
+disappear.
+
+The AAC condition shows the same mechanism in a milder form, which is what makes
+it a mechanism rather than an artefact of one extreme setting. Neutrality does
+not vanish under AAC, but it very nearly does: 84 predictions against 248 on
+clean audio, with $F_1$ falling from 0.611 to 0.340. Disgust absorbs the
+displaced mass and is over-predicted at 432 against 221. The container control
+reproduces the pattern to within a few clips per class, at 82 and 441, which
+confirms that the redistribution is caused by the codec and not by the decode
+path.
+
+This result belongs beside Section~\ref{sec:blindspot} rather than apart from
+it. There we report that a global attribution ranking can be stable while the
+classifier stops working. Here we report that an aggregate accuracy can decline
+plausibly while the classifier stops emitting half of its classes. Both failures
+are invisible to the single number that deployment practice usually monitors,
+and both are visible immediately in a quantity that costs nothing to compute.
+
 \subsection{Matched-format training}\label{sec:matched}
 The mismatch result is a statement about deployment and not about the codec. To
 separate the two, every model was refitted \emph{within} each condition, using
@@ -684,25 +775,26 @@ give the outcome, and it is unambiguous.
 
 \begin{table}[!t]
 \caption{Matched-format training. Balanced accuracy when a model is fitted and
-evaluated in the \emph{same} condition. The rightmost column gives the spread
-across all four conditions. These values should be contrasted with
+evaluated in the \emph{same} condition. Columns are \ttf{ref}, \ttf{mp3\_64},
+\ttf{mp4\_aac64} and \ttf{roundtrip\_wav}; the rightmost column gives the spread
+across all four. These values should be contrasted with
 Table~\ref{tab:crossformat}, where the same models lose up to 38 points.}
 \label{tab:matched}
 \centering
-\footnotesize
-\setlength{\tabcolsep}{4pt}
+\scriptsize
+\setlength{\tabcolsep}{3.5pt}
 \begin{tabular}{@{}lccccc@{}}
 \toprule
-Model & \ttf{ref} & \ttf{mp3\_64} & \ttf{mp4\_aac64} & \ttf{roundtrip} & range\\
+Model & WAV & MP3 & AAC & r-trip & range\\
 \midrule
-LightGBM              & 0.591 & 0.583 & 0.582 & 0.585 & 0.008\\
-SVM (RBF)             & 0.586 & \textbf{0.589} & 0.572 & 0.572 & 0.017\\
-LDA (shrinkage)       & 0.585 & 0.586 & 0.579 & 0.584 & 0.007\\
-MLP (scikit-learn)    & 0.574 & 0.566 & 0.569 & 0.558 & 0.017\\
-Logistic regression   & 0.567 & 0.563 & 0.570 & 0.567 & 0.008\\
-Random forest         & 0.526 & 0.519 & 0.524 & 0.523 & 0.007\\
-Decision tree ($d=12$)& 0.408 & 0.379 & 0.398 & 0.369 & 0.039\\
-Decision tree ($d=3$) & 0.407 & 0.408 & 0.389 & 0.389 & 0.019\\
+LightGBM               & 0.591 & 0.583 & 0.582 & 0.585 & 0.008\\
+SVM (RBF)              & 0.586 & \textbf{0.589} & 0.572 & 0.572 & 0.017\\
+LDA (shrinkage)        & 0.585 & 0.586 & 0.579 & 0.584 & 0.007\\
+MLP (scikit-learn)     & 0.574 & 0.566 & 0.569 & 0.558 & 0.017\\
+Logistic regression    & 0.567 & 0.563 & 0.570 & 0.567 & 0.008\\
+Random forest          & 0.526 & 0.519 & 0.524 & 0.523 & 0.007\\
+Decision tree ($d=12$) & 0.408 & 0.379 & 0.398 & 0.369 & 0.039\\
+Decision tree ($d=3$)  & 0.407 & 0.408 & 0.389 & 0.389 & 0.019\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -756,24 +848,31 @@ named descriptors, we can ask the question directly. Given audio that supports
 the same accuracy, does the model reach that accuracy by asking the same
 questions?
 
-Fig.~\ref{fig:trees} and Table~\ref{tab:splits} show the top two levels of an
-entropy tree fitted independently on each condition. Section~\ref{sec:depth}
-carries the same comparison down to depth 6, and Appendix~\ref{app:splits}
-tabulates every internal node of all four trees to depth 4.
+Fig.~\ref{fig:trees} shows the top three levels of an entropy tree fitted
+independently on each condition, with the node entropy and the information gain
+printed at every node; Table~\ref{tab:splits} gives the root and depth-1 numbers
+exactly. Section~\ref{sec:depth} carries the same comparison down to depth 6,
+and Appendix~\ref{app:splits} tabulates every internal node of all four trees to
+depth 4.
 
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=\textwidth]{figs/fig_trees.pdf}
-\caption{The top two levels of the depth-3 entropy tree, fitted separately on
-each condition using the same actors and the same items. The identity of the
-root test does not change with the codec, and its threshold and information gain
-change very little. The trees begin to diverge one level below the root, and
-they diverge under AAC rather than under MP3. The AAC and roundtrip trees
-abandon the frame-aligned delta descriptor \ttf{mfcc\_d1\_00\_std} in favour of
-the static dispersion measure \ttf{mfcc\_00\_iqr}, which is what the
-\SI{32.68}{\milli\second} priming shift predicts. AAC and roundtrip carry the
-same codec output through two different containers, and they select identical
-descriptors with thresholds that agree to four decimal places.}
+\caption{The top three levels of the entropy tree, fitted separately on each
+condition using the same actors and the same items. Every node carries its own
+entropy $H$ and its information gain, both in bits, so the calculation of
+Eq.~\ref{eq:entropy} and Eq.~\ref{eq:ig} is shown at each node rather than only
+at the root. The identity of the root test does not change with the codec, and
+its threshold and information gain change very little. The trees begin to
+diverge one level below the root, and they diverge under AAC rather than under
+MP3. The AAC and roundtrip trees abandon the frame-aligned delta descriptor
+\ttf{mfcc\_d1\_00\_std} in favour of the static dispersion measure
+\ttf{mfcc\_00\_iqr}, which is what the \SI{32.68}{\milli\second} priming shift
+predicts. AAC and roundtrip carry the same codec output through two different
+containers, and they select identical descriptors at all seven nodes shown. The
+four trees also harvest almost the same cumulative information gain over these
+three levels while testing different descriptors, which is the result
+Section~\ref{sec:depth} carries down to depth 6.}
 \label{fig:trees}
 \end{figure*}
 
@@ -790,7 +889,7 @@ satisfied.}
 \toprule
 Condition & Descriptor & Threshold & IG\\
 \midrule
-\multicolumn{4}{@{}l@{}}{\textit{root} \quad $H=2.5850 bits=\log_2 6$}\\
+\multicolumn{4}{@{}l@{}}{\textit{root} \quad $H=2.5850\;\text{bits}=\log_2 6$}\\
 \ttf{ref}            & \ttf{prosody\_intensity\_std} & 8.2184 & 0.3090\\
 \ttf{mp3\_64}        & \ttf{prosody\_intensity\_std} & 8.2210 & 0.3090\\
 \ttf{mp4\_aac64}     & \ttf{prosody\_intensity\_std} & 8.3241 & 0.3064\\
@@ -835,12 +934,13 @@ finds an equally good question that the codec has not damaged.
 
 \textbf{The container control reproduces at the level of tree structure.}
 \ttf{mp4\_aac64} and \ttf{roundtrip\_wav} carry the same codec output through
-different containers. Their trees select identical descriptors at every node of
-the top two levels. The root thresholds are 8.3241 in both cases, and the
-depth-1 thresholds are 60.5853 and 60.5802. Two conditions that differ only in
-container therefore produce the same model over these levels, and two conditions
-that differ in codec do not. Section~\ref{sec:depth} shows how far that
-agreement extends, which is three levels rather than the whole tree. The distinction between container and codec was previously visible
+different containers. Their trees select identical descriptors at all seven
+nodes of the top three levels. The root thresholds are 8.3241 in both cases, and
+the depth-1 thresholds are 60.5853 and 60.5802. Two conditions that differ only
+in container therefore produce the same model over these levels, and two
+conditions that differ in codec do not. Section~\ref{sec:depth} shows how far
+that agreement extends, which is three levels rather than the whole tree. The
+distinction between container and codec was previously visible
 only as a difference in accuracy. Here it is visible as a difference in the
 learned decision rule itself.
 
@@ -939,6 +1039,90 @@ statistic at all. Two conditions carrying the same codec output through
 different containers are structurally indistinguishable from each other, while
 both differ from the reference at depth 1.
 
+\textbf{The information budget is preserved even where the structure is not.}
+Structural agreement and informational agreement are different quantities, and
+separating them is what the entropy criterion of Section~\ref{sec:models} makes
+possible. Table~\ref{tab:entropy} evaluates Eq.~\ref{eq:entropy} and
+Eq.~\ref{eq:ig} at every internal node of all four depth-6 trees and aggregates
+them by depth. The two halves of that table point in opposite directions, and
+the contrast is the sharpest statement of this paper's thesis that we are able
+to make.
+
+\begin{table}[!t]
+\caption{The entropy calculation carried through the whole depth-6 tree. The
+upper block gives the mean node entropy $\bar H$ over the internal nodes at each
+depth, and the lower block gives the information gain harvested at that depth,
+weighted by the fraction of the training sample reaching each node so that the
+depths are commensurable and sum to the total. All values are in bits, computed
+from Eq.~\ref{eq:entropy} and Eq.~\ref{eq:ig}. The four trees agree on the total
+to within 2\,\% while sharing almost none of their structure below depth 2
+(Table~\ref{tab:depth}).}
+\label{tab:entropy}
+\centering
+\scriptsize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Depth & \ttf{ref} & \ttf{mp3\_64} & \ttf{mp4\_aac64} & \ttf{roundtrip}\\
+\midrule
+\multicolumn{5}{@{}l@{}}{\textit{mean node entropy} $\bar H$}\\
+0 & 2.5850 & 2.5850 & 2.5850 & 2.5850\\
+1 & 2.2370 & 2.2370 & 2.2383 & 2.2383\\
+2 & 2.0516 & 2.0506 & 2.0708 & 2.0708\\
+3 & 1.9512 & 1.9484 & 1.9427 & 1.9398\\
+4 & 1.8547 & 1.8507 & 1.8342 & 1.8183\\
+5 & 1.7245 & 1.7882 & 1.7458 & 1.7369\\
+\midrule
+\multicolumn{5}{@{}l@{}}{\textit{sample-weighted information gain}}\\
+0 & 0.3090 & 0.3090 & 0.3064 & 0.3064\\
+1 & 0.1556 & 0.1546 & 0.1462 & 0.1462\\
+2 & 0.0938 & 0.0935 & 0.0939 & 0.0941\\
+3 & 0.0832 & 0.0842 & 0.0863 & 0.0860\\
+4 & 0.1047 & 0.1027 & 0.1036 & 0.1031\\
+5 & 0.1292 & 0.1275 & 0.1226 & 0.1220\\
+\midrule
+total & \textbf{0.8754} & \textbf{0.8714} & \textbf{0.8590} & \textbf{0.8578}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The mean node entropy falls from $\log_2 6$ at the root to roughly 1.73 bits at
+depth 5, and it falls along almost the same trajectory in every condition. No
+per-depth mean differs from the uncompressed value by more than 0.064 bits, and
+the largest single discrepancy is at depth 5, where the MP3 tree is the
+\emph{least} resolved of the four. The information harvested per depth behaves
+the same way. Summed over all six levels, the uncompressed tree extracts 0.8754
+bits of the 2.5850 available. MP3 extracts 0.8714 bits, which is 0.46\,\% less,
+and AAC extracts 0.8590 bits, which is 1.87\,\% less. The container re-wrap
+extracts 0.8578 bits, and it is the lowest of the four despite carrying no
+coding information at all, which is a further instance of the calibration
+argument of Section~\ref{sec:null}: a difference of this size is inside the
+floor and cannot be attributed to the codec.
+
+Setting the two blocks against Table~\ref{tab:depth} gives the result. Below
+depth 2 the AAC tree shares essentially no structure with the reference, and yet
+it arrives at the same resolution of label uncertainty to within two parts in a
+hundred. The codec does not take information away from the model and it does not
+force the model to settle for a worse question. It changes which question the
+model asks and leaves the answer worth the same. Section~\ref{sec:trees} showed
+this happening once, at depth 1, where the tree traded a corrupted temporal
+statistic for an intact positional one at 0.1408 bits against 0.1415 bits. The
+table shows that the same substitution is available throughout the tree, and
+that the model takes it every time.
+
+One feature of the lower block is worth flagging because it bears on
+Limitation~7. The information gain per depth reaches its minimum at depth 3 and
+then \emph{rises} again, from 0.0832 to 0.1292 bits in the reference tree. A
+tree that is genuinely resolving structure should show gains that decay
+monotonically. Gains that recover at depth are the signature of a tree fitting
+noise in nodes that hold a few hundred clips each, which is the regime the
+25-sample leaf minimum permits. The deep structure that
+Table~\ref{tab:depth} finds so unstable is therefore not merely fragile under
+perturbation; a substantial part of it should not be read as evidence about
+emotion in the first place. This strengthens rather than weakens the practical
+reading below, because it means the levels worth auditing are exactly the levels
+that prove reproducible.
+
 Two details are worth recording because they qualify how the agreement should
 be read. First, at depth 1 the AAC tree keeps \ttf{mfcc\_d1\_00\_std} on the
 \ttf{R} branch and replaces it only on the \ttf{L} branch, which is why its
@@ -981,7 +1165,7 @@ computed over the descriptors that at least one of the two fits actually used.}
 \centering
 \scriptsize
 \setlength{\tabcolsep}{4pt}
-\begin{tabular}{@{}lccl@{}}
+\begin{tabular}{@{}lcc>{\raggedright\arraybackslash}p{2.45cm}@{}}
 \toprule
 Comparison & top-25 kept & $\rho$ & What it varies\\
 \midrule
@@ -1142,10 +1326,58 @@ ANN (int.\ grad.)    & 0.542 & 0.238 & 0.153 & 0.057 & 0.009\\
 \end{tabular}
 \end{table}
 
-The per-emotion attributions are acoustically sensible. CPPS, which correlates
-with breathiness, drives both sadness and neutrality. The median $F_0$ drives
-fear, movement in $F_2$ drives disgust, and loudness dynamics drive anger. The
-network was given none of this information in advance.
+The per-emotion attributions are acoustically sensible, and because the
+descriptors are named this can be checked rather than asserted.
+Table~\ref{tab:peremotion} gives the three most attributed descriptors for each
+emotion under integrated gradients.
+
+\begin{table}[!t]
+\caption{The three descriptors carrying the most integrated-gradients
+attribution for each emotion, computed on uncompressed audio over the held-out
+speakers, with the attribution mass in parentheses. The rightmost column gives
+the phonetic reading that the descriptor names license. The network received no
+phonetic supervision.}
+\label{tab:peremotion}
+\centering
+\scriptsize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Emotion & Most attributed descriptors, and what they measure\\
+\midrule
+\textsc{ang} & \ttf{mfcc\_d1\_00\_std} (0.294), \ttf{mfcc\_d2\_00\_std} (0.232),\\
+             & \ttf{mfcc\_00\_iqr} (0.157) --- loudness dynamics\\[2pt]
+\textsc{dis} & \ttf{duration\_s} (0.285), \ttf{prosody\_f2\_std} (0.241),\\
+             & \ttf{mfcc\_00\_skew} (0.215) --- timing and $F_2$ movement\\[2pt]
+\textsc{fea} & \ttf{prosody\_f0\_median} (0.235), \ttf{mfcc\_d1\_00\_std} (0.208),\\
+             & \ttf{prosody\_hnr\_std} (0.181) --- raised, unstable pitch\\[2pt]
+\textsc{hap} & \ttf{duration\_s} (0.307), \ttf{spectral\_flux\_std} (0.247),\\
+             & \ttf{mfcc\_d1\_01\_std} (0.175) --- spectral churn\\[2pt]
+\textsc{neu} & \ttf{mfcc\_00\_skew} (0.327), \ttf{prosody\_cpps} (0.327),\\
+             & \ttf{mfcc\_d1\_01\_std} (0.273) --- steady, clean phonation\\[2pt]
+\textsc{sad} & \ttf{prosody\_cpps} (0.154), \ttf{mfcc\_d2\_00\_std} (0.149),\\
+             & \ttf{mfcc\_03\_std} (0.146) --- breathiness\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Three of these associations are ones the speech literature already reports.
+CPPS, which is the standard acoustic correlate of breathy phonation, is the
+leading descriptor for sadness and is joint-leading for neutrality. Median $F_0$
+leads for fear, which is the raised-pitch response. Movement in $F_2$ leads for
+disgust, which is a vocal-tract shape effect. The network was given none of this
+in advance, and the agreement is a construct-validity check on the attribution
+rather than a new finding about emotion.
+
+Two of these descriptors also connect this section to the coding results.
+\ttf{prosody\_cpps} carries the most attribution for sadness, and it is one of
+the descriptors that \emph{leaves} the top 25 under MP3
+(Section~\ref{sec:stability}). \ttf{duration\_s} leads for both disgust and
+happiness, and it is the descriptor that the AAC priming shift moves by
+\SI{32.68}{\milli\second} on every clip. The emotions whose evidence the codecs
+disturb are therefore identifiable in advance from this table, which is a
+property that an attribution over unnamed latent dimensions could not have
+supplied.
 
 \subsubsection{The methods disagree with each other}\label{sec:methods-disagree}
 Fig.~\ref{fig:methods}(a) presents an uncomfortable result. For the simpler
@@ -1375,10 +1607,30 @@ everything below that is reorganised. Even the reorganisation is smaller than
 the raw numbers suggest, and only a properly nulled comparison can say by how
 much.
 
+A fourth question separates out once the entropy criterion is read at every
+node rather than only at the root, and it is the one we did not expect to be able
+to answer. Structural agreement and informational agreement come apart. Below
+depth 2 the AAC tree shares almost no structure with the reference tree, and it
+nonetheless resolves the same amount of label uncertainty, 0.859 bits against
+0.875. The codec does not degrade the model's evidence and does not force it to
+accept a worse question. It substitutes one question for another of equal value.
+This is a stronger and more specific claim than ``the attributions changed'', and
+it is available only because the splitting criterion is explicit and the
+descriptors are named.
+
 An evaluation that reports only the second question, which is what cross-format
 benchmarking does, would conclude that MP3 at \SI{64}{\kilo\bit\per\second} is
 unusable for SER. The first question shows that this conclusion is really about
 the pipeline and not about the codec.
+
+There is a converse warning in Section~\ref{sec:perclass}, and it cuts against
+aggregate reporting from the other direction. Where the entropy profile shows an
+aggregate concealing a change that does not matter, the per-class table shows an
+aggregate concealing one that matters a great deal. A balanced accuracy of 0.354
+reads as heavy degradation of a six-way classifier. What it in fact describes is
+a model that has silently become a three-way classifier. Neither reading is
+recoverable from the summary statistic; both are immediate from a quantity that
+is already computed.
 
 \subsection{Null calibration is not optional}
 The container re-wrap changes no coding information at all, and it still turns
