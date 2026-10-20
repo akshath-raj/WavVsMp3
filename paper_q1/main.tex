@@ -1,6 +1,9 @@
-\documentclass[10pt,journal,compsoc]{IEEEtran}
+\documentclass[lettersize,journal]{IEEEtran}
 
 \usepackage{graphicx}
+\usepackage{cite}
+\usepackage{textcomp}
+\usepackage{stfloats}
 \usepackage{iftex}
 \ifXeTeX
   % IEEEtran asks for Times, which XeTeX cannot load in bold; Termes is the
@@ -56,13 +59,14 @@ the per-condition tree splits are given in the supplementary material.}}
 \markboth{IEEE Transactions on Affective Computing}%
 {R: Audio Codec Effects on Feature Attribution in SER}
 
-\IEEEtitleabstractindextext{%
+\maketitle
+
 \begin{abstract}
 Speech emotion recognition (SER) systems are usually validated on uncompressed
 audio but deployed on coded audio. This study examines how coding affects the
 evidence a model uses, beyond its accuracy. Fifteen classifiers were fitted to
 436 named acoustic descriptors from CREMA-D, with every clip rendered as WAV,
-as MP3 and AAC at \SI{64}{\kilo\bit\per\second}, and as an AAC re-wrap that
+as MP3 and AAC at 64\,kbit/s, and as an AAC re-wrap that
 changes only the container. Cross-format losses arise from train/serve
 mismatch rather than lost information: an RBF-SVM trained on WAV reaches 0.203
 balanced accuracy on MP3, but 0.589 when trained on MP3, against 0.586 on clean
@@ -73,7 +77,7 @@ only to depth 2 under MP3 and depth 0 under AAC, compared with depth 3 for the
 empty container control, while extracting the same total information gain to
 within 2\,\%. The empty re-wrap alone displaces 8.4 of a tree's 25 most
 important descriptors; against this floor, the codec-specific displacement is
-significant ($p\leq1.1\times10^{-3}$) but 2.6 times smaller than the
+significant (p\,<\,0.002) but 2.6 times smaller than the
 uncalibrated figure. Attribution-shift claims should therefore be reported
 against a matched empty-perturbation control.
 \end{abstract}
@@ -82,10 +86,8 @@ against a matched empty-perturbation control.
 Speech emotion recognition, explainable artificial intelligence, perceptual
 audio coding, feature attribution, decision trees, information gain, covariate
 shift, null calibration.
-\end{IEEEkeywords}}
+\end{IEEEkeywords}
 
-\maketitle
-\IEEEdisplaynontitleabstractindextext
 
 \section{Introduction}
 \IEEEPARstart{A}{udio} rarely reaches an inference endpoint in the format in
@@ -415,7 +417,7 @@ recommendation of Rudin~\cite{rudin2019stop} here and in favour of post-hoc
 attribution on a stronger model.
 
 \begin{table}[!t]
-\caption{In-format performance on uncompressed audio (20 held-out speakers).}
+\caption{In-Format Performance on Uncompressed Audio (20 Held-Out Speakers)}
 \label{tab:leaderboard}
 \centering
 \footnotesize
@@ -452,7 +454,7 @@ model that uses descriptor values as continuous magnitudes loses between 12 and
 38 points.
 
 \begin{table*}[!t]
-\caption{Balanced accuracy of models trained on uncompressed audio and served coded audio.}
+\caption{Balanced Accuracy of Models Trained on Uncompressed Audio and Served Coded Audio}
 \label{tab:crossformat}
 \centering
 \footnotesize
@@ -515,7 +517,7 @@ histogram, which is trivial to compute, would show half of the label space
 disappearing.
 
 \begin{table}[!t]
-\caption{The neural network under mismatch, by class: per-class $F_1$ and the number of clips predicted into each class.}
+\caption{Neural Network Under Mismatch by Class: Per-Class $F_1$ and Number of Clips Predicted Into Each Class}
 \label{tab:perclass}
 \centering
 \scriptsize
@@ -554,7 +556,7 @@ and the shallow MLP 18.2. No model varies by more than 0.039 across the four
 conditions, and the two largest spreads belong to single decision trees.
 
 \begin{table}[!t]
-\caption{Matched-format training: balanced accuracy when a model is fitted and tested in the same condition.}
+\caption{Matched-Format Training: Balanced Accuracy When a Model Is Fitted and Tested in the Same Condition}
 \label{tab:matched}
 \centering
 \scriptsize
@@ -678,7 +680,7 @@ those tests extract. The depth-1 substitution described in
 Section~\ref{sec:trees} occurs throughout the tree.
 
 \begin{table}[!t]
-\caption{Mean node entropy and sample-weighted information gain per depth of the depth-6 trees (bits).}
+\caption{Mean Node Entropy and Sample-Weighted Information Gain per Depth of the Depth-6 Trees (Bits)}
 \label{tab:entropy}
 \centering
 \scriptsize
@@ -741,7 +743,7 @@ results given in Table~\ref{tab:paired} and Fig.~\ref{fig:nullcal}(b).
 \end{figure*}
 
 \begin{table}[!t]
-\caption{Paired within-draw retention of the tree's top-25 descriptors over 20 draws; $p$ values are Wilcoxon signed-rank tests against the floor.}
+\caption{Paired Within-Draw Retention of the Tree's Top-25 Descriptors Over 20 Draws ($p$ From Wilcoxon Signed-Rank Tests Against the Floor)}
 \label{tab:paired}
 \centering
 \scriptsize
@@ -815,7 +817,7 @@ disgust and happiness, is the descriptor that AAC priming shifts on every
 clip.
 
 \begin{table}[!t]
-\caption{Top three integrated-gradients descriptors per emotion, with attribution mass.}
+\caption{Top Three Integrated-Gradients Descriptors per Emotion, With Attribution Mass}
 \label{tab:peremotion}
 \centering
 \scriptsize
@@ -891,7 +893,7 @@ five statistics, and \ttf{spectral\_contrast\_6\_mean}), while those that
 reliance from properties of the voice to artefacts of the encoder.
 
 \begin{table}[!t]
-\caption{Attribution stability under mismatch: Spearman $\rho$ against \ttf{ref}, with top-25 descriptors retained in parentheses.}
+\caption{Attribution Stability Under Mismatch: Spearman $\rho$ Against \ttf{ref}, With Top-25 Descriptors Retained in Parentheses}
 \label{tab:stability}
 \centering
 \scriptsize
@@ -931,7 +933,7 @@ of the RBF-SVM's 38.3-point loss and 92\,\% of the network's 24.6-point loss;
 masking three brings logistic regression to 0.562 against a clean 0.567.
 
 \begin{table}[!t]
-\caption{Balanced accuracy on MP3 after replacing the $k$ most codec-shifted descriptors with training medians.}
+\caption{Balanced Accuracy on MP3 After Replacing the $k$ Most Codec-Shifted Descriptors With Training Medians}
 \label{tab:neutralise}
 \centering
 \footnotesize
@@ -1115,11 +1117,7 @@ heterogeneous audio without format-aware validation. Nothing in this paper
 should be taken as evidence that automatic emotion inference is accurate, fair
 or appropriate in consequential settings.
 
-\ifCLASSOPTIONcompsoc
-  \section*{Acknowledgments}
-\else
-  \section*{Acknowledgment}
-\fi
+\section*{Acknowledgments}
 This research received no external funding. The author used Claude (Anthropic)
 to assist with editing and condensing the manuscript text and with preparing the
 drawing code for Fig.~\ref{fig:framework}. The author reviewed all such content
@@ -1127,5 +1125,16 @@ and takes full responsibility for the article.
 
 \bibliographystyle{IEEEtran}
 \bibliography{refs}
+
+% ---------------------------------------------------------------- biography
+% Required by IEEE Computer Society journals and counted in the page limit.
+% Uncomment one block and fill in. For a photo, place a 1in x 1.25in head-shot
+% at figs/author.jpg and use the first block.
+%\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{figs/author.jpg}}]{Akshath R}
+%Biography text: degree and institution, current position, research interests.
+%\end{IEEEbiography}
+%\begin{IEEEbiographynophoto}{Akshath R}
+%Biography text: degree and institution, current position, research interests.
+%\end{IEEEbiographynophoto}
 
 \end{document}
