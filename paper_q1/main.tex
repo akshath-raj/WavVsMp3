@@ -1,4 +1,4 @@
-\documentclass[journal]{IEEEtran}
+\documentclass[10pt,journal,compsoc]{IEEEtran}
 
 \usepackage{graphicx}
 \usepackage{iftex}
@@ -50,46 +50,42 @@ in Speech Emotion Recognition}
 \author{Akshath~R%
 \thanks{A.~R is an independent researcher (e-mail: akshath.r333@gmail.com).}%
 \thanks{Code, stimulus manifests and every result file underlying the tables
-and figures are released with this paper. The complete feature inventory and
+and figures are available at \url{https://github.com/akshath-raj/WavVsMp3}. The complete feature inventory and
 the per-condition tree splits are given in the supplementary material.}}
 
 \markboth{IEEE Transactions on Affective Computing}%
 {R: Audio Codec Effects on Feature Attribution in SER}
 
-\maketitle
-
+\IEEEtitleabstractindextext{%
 \begin{abstract}
 Speech emotion recognition (SER) systems are usually validated on uncompressed
-audio and deployed on coded audio. Earlier studies examined the effect of this
-gap on accuracy. This study examines its effect on the evidence a model uses.
-Fifteen classifiers, including a small neural network, were fitted to 436
-\emph{named} acoustic descriptors extracted from CREMA-D, with every clip
-rendered as uncompressed WAV, MP3 at \SI{64}{\kilo\bit\per\second}, MP4/AAC at
-\SI{64}{\kilo\bit\per\second}, and an AAC re-wrap that changes only the
-container. The large cross-format losses are caused by train/serve mismatch
-rather than by lost information: an RBF-SVM trained on WAV reaches 0.203
-balanced accuracy on MP3, whereas the same model trained on MP3 reaches 0.589,
-against 0.586 on clean audio. Under mismatch the neural network stops
-predicting three of the six classes, a failure that balanced accuracy conceals.
-Coding also changes the tests a model learns, though not the information those
-tests extract. Entropy trees fitted per condition share the same root
-descriptor, but the MP3 tree reproduces the reference structure only to depth 2
-and the AAC tree only to depth 0, compared with depth 3 for the empty container
-control. All four trees still extract the same total information gain to
-within 2\,\%. Finally, a shift in feature importance is uninterpretable without
-a null. The informationally empty re-wrap alone displaces 8.4 of a tree's 25
-most important descriptors. Measured against that floor, the codec-specific
-displacement is significant ($p\leq1.1\times10^{-3}$) but about 2.6 times
-smaller than the uncalibrated figure. Attribution-shift claims in affective
-computing should therefore be reported against a matched empty-perturbation
-control.
+audio but deployed on coded audio. This study examines how coding affects the
+evidence a model uses, beyond its accuracy. Fifteen classifiers were fitted to
+436 named acoustic descriptors from CREMA-D, with every clip rendered as WAV,
+as MP3 and AAC at \SI{64}{\kilo\bit\per\second}, and as an AAC re-wrap that
+changes only the container. Cross-format losses arise from train/serve
+mismatch rather than lost information: an RBF-SVM trained on WAV reaches 0.203
+balanced accuracy on MP3, but 0.589 when trained on MP3, against 0.586 on clean
+audio. Under mismatch the neural network stops predicting three of the six
+classes, a failure that balanced accuracy conceals. Entropy trees fitted per
+condition keep the same root descriptor but reproduce the reference structure
+only to depth 2 under MP3 and depth 0 under AAC, compared with depth 3 for the
+empty container control, while extracting the same total information gain to
+within 2\,\%. The empty re-wrap alone displaces 8.4 of a tree's 25 most
+important descriptors; against this floor, the codec-specific displacement is
+significant ($p\leq1.1\times10^{-3}$) but 2.6 times smaller than the
+uncalibrated figure. Attribution-shift claims should therefore be reported
+against a matched empty-perturbation control.
 \end{abstract}
 
 \begin{IEEEkeywords}
 Speech emotion recognition, explainable artificial intelligence, perceptual
 audio coding, feature attribution, decision trees, information gain, covariate
 shift, null calibration.
-\end{IEEEkeywords}
+\end{IEEEkeywords}}
+
+\maketitle
+\IEEEdisplaynontitleabstractindextext
 
 \section{Introduction}
 \IEEEPARstart{A}{udio} rarely reaches an inference endpoint in the format in
@@ -1101,7 +1097,8 @@ here is reduced by a factor of about 2.6.
 CREMA-D is publicly available from its authors~\cite{cao2014cremad}. The
 stimulus construction scripts, condition manifests, the schema of the
 436-descriptor table, and the result files from which every table and figure is
-generated are released with this paper. The figure and supplementary-table
+generated are available at
+\url{https://github.com/akshath-raj/WavVsMp3}. The figure and supplementary-table
 generators read only these files and contain no hard-coded results. The
 \SI{243}{\mega\byte} feature table and the rendered audio can be regenerated
 from the released extraction code. All computation was performed on a CPU
@@ -1117,6 +1114,16 @@ validity of explanations, and they caution against deploying such systems on
 heterogeneous audio without format-aware validation. Nothing in this paper
 should be taken as evidence that automatic emotion inference is accurate, fair
 or appropriate in consequential settings.
+
+\ifCLASSOPTIONcompsoc
+  \section*{Acknowledgments}
+\else
+  \section*{Acknowledgment}
+\fi
+This research received no external funding. The author used Claude (Anthropic)
+to assist with editing and condensing the manuscript text and with preparing the
+drawing code for Fig.~\ref{fig:framework}. The author reviewed all such content
+and takes full responsibility for the article.
 
 \bibliographystyle{IEEEtran}
 \bibliography{refs}
