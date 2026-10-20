@@ -72,7 +72,7 @@ DESCRIPTORS: list[tuple[str, str, str, str, str]] = [
      "Euclidean norm of the frame-to-frame difference of the magnitude spectrum. It measures how fast the spectrum is changing.",
      STATS8, "spectral"),
     ("spectral_entropy", "Spectral entropy",
-     "Shannon entropy of the power spectrum normalised to its own bin count (Eq.~\\ref{eq:specent}). It is a scale-free measure of how evenly energy is distributed across frequency.",
+     "Shannon entropy of the power spectrum normalised to its own bin count, $-\\sum_k P_k\\ln P_k/\\ln K$ with $P_k$ the share of frame power in bin $k$ of $K$. It is a scale-free measure of how evenly energy is distributed across frequency.",
      STATS8, "spectral"),
     ("spectral_slope", "Spectral slope",
      "Least-squares slope of magnitude regressed on frequency, per frame. This is the spectral tilt.",
@@ -326,7 +326,7 @@ def write_splits_appendix() -> None:
     w(r"A path missing from a table is one the tree stopped splitting, because "
       r"a child would have fallen below the 25-sample leaf minimum. Comparing "
       r"the same path across the four tables is the node-level comparison "
-      r"summarised in Table~\ref{tab:depth} and Fig.~\ref{fig:depth}.")
+      r"summarised in Fig.~\ref{fig:depth} of the main paper.")
     w("")
 
     def tabular(cond) -> list[str]:

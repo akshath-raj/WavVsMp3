@@ -25,7 +25,7 @@ Spectral flatness & Geometric mean of the magnitude spectrum divided by its arit
 Zero-crossing rate & Fraction of adjacent sample pairs with a sign change. It is a cheap proxy for voicing and frication. & all 8 & 8\\
 Frame RMS energy & Root-mean-square magnitude per frame, which gives the loudness contour. & all 8 & 8\\
 Spectral flux & Euclidean norm of the frame-to-frame difference of the magnitude spectrum. It measures how fast the spectrum is changing. & all 8 & 8\\
-Spectral entropy & Shannon entropy of the power spectrum normalised to its own bin count (Eq.~\ref{eq:specent}). It is a scale-free measure of how evenly energy is distributed across frequency. & all 8 & 8\\
+Spectral entropy & Shannon entropy of the power spectrum normalised to its own bin count, $-\sum_k P_k\ln P_k/\ln K$ with $P_k$ the share of frame power in bin $k$ of $K$. It is a scale-free measure of how evenly energy is distributed across frequency. & all 8 & 8\\
 Spectral slope & Least-squares slope of magnitude regressed on frequency, per frame. This is the spectral tilt. & all 8 & 8\\
 Band-energy ratios (8 bands) & Fraction of frame energy in each of 0--500, 500--1000, 1000--2000, 2000--3000, 3000--4000, 4000--5000, 5000--6000, 6000--8000\,Hz. Energy-normalised, so these describe spectral \emph{shape} rather than level. & mean, std & 16\\
 High-frequency survival ratios & Fraction of frame energy above 4 and above 6\,kHz. The most direct probes of lossy-codec low-pass behaviour in the inventory. & mean, std & 4\\

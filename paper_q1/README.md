@@ -1,11 +1,11 @@
 # paper_q1 — manuscript
 
-**What the Model Learns from Coded Audio: Null-Calibrated Feature Attribution
-in Explainable Speech Emotion Recognition**
+**Audio Codec Effects on Feature Attribution in Speech Emotion Recognition**
 
 Formatted for **IEEE Transactions on Affective Computing** (IEEEtran journal
-class, IEEE numeric citations). 23 pages including two appendices and
-references.
+class, IEEE numeric citations). 12 pages including references. The feature
+inventory and per-condition tree splits are in a separate
+`supplementary.pdf` (7 pages).
 
 Confined to interpretable models over named acoustic descriptors — fifteen
 scikit-learn classifiers plus a PyTorch MLP, attributed with SHAP, LIME,
@@ -17,8 +17,10 @@ parked under `../future_work/` and is not part of this manuscript.
 
 ```bash
 python make_figures.py          # regenerate figs/*.pdf from committed artefacts
+../xai_ser/.venv/bin/python make_fig_framework.py   # Fig. 1 image tiles (needs librosa)
 python make_appendix.py         # regenerate appendix_features.tex + appendix_splits.tex
-tectonic -X compile main.tex    # -> main.pdf  (downloads IEEEtran on first run)
+tectonic -X compile --keep-intermediates main.tex   # -> main.pdf (+ main.aux)
+tectonic -X compile supplementary.tex               # -> supplementary.pdf (reads main.aux)
 ```
 
 Both generator scripts read only committed result files under
@@ -32,6 +34,8 @@ itself, so the appendix cannot drift from the data the models were fitted on.
 main.tex                 manuscript
 refs.bib                 28 references, all cited
 make_figures.py          9 figures, PDF (vector) + PNG mirror
+fig_framework.tex        Fig. 1 flowchart (TikZ, embeds figs/fw_*.png)
+supplementary.tex        wraps the two generated appendices as a standalone document
 make_appendix.py         Appendix A (feature inventory) + Appendix B (tree splits)
 appendix_features.tex    GENERATED — 436 descriptors, defined and enumerated
 appendix_splits.tex      GENERATED — all 31 internal nodes to depth 4, all four trees
